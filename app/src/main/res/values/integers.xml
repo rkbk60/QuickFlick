@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Preferences Default value -->
+    <integer name="preferences_x1_default">50</integer>
+    <integer name="preferences_x2_default">300</integer>
+    <integer name="preferences_y1_default">50</integer>
+    <integer name="preferences_y2_default">150</integer>
+
+</resources>

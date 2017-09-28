@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="backgroundKey">#000</color>
+    <color name="pressedKey">#009688</color>
+    <color name="backgroundIndicator">#222</color>
+    <color name="previewBackground">#1b1b1b</color>
+    <color name="previewForward">#CCC</color>
+
+    <!-- theme Base -->
+    <color name="themeBaseBackgroundIndicator">@color/backgroundIndicator</color>
+    <color name="themeBaseLeft">#d1853f</color>
+    <color name="themeBaseRight">#7ec24e</color>
+    <color name="themeBaseUp">#54aaf0</color>
+    <color name="themeBaseDown">#b96fde</color>
+
+    <!-- theme Lime -->
+    <color name="themeLimeBackgroundIndicator">@color/backgroundIndicator</color>
+    <color name="themeLimeLeft">#30d0f0</color>
+    <color name="themeLimeRight">#97e300</color>
+    <color name="themeLimeUp">#f92672</color>
+    <color name="themeLimeDown">#803dfc</color>
+
+</resources>

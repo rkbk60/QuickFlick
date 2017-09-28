@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/app_full_name">
+
+    <PreferenceCategory android:title="@string/preferences_category_horizontal">
+        <EditTextPreference
+            android:defaultValue="@integer/preferences_x1_default"
+            android:key="@string/preferences_x1"
+            android:numeric="integer"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/preferences_title_threshold_x1" />
+        <EditTextPreference
+            android:defaultValue="@integer/preferences_x2_default"
+            android:key="@string/preferences_x2"
+            android:numeric="integer"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/preferences_title_threshold_x2" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferences_category_vertical">
+        <EditTextPreference
+            android:defaultValue="@integer/preferences_y1_default"
+            android:key="@string/preferences_y1"
+            android:numeric="integer"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/preferences_title_threshold_y1" />
+        <EditTextPreference
+            android:defaultValue="@integer/preferences_y2_default"
+            android:key="@string/preferences_y2"
+            android:numeric="integer"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/preferences_title_threshold_y2" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferences_category_canceler">
+        <SwitchPreference
+            android:defaultValue="@bool/preferences_cancel_flick_default"
+            android:key="@string/preferences_cancel_flick"
+            android:summary="@string/preferences_summary_cancel_flick"
+            android:title="@string/preferences_title_cancel_flick" />
+        <SwitchPreference
+            android:defaultValue="@bool/preferences_cancel_input_default"
+            android:key="@string/preferences_cancel_input"
+            android:summary="@string/preferences_summary_cancel_input"
+            android:title="@string/preferences_title_cancel_input"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
