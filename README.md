@@ -1,9 +1,7 @@
 # QuickFlick
 
--- Minimal size Keyboard for Hackers -- 
-
-QuickFlick is minimal size keyboard made for hackers.
-If you use terminal emulator or code editor in Android Phone, this app is maybe BEST choice.
+QuickFlick is minimal size keyboard for any hackers.  
+If you use terminal emulator or code editor in Android Phone, this app will be BEST choice.
 
 ## Features
 * Compact Height.
@@ -11,10 +9,14 @@ If you use terminal emulator or code editor in Android Phone, this app is maybe 
 * All characters and numbers can input only with one action.
 * Meta/Ctrl/Alt keys have LOCK mode.
 
-## TODO
-* create documents with English
-* add direction key repeatment
-* show custom popup preview
-* settings for change background and indicator color
-* implement F1-F12, Insert, PageUp, PageDown, Home, End key
+## Installation & Usage
+Check [Wiki](https://github.com/rkbk60/QuickFlick/wiki/).
 
+## License
+MIT License
+
+## TODO
+* add direction key repeating
+* show custom pop-up preview
+* settings for change background and indicator color
+* implement F1-F12, Insert, Page-Up, Page-Down, Home, End key
