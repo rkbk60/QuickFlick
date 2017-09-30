@@ -23,5 +23,5 @@ object KeyNumbers {
     val LIST_INPUTTABLE = (1 .. 20).toList()
     val LIST_LOCATED_SIDE = listOf(1, 5, 6, 10, 11, 15, 16, 20)
     val LIST_LOCATED_RIGHT_EDGE =
-            listOf(RIGHT_SPACER, RIGHT_VIEWER, RIGHT_SWITCHER)
+            listOf(INDICATOR, RIGHT_SPACER, RIGHT_VIEWER, RIGHT_SWITCHER)
 }

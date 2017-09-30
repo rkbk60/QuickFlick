@@ -3,6 +3,7 @@ package com.rkbk60.quickflick
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
+import android.util.Log
 
 /**
  * Created by s-iwamoto on 9/29/17.
@@ -13,7 +14,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     val keyboard = Keyboard(ime, R.xml.keyboard)
 
     enum class Adjustment { NONE, LEFT, RIGHT }
-    private var adjustment = Adjustment.LEFT
+    private var adjustment = Adjustment.NONE
 
     companion object {
         var INDEX_INDICATOR = 0
@@ -84,6 +85,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
                 Adjustment.LEFT  -> getWidthInLeft(screenWidth, code)
                 Adjustment.RIGHT -> getWidthInRight(screenWidth, code)
             }
+            Log.d("LocalLog", "$index: $width")
             key.width = width
             key.x = x
             if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += width
@@ -112,6 +114,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             if (code in KeyNumbers.LIST_LOCATED_SIDE) it.width += correction
             it.x = x
             if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += it.width
+            Log.d("LocalLog", "c$code w${it.width} x${it.x}")
         }
     }
 
