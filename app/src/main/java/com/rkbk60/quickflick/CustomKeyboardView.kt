@@ -6,6 +6,7 @@ import android.graphics.drawable.ShapeDrawable
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.util.AttributeSet
+import android.util.Log
 
 /**
  * KeyboardView having Flick Indicator.
@@ -62,9 +63,10 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
         val distance = Math.min(flick.distance, maxDistance)
         shape.apply {
             setBounds(x, y, x + width, y + height)
-            paint.color = color
-            alpha = if (flick.direction == Flick.Direction.NONE) 255
-                        else 255 * distance / maxFlickDistance
+            paint.color = if (maxDistance == 0)
+                flickDefaultColor else color
+            alpha = if ((flick.direction == Flick.Direction.NONE) or (maxDistance == 0))
+                255 else 255 * distance / maxDistance
         }
         drawable = shape
     }
