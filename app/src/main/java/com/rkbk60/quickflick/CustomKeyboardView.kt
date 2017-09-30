@@ -23,14 +23,12 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
     private val flickUpColor      = themeFactory.getUpColor()
     private val flickDownColor    = themeFactory.getDownColor()
 
-    private val indicator_keycode = 0 // check res/xml/keyboard.xml
-
     private lateinit var keymap: Keymap
     private var maxFlickDistance = 1
 
     fun setKeyboard(keyboard: Keyboard, keymap: Keymap) {
         super.setKeyboard(keyboard)
-        indicatorKey = keyboard.keys.find { it.codes[0] == indicator_keycode }
+        indicatorKey = keyboard.keys.find { it.codes[0] == KeyNumbers.INDICATOR}
         this.keymap = keymap
         maxFlickDistance = keymap.maxDistance
         updateDrawable(Flick(), 0)
@@ -43,7 +41,7 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
 
     fun indicate(flick: Flick, initialCode: Int) {
         updateDrawable(flick, initialCode)
-        invalidateKey(indicator_keycode)
+        invalidateKey(KeyNumbers.INDICATOR)
     }
 
     private fun updateDrawable(flick: Flick, initialCode: Int) {

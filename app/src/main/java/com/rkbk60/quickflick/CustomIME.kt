@@ -78,7 +78,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             return@OnTouchListener when (actionCode) {
                 MotionEvent.ACTION_DOWN -> {
                     val key = getTappingKey(x, y) ?: return@OnTouchListener true
-                    if (key.codes[0] in KeyboardManager.KEY_NUMBERS)  {
+                    if (key.codes[0] in KeyNumbers.LIST_INPUTTABLE)  {
                         resetTapState(x, y)
                         canInput = true
                         false
@@ -95,7 +95,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    if (onPressCode !in KeyboardManager.KEY_NUMBERS) return@OnTouchListener true
+                    if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return@OnTouchListener true
                     flick.update(tapX, tapY, x, y)
                     keyboardView.indicate(flick, onPressCode)
                     if (hasInputLimit()) {
@@ -245,8 +245,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         keyList = keyboard.keys
         keyList.forEach { key ->
             when (key.codes[0]) {
-                KeyboardManager.KEY_NUMBER_META_ALT-> keyMetaAlt = key
-                KeyboardManager.KEY_NUMBER_CTRL_ALT -> keyCtrlAlt = key
+                KeyNumbers.META_ALT -> keyMetaAlt = key
+                KeyNumbers.CTRL_ALT -> keyCtrlAlt = key
             }
         }
     }

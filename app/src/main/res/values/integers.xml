@@ -8,12 +8,12 @@
     <integer name="preferences_y2_default">150</integer>
 
     <!-- special keycode -->
-    <integer name="keycode_indicator">0</integer>
-    <integer name="keycode_left_spacer">-1</integer>
-    <integer name="keycode_left_viewer">-2</integer>
-    <integer name="keycode_left_switcher">-3</integer>
-    <integer name="keycode_right_spacer">-4</integer>
-    <integer name="keycode_right_viewer">-5</integer>
-    <integer name="keycode_right_switcher">-6</integer>
+    <integer name="number_indicator">0</integer>
+    <integer name="number_left_spacer">-1</integer>
+    <integer name="number_left_viewer">-2</integer>
+    <integer name="number_left_switcher">-3</integer>
+    <integer name="number_right_spacer">-4</integer>
+    <integer name="number_right_viewer">-5</integer>
+    <integer name="number_right_switcher">-6</integer>
 
 </resources>

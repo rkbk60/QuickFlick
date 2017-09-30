@@ -3,7 +3,6 @@ package com.rkbk60.quickflick
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
-import android.util.Log
 
 /**
  * Created by s-iwamoto on 9/29/17.
@@ -57,16 +56,16 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             }
             it.width = width
             it.x = x
-            if (code in KEY_NUMBERS_RIGHT_EDGE) x = 0 else x += width
-            if (code != KEY_NUMBER_INDICATOR) sum += width
+            if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += width
+            if (code != KeyNumbers.INDICATOR) sum += width
         }
         // fix width
         val correction = ((4 * screenWidth) - sum) / 8
         keyboard.keys.forEach {
             val code = it.codes[0]
-            if (code in KEY_NUMBERS_VERTICAL_EDGE) it.width += correction
+            if (code in KeyNumbers.LIST_LOCATED_SIDE) it.width += correction
             it.x = x
-            if (code in KEY_NUMBERS_RIGHT_EDGE) x = 0 else x += it.width
+            if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += it.width
         }
     }
 

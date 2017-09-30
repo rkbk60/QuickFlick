@@ -8,50 +8,50 @@ import android.view.KeyEvent
 
 object SpecialKeyCode {
 
-    private val floor = 4095
+    private val floor = 1.shl(10)
 
     // basic code in any keyboard
-    val BACKSPACE = KeyEvent.KEYCODE_DEL + floor
-    val TAB       = KeyEvent.KEYCODE_TAB + floor
-    val ENTER     = KeyEvent.KEYCODE_ENTER + floor
-    val META      = KeyEvent.KEYCODE_META_LEFT + floor
-    val CTRL      = KeyEvent.KEYCODE_CTRL_LEFT + floor
-    val ALT       = KeyEvent.KEYCODE_ALT_LEFT + floor
-    val ESCAPE    = KeyEvent.KEYCODE_ESCAPE + floor
-    val PAGE_UP   = KeyEvent.KEYCODE_PAGE_UP + floor
-    val PAGE_DOWN = KeyEvent.KEYCODE_PAGE_DOWN + floor
-    val END       = KeyEvent.KEYCODE_MOVE_END + floor
-    val HOME      = KeyEvent.KEYCODE_MOVE_HOME + floor
-    val LEFT      = KeyEvent.KEYCODE_DPAD_LEFT + floor
-    val RIGHT     = KeyEvent.KEYCODE_DPAD_RIGHT + floor
-    val UP        = KeyEvent.KEYCODE_DPAD_UP + floor
-    val DOWN      = KeyEvent.KEYCODE_DPAD_DOWN + floor
-    val INSERT    = KeyEvent.KEYCODE_INSERT + floor
-    val DELETE    = KeyEvent.KEYCODE_FORWARD_DEL + floor
-    val FUNCTION  = KeyEvent.KEYCODE_FUNCTION + floor
-    val F1        = KeyEvent.KEYCODE_F1 + floor
-    val F2        = KeyEvent.KEYCODE_F2 + floor
-    val F3        = KeyEvent.KEYCODE_F3 + floor
-    val F4        = KeyEvent.KEYCODE_F4 + floor
-    val F5        = KeyEvent.KEYCODE_F5 + floor
-    val F6        = KeyEvent.KEYCODE_F6 + floor
-    val F7        = KeyEvent.KEYCODE_F7 + floor
-    val F8        = KeyEvent.KEYCODE_F8 + floor
-    val F9        = KeyEvent.KEYCODE_F9 + floor
-    val F10       = KeyEvent.KEYCODE_F10 + floor
-    val F11       = KeyEvent.KEYCODE_F11 + floor
-    val F12       = KeyEvent.KEYCODE_F12 + floor
+    val BACKSPACE = KeyEvent.KEYCODE_DEL or floor
+    val TAB       = KeyEvent.KEYCODE_TAB or floor
+    val ENTER     = KeyEvent.KEYCODE_ENTER or floor
+    val META      = KeyEvent.KEYCODE_META_LEFT or floor
+    val CTRL      = KeyEvent.KEYCODE_CTRL_LEFT or floor
+    val ALT       = KeyEvent.KEYCODE_ALT_LEFT or floor
+    val ESCAPE    = KeyEvent.KEYCODE_ESCAPE or floor
+    val PAGE_UP   = KeyEvent.KEYCODE_PAGE_UP or floor
+    val PAGE_DOWN = KeyEvent.KEYCODE_PAGE_DOWN or floor
+    val END       = KeyEvent.KEYCODE_MOVE_END or floor
+    val HOME      = KeyEvent.KEYCODE_MOVE_HOME or floor
+    val LEFT      = KeyEvent.KEYCODE_DPAD_LEFT or floor
+    val RIGHT     = KeyEvent.KEYCODE_DPAD_RIGHT or floor
+    val UP        = KeyEvent.KEYCODE_DPAD_UP or floor
+    val DOWN      = KeyEvent.KEYCODE_DPAD_DOWN or floor
+    val INSERT    = KeyEvent.KEYCODE_INSERT or floor
+    val DELETE    = KeyEvent.KEYCODE_FORWARD_DEL or floor
+    val FUNCTION  = KeyEvent.KEYCODE_FUNCTION or floor
+    val F1        = KeyEvent.KEYCODE_F1 or floor
+    val F2        = KeyEvent.KEYCODE_F2 or floor
+    val F3        = KeyEvent.KEYCODE_F3 or floor
+    val F4        = KeyEvent.KEYCODE_F4 or floor
+    val F5        = KeyEvent.KEYCODE_F5 or floor
+    val F6        = KeyEvent.KEYCODE_F6 or floor
+    val F7        = KeyEvent.KEYCODE_F7 or floor
+    val F8        = KeyEvent.KEYCODE_F8 or floor
+    val F9        = KeyEvent.KEYCODE_F9 or floor
+    val F10       = KeyEvent.KEYCODE_F10 or floor
+    val F11       = KeyEvent.KEYCODE_F11 or floor
+    val F12       = KeyEvent.KEYCODE_F12 or floor
 
     // custom code
-    private val customFloor = 40950
+    private val customFloor = floor.shl(2)
     val NULL        = 0
-    val META_LOCK   = 1 + customFloor
-    val CTRL_LOCK   = 2 + customFloor
-    val ALT_LOCK    = 3 + customFloor
-    val SHIFT_TAB   = 4 + customFloor
-    val SHIFT_ENTER = 5 + customFloor
+    val META_LOCK   = 1 or customFloor
+    val CTRL_LOCK   = 2 or customFloor
+    val ALT_LOCK    = 3 or customFloor
+    val SHIFT_TAB   = 4 or customFloor
+    val SHIFT_ENTER = 5 or customFloor
 
-    fun convertToKeyEventCode(code: Int): Int = code - floor
+    fun convertToKeyEventCode(code: Int): Int = code xor floor
 
     fun convertToString(code: Int): String = when (convertToKeyEventCode(code)) {
         NULL -> ""
@@ -84,8 +84,8 @@ object SpecialKeyCode {
         META_LOCK -> "MLock"
         CTRL_LOCK -> "CLock"
         ALT_LOCK -> "ALock"
-        SHIFT_TAB -> "S-Tab"
-        SHIFT_ENTER -> "S-Enter"
+        SHIFT_TAB -> "STab"
+        SHIFT_ENTER -> "SEnter"
         else -> ""
     }
 

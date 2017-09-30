@@ -13,12 +13,12 @@
     <Row android:keyHeight="2dp">
         <!-- Flick Indicator -->
         <Key
-            android:codes="@integer/keycode_indicator"
+            android:codes="@integer/number_indicator"
             android:keyWidth="100%p"/>
     </Row>
 
     <Row>
-        <Key android:codes="@integer/keycode_left_spacer"
+        <Key android:codes="@integer/number_left_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="left"/>
         <Key
@@ -36,12 +36,12 @@
         <Key
             android:codes="5"
             android:keyIcon="@drawable/keyicon05"/>
-        <Key android:codes="@integer/keycode_right_spacer"
+        <Key android:codes="@integer/number_right_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="@integer/keycode_left_spacer"
+        <Key android:codes="@integer/number_left_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="left"/>
         <Key
@@ -60,12 +60,12 @@
             android:codes="10"
             android:keyIcon="@drawable/keyicon10"
             android:isRepeatable="true"/>
-        <Key android:codes="@integer/keycode_right_spacer"
+        <Key android:codes="@integer/number_right_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="@integer/keycode_left_spacer"
+        <Key android:codes="@integer/number_left_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="left"/>
         <Key
@@ -84,12 +84,12 @@
             android:codes="15"
             android:keyIcon="@drawable/keyicon15"
             android:isRepeatable="true"/>
-        <Key android:codes="@integer/keycode_right_spacer"
+        <Key android:codes="@integer/number_right_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="@integer/keycode_left_spacer"
+        <Key android:codes="@integer/number_left_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="left"/>
         <Key
@@ -107,7 +107,7 @@
         <Key
             android:codes="20"
             android:keyIcon="@drawable/keyicon20"/>
-        <Key android:codes="@integer/keycode_right_spacer"
+        <Key android:codes="@integer/number_right_spacer"
             android:keyLabel=""
             android:keyEdgeFlags="right"/>
     </Row>
