@@ -4,6 +4,7 @@ import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.text.InputType
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -17,6 +18,7 @@ import android.view.inputmethod.InputConnection
 class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private lateinit var keyboardView: CustomKeyboardView
+    private lateinit var keyboardManager: KeyboardManager
     private lateinit var keyboard: Keyboard
     private lateinit var keyList: List<Keyboard.Key>
 
@@ -32,11 +34,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private lateinit var keyMetaAlt: Keyboard.Key
     private lateinit var keyCtrlAlt: Keyboard.Key
-
-    // keycode number(see keyboard.xml)
-    private val KEY_NUMBER_INDICATOR = 0
-    private val KEY_NUMBER_META_ALT  = 6
-    private val KEY_NUMBER_CTRL_ALT  = 11
 
     private var metaKey
             = ModKey(KeyEvent.KEYCODE_META_LEFT,  KeyEvent.META_META_ON  or KeyEvent.META_META_LEFT_ON)
@@ -61,7 +58,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onCreateInputView(): View {
         keyboardView = layoutInflater.inflate(R.layout.keyboardview, null) as CustomKeyboardView
 
-        keyboard = Keyboard(this, R.xml.keyboard)
+        keyboardManager = KeyboardManager(this, keyboardView)
+        keyboard = keyboardManager.keyboard
 
         keymapController = KeymapController()
         keymap = keymapController.createInitialKeymap()
@@ -80,10 +78,13 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             return@OnTouchListener when (actionCode) {
                 MotionEvent.ACTION_DOWN -> {
                     val key = getTappingKey(x, y) ?: return@OnTouchListener true
-                    if (key.codes[0] == KEY_NUMBER_INDICATOR) return@OnTouchListener true
-                    resetTapState(x, y)
-                    canInput = true
-                    false
+                    if (key.codes[0] in KeyboardManager.KEY_NUMBERS)  {
+                        resetTapState(x, y)
+                        canInput = true
+                        false
+                    } else {
+                        return@OnTouchListener true
+                    }
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     multiTapSetting.addCount()
@@ -94,6 +95,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    if (onPressCode !in KeyboardManager.KEY_NUMBERS) return@OnTouchListener true
                     flick.update(tapX, tapY, x, y)
                     keyboardView.indicate(flick, onPressCode)
                     if (hasInputLimit()) {
@@ -243,8 +245,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         keyList = keyboard.keys
         keyList.forEach { key ->
             when (key.codes[0]) {
-                KEY_NUMBER_META_ALT -> keyMetaAlt = key
-                KEY_NUMBER_CTRL_ALT -> keyCtrlAlt = key
+                KeyboardManager.KEY_NUMBER_META_ALT-> keyMetaAlt = key
+                KeyboardManager.KEY_NUMBER_CTRL_ALT -> keyCtrlAlt = key
             }
         }
     }
@@ -312,8 +314,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         val labelA = if (altKey.isEnabled())  "A" else "a"
         keyMetaAlt.label = "$labelM/$labelA"
         keyCtrlAlt.label = "$labelC/$labelA"
-        keyboardView.invalidateKey(KEY_NUMBER_META_ALT)
-        keyboardView.invalidateKey(KEY_NUMBER_CTRL_ALT)
+        keyboardView.invalidateKey(KeyboardManager.KEY_NUMBER_META_ALT)
+        keyboardView.invalidateKey(KeyboardManager.KEY_NUMBER_CTRL_ALT)
     }
 
 }

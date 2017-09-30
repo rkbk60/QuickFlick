@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- NOTE: keyWidth are re-defined by KeyboardManager. -->
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
-    android:keyWidth="20%p"
+    android:keyWidth="100%p"
     android:horizontalGap="0dp"
     android:verticalGap="0dp"
     android:keyHeight="@dimen/key_height"
@@ -12,108 +13,103 @@
     <Row android:keyHeight="2dp">
         <!-- Flick Indicator -->
         <Key
-            android:codes="0"
+            android:codes="@integer/keycode_indicator"
             android:keyWidth="100%p"/>
     </Row>
 
     <Row>
+        <Key android:codes="@integer/keycode_left_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="1"
-            android:keyIcon="@drawable/keyicon01"
-            android:keyEdgeFlags="left">
-        </Key>
+            android:keyIcon="@drawable/keyicon01"/>
         <Key
             android:codes="2"
-            android:keyIcon="@drawable/keyicon02"
-            android:isRepeatable="false">
-        </Key>
+            android:keyIcon="@drawable/keyicon02"/>
         <Key
             android:codes="3"
-            android:keyIcon="@drawable/keyicon03">
-        </Key>
+            android:keyIcon="@drawable/keyicon03"/>
         <Key
             android:codes="4"
-            android:keyIcon="@drawable/keyicon04">
-        </Key>
+            android:keyIcon="@drawable/keyicon04"/>
         <Key
             android:codes="5"
-            android:keyIcon="@drawable/keyicon05"
-            android:keyEdgeFlags="right">
-        </Key>
+            android:keyIcon="@drawable/keyicon05"/>
+        <Key android:codes="@integer/keycode_right_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="right"/>
     </Row>
     <Row>
+        <Key android:codes="@integer/keycode_left_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="6"
-            android:keyLabel="m/a"
-            android:keyEdgeFlags="left">
-        </Key>
+            android:keyLabel="m/a"/>
         <Key
             android:codes="7"
-            android:keyIcon="@drawable/keyicon07">
-        </Key>
+            android:keyIcon="@drawable/keyicon07"/>
         <Key
             android:codes="8"
-            android:keyIcon="@drawable/keyicon08">
-        </Key>
+            android:keyIcon="@drawable/keyicon08"/>
         <Key
             android:codes="9"
-            android:keyIcon="@drawable/keyicon09">
-        </Key>
+            android:keyIcon="@drawable/keyicon09"/>
         <Key
             android:codes="10"
             android:keyIcon="@drawable/keyicon10"
-            android:isRepeatable="true"
-            android:keyEdgeFlags="right">
-        </Key>
+            android:isRepeatable="true"/>
+        <Key android:codes="@integer/keycode_right_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="right"/>
     </Row>
     <Row>
+        <Key android:codes="@integer/keycode_left_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="11"
-            android:keyLabel="c/a"
-            android:keyEdgeFlags="left">
-        </Key>
+            android:keyLabel="c/a"/>
         <Key
             android:codes="12"
-            android:keyIcon="@drawable/keyicon12">
-        </Key>
+            android:keyIcon="@drawable/keyicon12"/>
         <Key
             android:codes="13"
-            android:keyIcon="@drawable/keyicon13">
-        </Key>
+            android:keyIcon="@drawable/keyicon13"/>
         <Key
             android:codes="14"
-            android:keyIcon="@drawable/keyicon14">
-        </Key>
+            android:keyIcon="@drawable/keyicon14"/>
         <Key
             android:codes="15"
             android:keyIcon="@drawable/keyicon15"
-            android:isRepeatable="true"
-            android:keyEdgeFlags="right">
-        </Key>
+            android:isRepeatable="true"/>
+        <Key android:codes="@integer/keycode_right_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="right"/>
     </Row>
     <Row>
+        <Key android:codes="@integer/keycode_left_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="16"
-            android:keyIcon="@drawable/keyicon16"
-            android:keyEdgeFlags="left">
-        </Key>
+            android:keyIcon="@drawable/keyicon16"/>
         <Key
             android:codes="17"
-            android:keyIcon="@drawable/keyicon17">
-        </Key>
+            android:keyIcon="@drawable/keyicon17"/>
         <Key
             android:codes="18"
-            android:keyIcon="@drawable/keyicon18">
-        </Key>
+            android:keyIcon="@drawable/keyicon18"/>
         <Key
             android:codes="19"
-            android:keyIcon="@drawable/keyicon19">
-        </Key>
+            android:keyIcon="@drawable/keyicon19"/>
         <Key
             android:codes="20"
-            android:keyIcon="@drawable/keyicon20"
-            android:keyEdgeFlags="right">
-        </Key>
+            android:keyIcon="@drawable/keyicon20"/>
+        <Key android:codes="@integer/keycode_right_spacer"
+            android:keyLabel=""
+            android:keyEdgeFlags="right"/>
     </Row>
     <Row
         android:rowEdgeFlags="bottom"
