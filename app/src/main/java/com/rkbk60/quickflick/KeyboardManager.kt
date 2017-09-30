@@ -18,10 +18,12 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     companion object {
         var INDEX_INDICATOR = 0
             private set
+        private var INDEX_ARROW = 3
         private var INDEX_META_ALT = 9
         private var INDEX_CTRL_ALT = 16
     }
 
+    private lateinit var keyArrow: Keyboard.Key
     private lateinit var keyMetaAlt: Keyboard.Key
     private lateinit var keyCtrlAlt: Keyboard.Key
 
@@ -33,6 +35,19 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         this.adjustment = adjustment
         changeKeyWidth()
         keyboardView.invalidateAllKeys()
+    }
+
+    fun updateArrowKeyFace(state: ArrowKey.State) {
+        keyArrow.label = when (state) {
+            ArrowKey.State.DEFAULT -> "arw"
+            ArrowKey.State.REPEATING -> "ARW"
+            ArrowKey.State.PAGE_MOVE -> "pmv"
+        }
+        keyboardView.invalidateKey(INDEX_ARROW)
+    }
+
+    fun updateArrowKeyRepeatable(state: ArrowKey.State) {
+        keyArrow.repeatable = state == ArrowKey.State.REPEATING
     }
 
     fun updateMetaAltKeyFace(enableMeta: Boolean, enableAlt: Boolean) {
@@ -76,6 +91,10 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
 
             if (runKeyRecorder) when (code) {
                 KeyNumbers.INDICATOR -> INDEX_INDICATOR = index
+                KeyNumbers.ALLOW -> {
+                    INDEX_ARROW = index
+                    keyArrow = key
+                }
                 KeyNumbers.META_ALT -> {
                     INDEX_META_ALT = index
                     keyMetaAlt = key

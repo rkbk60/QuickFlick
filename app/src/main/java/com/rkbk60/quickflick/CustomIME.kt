@@ -4,7 +4,6 @@ import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.text.InputType
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -23,6 +22,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private lateinit var keyList: List<Keyboard.Key>
 
     private var onPressCode = 0
+    private var lastActionCode = Integer.MIN_VALUE
 
     private var tapX = 0
     private var tapY = 0
@@ -45,6 +45,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private var multiTapSetting = MultiTapSetting()
 
+    private val arrowKey = ArrowKey()
+
     private val charConverter = CharConverter()
 
     private var inputTypeClass = 0
@@ -65,6 +67,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         keyboardView.setOnKeyboardActionListener(this)
         keyboardView.isPreviewEnabled = false
 
+
         flick = Flick(Flick.Direction.NONE)
 
         retrieveKey()
@@ -72,12 +75,14 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             val x = event.x.toInt()
             val y = event.y.toInt()
             val actionCode = event.action and MotionEvent.ACTION_MASK
+            lastActionCode = actionCode
             return@OnTouchListener when (actionCode) {
                 MotionEvent.ACTION_DOWN -> {
                     val key = getTappingKey(x, y) ?: return@OnTouchListener true
                     if (key.codes[0] in KeyNumbers.LIST_INPUTTABLE)  {
                         resetTapState(x, y)
                         canInput = true
+                        arrowKey.toggleable = true
                         false
                     } else {
                         onPressCode = SpecialKeyCode.NULL
@@ -96,6 +101,9 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return@OnTouchListener true
                     flick.update(tapX, tapY, x, y)
                     keyboardView.indicate(flick, onPressCode)
+                    if ((onPressCode == KeyNumbers.ALLOW) and (flick.direction != Flick.Direction.NONE)) {
+                        arrowKey.toggleable = false
+                    }
                     if (hasInputLimit()) {
                         val char = keymap.searchKeycode(onPressCode, flick).toChar()
                         canInput = !(isTappingCharKey() and getInputtableChars().none { it == char })
@@ -134,6 +142,15 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
         val inputConnection = currentInputConnection ?: return
         if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return
+
+        if (canToggleArrowKey()) {
+            arrowKey.toggle()
+            keyboardManager.updateArrowKeyFace(arrowKey.state)
+            keyboardManager.updateArrowKeyRepeatable(arrowKey.state)
+            keymapController.updateArrowKeymap(arrowKey.state)
+            return
+        }
+
         val code = keymap.searchKeycode(onPressCode, flick)
         var flagTurnModKeyOff = true
 
@@ -146,10 +163,19 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             SpecialKeyCode.DELETE,
             SpecialKeyCode.TAB,
             SpecialKeyCode.ESCAPE,
+            SpecialKeyCode.HOME,
+            SpecialKeyCode.END,
+            SpecialKeyCode.PAGE_DOWN,
+            SpecialKeyCode.PAGE_UP -> {
+                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
+                sendSpecialKeyEvent(inputConnection, code)
+            }
+
             SpecialKeyCode.LEFT,
             SpecialKeyCode.RIGHT,
             SpecialKeyCode.DOWN,
             SpecialKeyCode.UP -> {
+                if ((lastActionCode == MotionEvent.ACTION_UP) and (arrowKey.isRepeatingMode())) return
                 modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
                 sendSpecialKeyEvent(inputConnection, code)
             }
@@ -269,6 +295,11 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private fun isTappingCharKey(): Boolean =
             listOf(7, 8, 9, 12, 13, 14, 17, 18, 19).any { it == onPressCode }
+
+    private fun canToggleArrowKey(): Boolean =
+            (lastActionCode == MotionEvent.ACTION_UP) and
+                    (onPressCode == KeyNumbers.ALLOW) and
+                    (arrowKey.toggleable)
 
     private fun sendModKeyEvent(ic: InputConnection, modKey: ModKey, isDown: Boolean) {
         sendKeyEvent(ic, modKey.action, isDown, true)

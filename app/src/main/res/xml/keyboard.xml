@@ -26,7 +26,7 @@
             android:keyIcon="@drawable/keyicon01"/>
         <Key
             android:codes="2"
-            android:keyIcon="@drawable/keyicon02"/>
+            android:keyLabel="arw"/>
         <Key
             android:codes="3"
             android:keyIcon="@drawable/keyicon03"/>

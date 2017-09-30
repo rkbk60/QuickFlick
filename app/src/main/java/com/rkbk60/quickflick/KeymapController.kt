@@ -21,6 +21,10 @@ internal class KeymapController {
         return keymap
     }
 
+    fun updateArrowKeymap(state: ArrowKey.State) {
+        generateAllowKeymap(state)
+    }
+
     private fun generateBasicKeymap() {
         keymap.apply {
             clear(1)
@@ -45,13 +49,23 @@ internal class KeymapController {
         }
     }
 
-    private fun generateAllowKeymap() {
+    private fun generateAllowKeymap(state: ArrowKey.State = ArrowKey.State.DEFAULT) {
         keymap.apply {
             clear(2)
-            put(2, SpecialKeyCode.DOWN, DOWN)
-            put(2, SpecialKeyCode.LEFT, LEFT)
-            put(2, SpecialKeyCode.UP, UP)
-            put(2, SpecialKeyCode.RIGHT, RIGHT)
+            when (state) {
+               ArrowKey.State.PAGE_MOVE -> {
+                   put(2, SpecialKeyCode.PAGE_DOWN, DOWN)
+                   put(2, SpecialKeyCode.HOME, LEFT)
+                   put(2, SpecialKeyCode.PAGE_UP, UP)
+                   put(2, SpecialKeyCode.END, RIGHT)
+               }
+               else -> {
+                   put(2, SpecialKeyCode.DOWN, DOWN)
+                   put(2, SpecialKeyCode.LEFT, LEFT)
+                   put(2, SpecialKeyCode.UP, UP)
+                   put(2, SpecialKeyCode.RIGHT, RIGHT)
+               }
+            }
         }
     }
 
