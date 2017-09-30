@@ -7,28 +7,28 @@ package com.rkbk60.quickflick
 class Keymap {
     private var keymap: MutableMap<Int, KeyOptionMap> = mutableMapOf()
 
-    fun put(initialCode: Int, actualCode: Int, direction: Flick.Direction): Keymap {
+    fun put(initialCode: Int, actualCode: Int, direction: Flick.Direction) {
         if (keymap.isEmpty() || !keymap.containsKey(initialCode)) {
             keymap.put(initialCode, KeyOptionMap())
         }
-        keymap[initialCode]!!.put(actualCode, direction)
-        return this
+        keymap[initialCode]?.put(actualCode, direction)
     }
 
-    fun put(initialCode: Int, char: Char, direction: Flick.Direction): Keymap =
-            put(initialCode, char.toInt(), direction)
+    fun put(initialCode: Int, char: Char, direction: Flick.Direction) {
+        put(initialCode, char.toInt(), direction)
+    }
 
     fun searchKeycode(initialCode: Int, flick: Flick): Int {
         return if (keymap.isEmpty() || !keymap.containsKey(initialCode)) {
             SpecialKeyCode.NULL
         } else {
-            keymap[initialCode]?.searchKeycode(flick.direction, flick.distance) ?: SpecialKeyCode.NULL
+            keymap[initialCode]?.searchKeycode(flick.direction, flick.distance)
+                    ?: SpecialKeyCode.NULL
         }
     }
 
-    fun reset(initialCode: Int) {
-        if (keymap.isEmpty() || !keymap.containsKey(initialCode)) return
-        keymap[initialCode] = KeyOptionMap()
+    fun clear(initialCode: Int) {
+        keymap[initialCode]?.clear()
     }
 
     fun getMaxDistance(initialCode: Int, direction: Flick.Direction): Int =
@@ -59,6 +59,11 @@ class Keymap {
             val list = keyOptions[direction] ?: return noFlickKeycode
             val index = list.run { if (lastIndex < distance) lastIndex else distance - 1 }
             return list[index]
+        }
+
+        fun clear() {
+            noFlickKeycode = SpecialKeyCode.NULL
+            keyOptions.clear()
         }
 
         val maxDistance: Int
