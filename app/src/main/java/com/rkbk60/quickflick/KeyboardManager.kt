@@ -16,24 +16,17 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     private var adjustment = Adjustment.LEFT
 
     companion object {
-        val KEY_NUMBER_META_ALT = 6
-        val KEY_NUMBER_CTRL_ALT = 11
-        val KEY_NUMBER_INDICATOR = 0
-        val KEY_NUMBER_LEFT_SPACER = -1
-        val KEY_NUMBER_LEFT_VIEWER = -2
-        val KEY_NUMBER_LEFT_SWITCHER = -3
-        val KEY_NUMBER_RIGHT_SPACER = -4
-        val KEY_NUMBER_RIGHT_VIEWER = -5
-        val KEY_NUMBER_RIGHT_SWITCHER = -6
-
-        val KEY_NUMBERS = (1 .. 20)
-        val KEY_NUMBERS_VERTICAL_EDGE = listOf(1, 5, 6, 10, 11, 15, 16, 20)
-        val KEY_NUMBERS_RIGHT_EDGE =
-                listOf(KEY_NUMBER_RIGHT_SPACER, KEY_NUMBER_RIGHT_VIEWER, KEY_NUMBER_RIGHT_SWITCHER)
+        var INDEX_INDICATOR = 0
+            private set
+        private var INDEX_META_ALT = 9
+        private var INDEX_CTRL_ALT = 16
     }
 
+    private lateinit var keyMetaAlt: Keyboard.Key
+    private lateinit var keyCtrlAlt: Keyboard.Key
+
     init {
-        changeKeyWidth()
+        changeKeyWidth(true)
     }
 
     fun changeKeyAdjustment(adjustment: Adjustment) {
@@ -42,22 +35,56 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         keyboardView.invalidateAllKeys()
     }
 
-    private fun changeKeyWidth() {
+    fun updateMetaAltKeyFace(enableMeta: Boolean, enableAlt: Boolean) {
+        val faceCode = (if (enableMeta) 0b10 else 0).or(if (enableAlt) 0b01 else 0)
+        keyMetaAlt.label = when (faceCode) {
+            0b11 -> "M/A"
+            0b10 -> "M/a"
+            0b01 -> "m/A"
+            else -> "m/a"
+        }
+        keyboardView.invalidateKey(INDEX_META_ALT)
+    }
+
+    fun updateCtrlAltKeyFace(enableCtrl: Boolean, enableAlt: Boolean) {
+        val faceCode = (if (enableCtrl) 0b10 else 0).or(if (enableAlt) 0b01 else 0)
+        keyCtrlAlt.label = when (faceCode) {
+            0b11 -> "C/A"
+            0b10 -> "C/a"
+            0b01 -> "c/A"
+            else -> "c/a"
+        }
+        keyboardView.invalidateKey(INDEX_CTRL_ALT)
+    }
+
+    private fun changeKeyWidth(runKeyRecorder: Boolean = false) {
         var x = 0
         var sum = 0
         val screenWidth = keyboard.keys[0]!!.width
-        // set key width
-        keyboard.keys.forEach {
-            val code = it.codes[0]
+        // set key width and record key index
+        keyboard.keys.forEachIndexed { index, key ->
+            val code = key.codes[0]
             val width = when (adjustment) {
                 Adjustment.NONE  -> getWidthInNone(screenWidth, code)
                 Adjustment.LEFT  -> getWidthInLeft(screenWidth, code)
                 Adjustment.RIGHT -> getWidthInRight(screenWidth, code)
             }
-            it.width = width
-            it.x = x
+            key.width = width
+            key.x = x
             if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += width
             if (code != KeyNumbers.INDICATOR) sum += width
+
+            if (runKeyRecorder) when (code) {
+                KeyNumbers.INDICATOR -> INDEX_INDICATOR = index
+                KeyNumbers.META_ALT -> {
+                    INDEX_META_ALT = index
+                    keyMetaAlt = key
+                }
+                KeyNumbers.CTRL_ALT -> {
+                    INDEX_CTRL_ALT = index
+                    keyCtrlAlt = key
+                }
+            }
         }
         // fix width
         val correction = ((4 * screenWidth) - sum) / 8
@@ -70,27 +97,27 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     }
 
     private fun getWidthInNone(screenWidth: Int, code: Int): Int = when (code) {
-        KEY_NUMBER_INDICATOR -> screenWidth
-        in KEY_NUMBERS_VERTICAL_EDGE -> (0.23 * screenWidth).toInt()
-        in KEY_NUMBERS -> (0.18 * screenWidth).toInt()
+        KeyNumbers.INDICATOR -> screenWidth
+        in KeyNumbers.LIST_LOCATED_SIDE -> (0.23 * screenWidth).toInt()
+        in KeyNumbers.LIST_INPUTTABLE -> (0.18 * screenWidth).toInt()
         else -> 0
     }
 
     private fun getWidthInLeft(screenWidth: Int, code: Int): Int = when (code) {
-        KEY_NUMBER_INDICATOR -> screenWidth
-        KEY_NUMBER_RIGHT_SPACER,
-        KEY_NUMBER_RIGHT_VIEWER,
-        KEY_NUMBER_RIGHT_SWITCHER -> (0.15 * screenWidth).toInt()
-        in KEY_NUMBERS -> (0.18 * screenWidth).toInt()
+        KeyNumbers.INDICATOR -> screenWidth
+        KeyNumbers.RIGHT_SPACER,
+        KeyNumbers.RIGHT_VIEWER,
+        KeyNumbers.RIGHT_SWITCHER -> (0.15 * screenWidth).toInt()
+        in KeyNumbers.LIST_INPUTTABLE -> (0.18 * screenWidth).toInt()
         else -> 0
     }
 
     private fun getWidthInRight(screenWidth: Int, code: Int): Int = when (code) {
-        KEY_NUMBER_INDICATOR -> screenWidth
-        KEY_NUMBER_LEFT_SPACER,
-        KEY_NUMBER_LEFT_VIEWER,
-        KEY_NUMBER_LEFT_SWITCHER -> (0.15 * screenWidth).toInt()
-        in KEY_NUMBERS -> (0.18 * screenWidth).toInt()
+        KeyNumbers.INDICATOR -> screenWidth
+        KeyNumbers.LEFT_SPACER,
+        KeyNumbers.LEFT_VIEWER,
+        KeyNumbers.LEFT_SWITCHER -> (0.15 * screenWidth).toInt()
+        in KeyNumbers.LIST_INPUTTABLE -> (0.18 * screenWidth).toInt()
         else -> 0
     }
 

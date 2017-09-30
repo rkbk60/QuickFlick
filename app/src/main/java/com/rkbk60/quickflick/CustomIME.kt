@@ -32,9 +32,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private lateinit var keymap: Keymap
     private lateinit var keymapController: KeymapController
 
-    private lateinit var keyMetaAlt: Keyboard.Key
-    private lateinit var keyCtrlAlt: Keyboard.Key
-
     private var metaKey
             = ModKey(KeyEvent.KEYCODE_META_LEFT,  KeyEvent.META_META_ON  or KeyEvent.META_META_LEFT_ON)
     private var ctrlKey
@@ -70,7 +67,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
         flick = Flick(Flick.Direction.NONE)
 
-        keyList = keyboard.keys
+        retrieveKey()
         keyboardView.setOnTouchListener OnTouchListener@ { _, event ->
             val x = event.x.toInt()
             val y = event.y.toInt()
@@ -83,7 +80,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         canInput = true
                         false
                     } else {
-                        return@OnTouchListener true
+                        onPressCode = SpecialKeyCode.NULL
+                        true
                     }
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
@@ -135,6 +133,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
         val inputConnection = currentInputConnection ?: return
+        if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return
         val code = keymap.searchKeycode(onPressCode, flick)
         var flagTurnModKeyOff = true
 
@@ -243,12 +242,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private fun retrieveKey() {
         keyList = keyboard.keys
-        keyList.forEach { key ->
-            when (key.codes[0]) {
-                KeyNumbers.META_ALT -> keyMetaAlt = key
-                KeyNumbers.CTRL_ALT -> keyCtrlAlt = key
-            }
-        }
     }
 
     private fun hasInputLimit(): Boolean = inputTypeClass > InputType.TYPE_CLASS_TEXT
@@ -309,13 +302,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private fun existEnabledModKey(): Boolean = modKeyList.any { it.isEnabled() }
 
     private fun updateModKeyFace() {
-        val labelM = if (metaKey.isEnabled()) "M" else "m"
-        val labelC = if (ctrlKey.isEnabled()) "C" else "c"
-        val labelA = if (altKey.isEnabled())  "A" else "a"
-        keyMetaAlt.label = "$labelM/$labelA"
-        keyCtrlAlt.label = "$labelC/$labelA"
-        keyboardView.invalidateKey(KeyboardManager.KEY_NUMBER_META_ALT)
-        keyboardView.invalidateKey(KeyboardManager.KEY_NUMBER_CTRL_ALT)
+        keyboardManager.updateMetaAltKeyFace(metaKey.isEnabled(), altKey.isEnabled())
+        keyboardManager.updateCtrlAltKeyFace(ctrlKey.isEnabled(), altKey.isEnabled())
     }
 
 }

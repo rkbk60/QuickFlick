@@ -42,7 +42,7 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
 
     fun indicate(flick: Flick, initialCode: Int) {
         updateDrawable(flick, initialCode)
-        invalidateKey(KeyNumbers.INDICATOR)
+        invalidateKey(KeyboardManager.INDEX_INDICATOR)
     }
 
     private fun updateDrawable(flick: Flick, initialCode: Int) {
