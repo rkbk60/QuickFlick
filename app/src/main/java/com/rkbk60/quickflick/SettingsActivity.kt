@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 
 /**
  * Settings
@@ -32,8 +31,6 @@ class SettingsActivity: AppCompatActivity() {
         private lateinit var thresholdX2: PreferenceTuple
         private lateinit var thresholdY1: PreferenceTuple
         private lateinit var thresholdY2: PreferenceTuple
-
-        private lateinit var defaultSharePreferences: SharedPreferences
 
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,26 +64,24 @@ class SettingsActivity: AppCompatActivity() {
         }
 
         private fun lateinit() {
-            defaultSharePreferences = PreferenceManager.getDefaultSharedPreferences(context)
-
             thresholdX1 = PreferenceTuple(
-                    context.resources.getString(R.string.preferences_x1),
-                    context.resources.getInteger(R.integer.preferences_x1_default),
+                    resources.getString(R.string.preferences_x1),
+                    resources.getInteger(R.integer.preferences_x1_default),
                     TYPE_THRESHOLD
             )
             thresholdX2 = PreferenceTuple(
-                    context.resources.getString(R.string.preferences_x2),
-                    context.resources.getInteger(R.integer.preferences_x2_default),
+                    resources.getString(R.string.preferences_x2),
+                    resources.getInteger(R.integer.preferences_x2_default),
                     TYPE_THRESHOLD
             )
             thresholdY1 = PreferenceTuple(
-                    context.resources.getString(R.string.preferences_y1),
-                    context.resources.getInteger(R.integer.preferences_y1_default),
+                    resources.getString(R.string.preferences_y1),
+                    resources.getInteger(R.integer.preferences_y1_default),
                     TYPE_THRESHOLD
             )
             thresholdY2 = PreferenceTuple(
-                    context.resources.getString(R.string.preferences_y2),
-                    context.resources.getInteger(R.integer.preferences_y2_default),
+                    resources.getString(R.string.preferences_y2),
+                    resources.getInteger(R.integer.preferences_y2_default),
                     TYPE_THRESHOLD
             )
         }
@@ -94,7 +89,7 @@ class SettingsActivity: AppCompatActivity() {
         private fun validateThreshold(sharedPreferences: SharedPreferences?, target: PreferenceTuple) {
             val newValue = sharedPreferences?.getString(target.keyName, "0") ?: return
             if (newValue.toInt() < minimalThreshold) {
-                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                preferenceScreen.sharedPreferences.edit()
                         ?.putString(target.keyName, "$minimalThreshold")
                         ?.commit()
                         ?: return
@@ -110,7 +105,7 @@ class SettingsActivity: AppCompatActivity() {
 
         private fun updateAllThresholdSummary() {
             val targets = listOf(thresholdX1, thresholdX2, thresholdY1, thresholdY2)
-            for (target in targets) updateThresholdSummary(defaultSharePreferences, target)
+            for (target in targets) updateThresholdSummary(preferenceScreen.sharedPreferences, target)
         }
 
     }
