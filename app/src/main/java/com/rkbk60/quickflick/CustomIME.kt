@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import java.util.*
 
 /**
  * main input method service
@@ -85,11 +84,10 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         canInput = true
                         arrowKey.toggleable = true
                         false
-//                    } else {
-//                        onPressCode = SpecialKeyCode.NULL
-//                        true
+                    } else {
+                        onPressCode = SpecialKeyCode.NULL
+                        true
                     }
-                    false
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     multiTapSetting.addCount()
@@ -103,7 +101,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return@OnTouchListener true
                     flick.update(tapX, tapY, x, y)
                     keyboardView.indicate(flick, onPressCode)
-                    if ((onPressCode == KeyNumbers.ALLOW) and (flick.direction != Flick.Direction.NONE)) {
+                    if ((onPressCode == KeyNumbers.ARROW) and (flick.direction != Flick.Direction.NONE)) {
                         arrowKey.toggleable = false
                         if (arrowKey.isRepeatingMode())
                             arrowKey.execRepeatingInput(keymap.searchKeycode(onPressCode, flick))
@@ -135,6 +133,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         modKeyList.forEach { it.turnOff() }
         inputTypeClass = InputType.TYPE_MASK_CLASS and
                 (currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT)
+        arrowKey.reset()
     }
 
 
@@ -301,7 +300,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             listOf(7, 8, 9, 12, 13, 14, 17, 18, 19).any { it == onPressCode }
 
     private fun canToggleArrowKey(): Boolean =
-            (onPressCode == KeyNumbers.ALLOW) and (arrowKey.toggleable)
+            (onPressCode == KeyNumbers.ARROW) and (arrowKey.toggleable)
 
     private fun sendModKeyEvent(ic: InputConnection, modKey: ModKey, isDown: Boolean) {
         sendKeyEvent(ic, modKey.action, isDown, true)

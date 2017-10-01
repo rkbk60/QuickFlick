@@ -9,7 +9,7 @@ object KeyNumbers {
     // check matching with keyboard.xml and integers.xml
     val INDICATOR = 0
 
-    val ALLOW = 2
+    val ARROW = 2
     val META_ALT = 6
     val CTRL_ALT = 11
 

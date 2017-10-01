@@ -1,9 +1,10 @@
 package com.rkbk60.quickflick
 
+import android.view.ViewConfiguration
 import java.util.*
 
 /**
- * Created by s-iwamoto on 9/30/17.
+ * Arrow key
  */
 class ArrowKey(private val ime: CustomIME) {
 
@@ -13,9 +14,9 @@ class ArrowKey(private val ime: CustomIME) {
 
     var toggleable = true
 
-    private lateinit var timer: Timer
-    private lateinit var task:  ArrowKeyTimerTask
-    private var repeatTime = 50L
+    private var timer = Timer()
+    private var task = ArrowKeyTimerTask(ime)
+    private var repeatTime = ViewConfiguration.getKeyRepeatDelay().toLong()
     private var running = false
 
     fun toggle() {
@@ -45,6 +46,33 @@ class ArrowKey(private val ime: CustomIME) {
             timer.cancel()
             running = false
         }
+    }
+
+    fun reset() {
+        stopRepeatingInput()
+        state = State.DEFAULT
+    }
+
+    inner class ArrowKeyTimerTask(private val ime: CustomIME): TimerTask() {
+
+        private var ic = ime.currentInputConnection
+
+        var code = SpecialKeyCode.NULL
+            set(value) {
+                field = when (value) {
+                    SpecialKeyCode.LEFT,
+                    SpecialKeyCode.RIGHT,
+                    SpecialKeyCode.DOWN,
+                    SpecialKeyCode.UP -> value
+                    else -> SpecialKeyCode.NULL
+                }
+            }
+
+        override fun run() {
+            if ((ic == null) or (code == SpecialKeyCode.NULL)) return
+            ime.sendSpecialKeyEvent(ic, code)
+        }
+
     }
 
 }

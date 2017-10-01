@@ -93,7 +93,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
 
             if (runKeyRecorder) when (code) {
                 KeyNumbers.INDICATOR -> INDEX_INDICATOR = index
-                KeyNumbers.ALLOW -> {
+                KeyNumbers.ARROW -> {
                     INDEX_ARROW = index
                     keyArrow = key
                 }
