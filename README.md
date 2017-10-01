@@ -16,7 +16,6 @@ Check [Wiki](https://github.com/rkbk60/QuickFlick/wiki/).
 MIT License
 
 ## TODO
-* add direction key repeating
 * show custom pop-up preview
 * settings for change background and indicator color
-* implement F1-F12, Insert, Page-Up, Page-Down, Home, End key
+* implement F1-F12 and Insert key
