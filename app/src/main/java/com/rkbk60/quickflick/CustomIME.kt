@@ -226,16 +226,13 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     modKeyList.forEach {
                         if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true)
                     }
-                    when (char) {
-                        in 'A'..'Z' -> {
-                            shiftKey.turnOn()
-                            sendModKeyEvent(inputConnection, shiftKey, true)
-                            sendCharKeyEvent(inputConnection, char.toLowerCase())
-                            sendModKeyEvent(inputConnection, shiftKey, false)
-                        }
-                        else -> {
-                            sendCharKeyEvent(inputConnection, char)
-                        }
+                    if (char.isUpperCase()) {
+                        shiftKey.turnOn()
+                        sendModKeyEvent(inputConnection, shiftKey, true)
+                        sendCharKeyEvent(inputConnection, char.toLowerCase())
+                        sendModKeyEvent(inputConnection, shiftKey, false)
+                    } else {
+                        sendCharKeyEvent(inputConnection, char)
                     }
                 } else {
                     sendKeyChar(char)
