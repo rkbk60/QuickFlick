@@ -3,7 +3,7 @@ package com.rkbk60.quickflick
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
-import android.util.Log
+import android.preference.PreferenceManager
 
 /**
  * Created by s-iwamoto on 9/29/17.
@@ -15,6 +15,12 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
 
     enum class Adjustment { NONE, LEFT, RIGHT }
     private var adjustment = Adjustment.NONE
+    set(value) {
+        field = value
+        setAdjustmentSettings(value)
+    }
+
+    private val adjustmentCacheName = "cache_last_adjustment_is_right"
 
     companion object {
         var INDEX_INDICATOR = 0
@@ -29,11 +35,16 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     private lateinit var keyCtrlAlt: Keyboard.Key
 
     init {
+        setAdjustmentFromSettings()
         changeKeyWidth(true)
     }
 
-    fun changeKeyAdjustment(adjustment: Adjustment) {
-        this.adjustment = adjustment
+    fun changeKeyAdjustment() {
+        adjustment = when (adjustment) {
+            Adjustment.NONE  -> return
+            Adjustment.LEFT  -> Adjustment.RIGHT
+            Adjustment.RIGHT -> Adjustment.LEFT
+        }
         changeKeyWidth()
         keyboardView.invalidateAllKeys()
     }
@@ -85,7 +96,6 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
                 Adjustment.LEFT  -> getWidthInLeft(screenWidth, code)
                 Adjustment.RIGHT -> getWidthInRight(screenWidth, code)
             }
-            Log.d("LocalLog", "$index: $width")
             key.width = width
             key.x = x
             if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += width
@@ -114,7 +124,6 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             if (code in KeyNumbers.LIST_LOCATED_SIDE) it.width += correction
             it.x = x
             if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += it.width
-            Log.d("LocalLog", "c$code w${it.width} x${it.x}")
         }
     }
 
@@ -141,6 +150,28 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         KeyNumbers.LEFT_SWITCHER -> (0.15 * screenWidth).toInt()
         in KeyNumbers.LIST_INPUTTABLE -> (0.18 * screenWidth).toInt()
         else -> 0
+    }
+
+    private fun setAdjustmentFromSettings() {
+        val pref = PreferenceManager.getDefaultSharedPreferences(keyboardView.context)
+        val isEnable = pref.getBoolean(
+                        keyboardView.resources.getString(R.string.preferences_enable_adjustment),
+                        keyboardView.resources.getBoolean(R.bool.preferences_enable_adjustment_default))
+        if (!isEnable) {
+            adjustment = Adjustment.NONE
+            return
+        }
+
+        val isRight = pref.getBoolean(adjustmentCacheName, true)
+        adjustment = if (isRight) Adjustment.RIGHT else Adjustment.LEFT
+    }
+
+    private fun setAdjustmentSettings(adjustment: Adjustment) {
+        if (adjustment == Adjustment.NONE) return
+        val isRight = adjustment == Adjustment.RIGHT
+        PreferenceManager.getDefaultSharedPreferences(keyboardView.context).edit()
+                .putBoolean(adjustmentCacheName, isRight)
+                .commit()
     }
 
 }

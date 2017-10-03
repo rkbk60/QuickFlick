@@ -24,4 +24,13 @@ object KeyNumbers {
     val LIST_LOCATED_SIDE = listOf(1, 5, 6, 10, 11, 15, 16, 20)
     val LIST_LOCATED_RIGHT_EDGE =
             listOf(INDICATOR, RIGHT_SPACER, RIGHT_VIEWER, RIGHT_SWITCHER)
+    val LIST_SWITCHER = listOf(LEFT_SWITCHER, RIGHT_SWITCHER)
+    var LIST_TAPPABLE: List<Int>
+        private set
+
+    init {
+        val listTappable = LIST_INPUTTABLE.toMutableList()
+        listTappable.addAll(LIST_SWITCHER)
+        LIST_TAPPABLE = listTappable.toList()
+    }
 }

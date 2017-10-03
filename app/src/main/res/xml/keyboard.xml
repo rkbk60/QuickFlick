@@ -89,7 +89,7 @@
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="@integer/number_left_spacer"
+        <Key android:codes="@integer/number_left_switcher"
             android:keyLabel=""
             android:keyEdgeFlags="left"/>
         <Key
@@ -107,7 +107,7 @@
         <Key
             android:codes="20"
             android:keyIcon="@drawable/keyicon20"/>
-        <Key android:codes="@integer/number_right_spacer"
+        <Key android:codes="@integer/number_right_switcher"
             android:keyLabel=""
             android:keyEdgeFlags="right"/>
     </Row>

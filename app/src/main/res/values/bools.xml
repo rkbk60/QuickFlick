@@ -2,4 +2,5 @@
 <resources>
     <bool name="preferences_cancel_flick_default">true</bool>
     <bool name="preferences_cancel_input_default">false</bool>
+    <bool name="preferences_enable_adjustment_default">false</bool>
 </resources>

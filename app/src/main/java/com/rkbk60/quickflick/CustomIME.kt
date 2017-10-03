@@ -32,6 +32,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private lateinit var keymap: Keymap
     private lateinit var keymapController: KeymapController
 
+    // TODO: move to Keyboard or KeyboardManager
     private var metaKey
             = ModKey(KeyEvent.KEYCODE_META_LEFT,  KeyEvent.META_META_ON  or KeyEvent.META_META_LEFT_ON)
     private var ctrlKey
@@ -49,6 +50,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private val charConverter = CharConverter()
 
+    // TODO: remove these when refactoring
     private var inputTypeClass = 0
     private var canInput = true
 
@@ -79,7 +81,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             return@OnTouchListener when (actionCode) {
                 MotionEvent.ACTION_DOWN -> {
                     val key = getTappingKey(x, y) ?: return@OnTouchListener true
-                    if (key.codes[0] in KeyNumbers.LIST_INPUTTABLE)  {
+                    if (key.codes[0] in KeyNumbers.LIST_TAPPABLE)  {
                         resetTapState(x, y)
                         canInput = true
                         arrowKey.toggleable = true
@@ -144,6 +146,12 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onRelease(primaryCode: Int) {}
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
+
+        if (onPressCode in KeyNumbers.LIST_SWITCHER) {
+            keyboardManager.changeKeyAdjustment()
+            return
+        }
+
         val inputConnection = currentInputConnection ?: return
         if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return
 

@@ -11,11 +11,13 @@
     <string name="preferences_y2">threshold_y2</string>
     <string name="preferences_cancel_flick">cancel_flick</string>
     <string name="preferences_cancel_input">cancel_input</string>
+    <string name="preferences_enable_adjustment">enable_adjustment</string>
 
     <!-- Preference Labels -->
     <string name="preferences_category_horizontal">Horizontal flick threshold</string>
     <string name="preferences_category_vertical">Vertical flick threshold</string>
     <string name="preferences_category_canceler">Multi tap settings</string>
+    <string name="preferences_category_adjustment">Key Adjustment</string>
     <string name="preferences_title_threshold_x1">1st horizontal threshold</string>
     <string name="preferences_title_threshold_x2">2nd horizontal threshold</string>
     <string name="preferences_title_threshold_y1">1st horizontal threshold</string>
@@ -24,5 +26,7 @@
     <string name="preferences_title_cancel_input">Input canceler</string>
     <string name="preferences_summary_cancel_flick">Reset flicking state with multi tap</string>
     <string name="preferences_summary_cancel_input">Cancel input with twice tap</string>
+    <string name="preferences_title_enable_adjustment">Enable key adjustment</string>
+    <string name="preferences_summary_enable_adjustment"> </string>
 
 </resources>
