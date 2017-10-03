@@ -58,10 +58,6 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         keyboardView.invalidateKey(INDEX_ARROW)
     }
 
-    fun updateArrowKeyRepeatable(state: ArrowKey.State) {
-        keyArrow.repeatable = state == ArrowKey.State.REPEATING
-    }
-
     fun updateMetaAltKeyFace(enableMeta: Boolean, enableAlt: Boolean) {
         val faceCode = (if (enableMeta) 0b10 else 0).or(if (enableAlt) 0b01 else 0)
         keyMetaAlt.label = when (faceCode) {
