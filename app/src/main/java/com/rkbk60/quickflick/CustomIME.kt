@@ -81,7 +81,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             return@OnTouchListener when (actionCode) {
                 MotionEvent.ACTION_DOWN -> {
                     val key = getTappingKey(x, y) ?: return@OnTouchListener true
-                    if (key.codes[0] in KeyNumbers.LIST_TAPPABLE)  {
+                    if (key.codes[0] in KeyNumbers.LIST_VALID)  {
                         resetTapState(x, y)
                         canInput = true
                         arrowKey.toggleable = true
@@ -100,7 +100,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return@OnTouchListener true
+                    if (onPressCode !in KeyNumbers.LIST_VALID) return@OnTouchListener true
                     flick.update(tapX, tapY, x, y)
                     keyboardView.indicate(flick, onPressCode)
                     if ((onPressCode == KeyNumbers.ARROW) and (flick.direction != Flick.Direction.NONE)) {
@@ -147,13 +147,13 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
 
-        if (onPressCode in KeyNumbers.LIST_SWITCHER) {
-            keyboardManager.changeKeyAdjustment()
-            return
-        }
+//        if (onPressCode in KeyNumbers.LIST_SWITCHER) {
+//            keyboardManager.changeKeyAdjustment()
+//            return
+//        }
 
         val inputConnection = currentInputConnection ?: return
-        if (onPressCode !in KeyNumbers.LIST_INPUTTABLE) return
+        if (onPressCode !in KeyNumbers.LIST_VALID) return
 
         if (canToggleArrowKey()) {
             arrowKey.toggle()

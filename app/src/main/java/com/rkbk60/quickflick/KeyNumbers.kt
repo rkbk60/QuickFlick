@@ -1,5 +1,7 @@
 package com.rkbk60.quickflick
 
+import android.util.Log
+
 
 /**
  * Created by s-iwamoto on 9/30/17.
@@ -9,28 +11,38 @@ object KeyNumbers {
     // check matching with keyboard.xml and integers.xml
     val INDICATOR = 0
 
-    val ARROW = 2
-    val META_ALT = 6
-    val CTRL_ALT = 11
+    val ARROW = 3
+    val META_ALT = 9
+    val CTRL_ALT = 16
 
-    val LEFT_SPACER = -1
-    val LEFT_VIEWER = -2
-    val LEFT_SWITCHER = -3
-    val RIGHT_SPACER = -4
-    val RIGHT_VIEWER = -5
-    val RIGHT_SWITCHER = -6
+    val LIST_VALID = (1 .. 28).toList()
 
-    val LIST_INPUTTABLE = (1 .. 20).toList()
-    val LIST_LOCATED_SIDE = listOf(1, 5, 6, 10, 11, 15, 16, 20)
-    val LIST_LOCATED_RIGHT_EDGE =
-            listOf(INDICATOR, RIGHT_SPACER, RIGHT_VIEWER, RIGHT_SWITCHER)
-    val LIST_SWITCHER = listOf(LEFT_SWITCHER, RIGHT_SWITCHER)
-    var LIST_TAPPABLE: List<Int>
-        private set
+    val LIST_LEFT_FUNCTIONS = listOf(1, 8, 15, 22)
+    val LIST_RIGHT_FUNCTIONS = listOf(7, 14, 21, 28)
+    val LIST_FUNCTIONS = mutableListOf<Int>()
+            .plus(LIST_LEFT_FUNCTIONS)
+            .plus(LIST_RIGHT_FUNCTIONS)
+            .sorted()
+            .toList()
 
-    init {
-        val listTappable = LIST_INPUTTABLE.toMutableList()
-        listTappable.addAll(LIST_SWITCHER)
-        LIST_TAPPABLE = listTappable.toList()
+    val LIST_NEXT_TO_LEFT_FUNCTIONS = mutableListOf<Int>()
+            .plus(LIST_LEFT_FUNCTIONS)
+            .map { it + 1 }
+            .toList()
+    val LIST_NEXT_TO_RIGHT_FUNCTIONS = mutableListOf<Int>()
+            .plus(LIST_RIGHT_FUNCTIONS)
+            .map { it - 1 }
+            .toList()
+    val LIST_NEXT_TO_FUNCTIONS = mutableListOf<Int>()
+            .plus(LIST_NEXT_TO_LEFT_FUNCTIONS)
+            .plus(LIST_NEXT_TO_RIGHT_FUNCTIONS)
+            .sorted()
+            .toList()
+
+    val LIST_LAST_OF_ROW by lazy {
+        val list = LIST_RIGHT_FUNCTIONS.toMutableList()
+        list.add(INDICATOR)
+        return@lazy list.toList()
     }
+
 }

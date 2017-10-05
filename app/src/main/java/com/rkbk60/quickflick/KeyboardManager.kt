@@ -4,6 +4,7 @@ import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.preference.PreferenceManager
+import android.util.Log
 
 /**
  * Created by s-iwamoto on 9/29/17.
@@ -84,7 +85,9 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         var x = 0
         var sum = 0
         val screenWidth = keyboard.keys[0]!!.width
-        // set key width and record key index
+        // 1-1. set key width
+        // 1-2. record key index
+        // 1-3. remove function keys label
         keyboard.keys.forEachIndexed { index, key ->
             val code = key.codes[0]
             val width = when (adjustment) {
@@ -94,7 +97,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             }
             key.width = width
             key.x = x
-            if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += width
+            if (code in KeyNumbers.LIST_LAST_OF_ROW) x = 0 else x += width
             if (code != KeyNumbers.INDICATOR) sum += width
 
             if (runKeyRecorder) when (code) {
@@ -112,39 +115,48 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
                     keyCtrlAlt = key
                 }
             }
+
+            if (code in KeyNumbers.LIST_FUNCTIONS) key.label = ""
         }
-        // fix width
-        val correction = ((4 * screenWidth) - sum) / 8
+        // 2-1. fix width
+        // 2-2. set function keys label
+        val listFixable = when (adjustment) {
+            Adjustment.NONE  -> KeyNumbers.LIST_NEXT_TO_FUNCTIONS
+            Adjustment.LEFT  -> KeyNumbers.LIST_NEXT_TO_LEFT_FUNCTIONS
+            Adjustment.RIGHT -> KeyNumbers.LIST_NEXT_TO_RIGHT_FUNCTIONS
+        }
+        val rowNum = 4
+        val correction = ((rowNum * screenWidth) - sum) / listFixable.count()
         keyboard.keys.forEach {
             val code = it.codes[0]
-            if (code in KeyNumbers.LIST_LOCATED_SIDE) it.width += correction
+            if (code in listFixable) it.width += correction
             it.x = x
-            if (code in KeyNumbers.LIST_LOCATED_RIGHT_EDGE) x = 0 else x += it.width
+            if (code in KeyNumbers.LIST_LAST_OF_ROW) x = 0 else x += it.width
+            setFunctionKeyFace(it)
         }
     }
 
     private fun getWidthInNone(screenWidth: Int, code: Int): Int = when (code) {
         KeyNumbers.INDICATOR -> screenWidth
-        in KeyNumbers.LIST_LOCATED_SIDE -> (0.23 * screenWidth).toInt()
-        in KeyNumbers.LIST_INPUTTABLE -> (0.18 * screenWidth).toInt()
+        in KeyNumbers.LIST_FUNCTIONS -> (0.08 * screenWidth).toInt()
+        in KeyNumbers.LIST_NEXT_TO_FUNCTIONS -> (0.18 * screenWidth).toInt()
+        in KeyNumbers.LIST_VALID -> (0.16 * screenWidth).toInt()
         else -> 0
     }
 
     private fun getWidthInLeft(screenWidth: Int, code: Int): Int = when (code) {
         KeyNumbers.INDICATOR -> screenWidth
-        KeyNumbers.RIGHT_SPACER,
-        KeyNumbers.RIGHT_VIEWER,
-        KeyNumbers.RIGHT_SWITCHER -> (0.15 * screenWidth).toInt()
-        in KeyNumbers.LIST_INPUTTABLE -> (0.18 * screenWidth).toInt()
+        in KeyNumbers.LIST_LEFT_FUNCTIONS -> 0
+        in KeyNumbers.LIST_RIGHT_FUNCTIONS -> (0.15 * screenWidth).toInt()
+        in KeyNumbers.LIST_VALID -> (0.17 * screenWidth).toInt()
         else -> 0
     }
 
     private fun getWidthInRight(screenWidth: Int, code: Int): Int = when (code) {
         KeyNumbers.INDICATOR -> screenWidth
-        KeyNumbers.LEFT_SPACER,
-        KeyNumbers.LEFT_VIEWER,
-        KeyNumbers.LEFT_SWITCHER -> (0.15 * screenWidth).toInt()
-        in KeyNumbers.LIST_INPUTTABLE -> (0.18 * screenWidth).toInt()
+        in KeyNumbers.LIST_LEFT_FUNCTIONS -> (0.15 * screenWidth).toInt()
+        in KeyNumbers.LIST_RIGHT_FUNCTIONS -> 0
+        in KeyNumbers.LIST_VALID -> (0.17 * screenWidth).toInt()
         else -> 0
     }
 
@@ -168,6 +180,16 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         PreferenceManager.getDefaultSharedPreferences(keyboardView.context).edit()
                 .putBoolean(adjustmentCacheName, isRight)
                 .commit()
+    }
+
+    private fun setFunctionKeyFace(key: Keyboard.Key) {
+        val leftList  = KeyNumbers.LIST_LEFT_FUNCTIONS
+        val rightList = KeyNumbers.LIST_RIGHT_FUNCTIONS
+        key.label = when (key.codes[0]) {
+            in leftList  -> ">  "
+            in rightList -> "  <"
+            else -> return
+        }
     }
 
 }
