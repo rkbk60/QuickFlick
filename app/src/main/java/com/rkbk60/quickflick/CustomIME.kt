@@ -147,20 +147,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
 
-//        if (onPressCode in KeyNumbers.LIST_SWITCHER) {
-//            keyboardManager.changeKeyAdjustment()
-//            return
-//        }
-
         val inputConnection = currentInputConnection ?: return
         if (onPressCode !in KeyNumbers.LIST_VALID) return
-
-        if (canToggleArrowKey()) {
-            arrowKey.toggle()
-            keyboardManager.updateArrowKeyFace(arrowKey.state)
-            keymapController.updateArrowKeymap(arrowKey.state)
-            return
-        }
 
         val code = keymap.searchKeycode(onPressCode, flick)
         var flagTurnModKeyOff = true
@@ -169,11 +157,36 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             SpecialKeyCode.NULL
             -> flagTurnModKeyOff = false
 
+            SpecialKeyCode.TOGGLE_ARROWKEY_MODES -> {
+                if (!canToggleArrowKey()) return
+                arrowKey.toggle()
+                keyboardManager.updateArrowKeyFace(arrowKey.state)
+                keymapController.updateArrowKeymap(arrowKey.state)
+            }
+
+            SpecialKeyCode.TOGGLE_ADJUSTMENT ->
+                keyboardManager.changeKeyAdjustment()
+
+            SpecialKeyCode.TOGGLE_ADJUSTMENT_ALIGN ->
+                keyboardManager.changeKeyAdjustmentAlign()
+
             SpecialKeyCode.BACKSPACE,
             SpecialKeyCode.ENTER,
             SpecialKeyCode.DELETE,
             SpecialKeyCode.TAB,
             SpecialKeyCode.ESCAPE,
+            SpecialKeyCode.F1,
+            SpecialKeyCode.F2,
+            SpecialKeyCode.F3,
+            SpecialKeyCode.F4,
+            SpecialKeyCode.F5,
+            SpecialKeyCode.F6,
+            SpecialKeyCode.F7,
+            SpecialKeyCode.F8,
+            SpecialKeyCode.F9,
+            SpecialKeyCode.F10,
+            SpecialKeyCode.F11,
+            SpecialKeyCode.F12,
             SpecialKeyCode.HOME,
             SpecialKeyCode.END,
             SpecialKeyCode.PAGE_DOWN,

@@ -44,12 +44,17 @@ object SpecialKeyCode {
 
     // custom code
     private val customFloor = floor.shl(2)
-    val NULL        = 0
-    val META_LOCK   = 1 or customFloor
-    val CTRL_LOCK   = 2 or customFloor
-    val ALT_LOCK    = 3 or customFloor
-    val SHIFT_TAB   = 4 or customFloor
-    val SHIFT_ENTER = 5 or customFloor
+    val NULL                    = 0 or customFloor
+    val META_LOCK               = 1 or customFloor
+    val CTRL_LOCK               = 2 or customFloor
+    val ALT_LOCK                = 3 or customFloor
+    val SHIFT_TAB               = 4 or customFloor
+    val SHIFT_ENTER             = 5 or customFloor
+    val TOGGLE_ADJUSTMENT       = 6 or customFloor
+    val TOGGLE_ADJUSTMENT_ALIGN = 7 or customFloor
+    val TOGGLE_ARROWKEY_MODES   = 8 or customFloor
+
+
 
     fun convertToKeyEventCode(code: Int): Int = code xor floor
 

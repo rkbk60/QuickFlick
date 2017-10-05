@@ -4,7 +4,6 @@ import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.preference.PreferenceManager
-import android.util.Log
 
 /**
  * Created by s-iwamoto on 9/29/17.
@@ -21,6 +20,9 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         setAdjustmentSettings(value)
     }
 
+    private val defaultPreference = PreferenceManager.getDefaultSharedPreferences(keyboardView.context)
+    private val adjustmentKeyName = ime.resources.getString(R.string.preferences_enable_adjustment)
+    private val adjustmentDefaultBool = ime.resources.getBoolean(R.bool.preferences_enable_adjustment_default)
     private val adjustmentCacheName = "cache_last_adjustment_is_right"
 
     companion object {
@@ -41,6 +43,13 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     }
 
     fun changeKeyAdjustment() {
+        adjustment = if (adjustment == Adjustment.NONE)
+            getLastAdjustmentAlign() else Adjustment.NONE
+        changeKeyWidth()
+        keyboardView.invalidateAllKeys()
+    }
+
+    fun changeKeyAdjustmentAlign() {
         adjustment = when (adjustment) {
             Adjustment.NONE  -> return
             Adjustment.LEFT  -> Adjustment.RIGHT
@@ -161,25 +170,22 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     }
 
     private fun setAdjustmentFromSettings() {
-        val pref = PreferenceManager.getDefaultSharedPreferences(keyboardView.context)
-        val isEnable = pref.getBoolean(
-                        keyboardView.resources.getString(R.string.preferences_enable_adjustment),
-                        keyboardView.resources.getBoolean(R.bool.preferences_enable_adjustment_default))
-        if (!isEnable) {
-            adjustment = Adjustment.NONE
-            return
-        }
+        val isEnable = defaultPreference.getBoolean(adjustmentKeyName, adjustmentDefaultBool)
+        adjustment = if (isEnable) getLastAdjustmentAlign() else Adjustment.NONE
+    }
 
-        val isRight = pref.getBoolean(adjustmentCacheName, true)
-        adjustment = if (isRight) Adjustment.RIGHT else Adjustment.LEFT
+    private fun getLastAdjustmentAlign(): Adjustment {
+        return if (defaultPreference.getBoolean(adjustmentCacheName, true))
+            Adjustment.RIGHT else Adjustment.LEFT
     }
 
     private fun setAdjustmentSettings(adjustment: Adjustment) {
-        if (adjustment == Adjustment.NONE) return
+        val edit = PreferenceManager.getDefaultSharedPreferences(keyboardView.context).edit()
+        if (adjustment == Adjustment.NONE) {
+            return
+        }
         val isRight = adjustment == Adjustment.RIGHT
-        PreferenceManager.getDefaultSharedPreferences(keyboardView.context).edit()
-                .putBoolean(adjustmentCacheName, isRight)
-                .commit()
+        edit.putBoolean(adjustmentCacheName, isRight).commit()
     }
 
     private fun setFunctionKeyFace(key: Keyboard.Key) {
