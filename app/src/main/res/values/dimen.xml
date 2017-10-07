@@ -2,4 +2,5 @@
 <resources>
     <dimen name="key_height">32dp</dimen>
     <dimen name="inch_unit">1in</dimen>
+    <dimen name="dp_unit">1dp</dimen>
 </resources>

@@ -6,7 +6,6 @@ import android.graphics.drawable.ShapeDrawable
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.util.AttributeSet
-import android.util.Log
 
 /**
  * KeyboardView having Flick Indicator.
@@ -38,6 +37,7 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         drawable?.draw(canvas)
+        drawKeySeparator(canvas)
     }
 
     fun indicate(flick: Flick, initialCode: Int) {
@@ -69,6 +69,29 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
                 255 else 255 * distance / maxDistance
         }
         drawable = shape
+    }
+
+    private fun drawKeySeparator(canvas: Canvas) {
+        val keys = keyboard?.keys
+                ?.filter { it.codes[0] in KeyNumbers.LIST_NEXT_TO_FUNCTIONS }
+                ?.take(2)
+                ?:return
+        val sizeX = 1
+        val top = { key: Keyboard.Key -> (key.y + 0.05 * keyboard.height).toInt() }
+        val bottom = { key: Keyboard.Key -> (key.y + 0.95 * keyboard.height).toInt() }
+        val color = flickDefaultColor
+        keys.forEach { it ->
+            ShapeDrawable().apply {
+                setBounds(it.x, top(it), it.x + sizeX, bottom(it)) // left border
+                paint.color = color
+                draw(canvas)
+            }
+            ShapeDrawable().apply {
+                setBounds(it.x + it.width - sizeX, top(it), it.x + it.width, bottom(it)) // right border
+                paint.color = color
+                draw(canvas)
+            }
+        }
     }
 
 }

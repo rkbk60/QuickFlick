@@ -37,6 +37,8 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     private lateinit var keyMetaAlt: Keyboard.Key
     private lateinit var keyCtrlAlt: Keyboard.Key
 
+    private val unitDP = ime.resources.getDimensionPixelSize(R.dimen.dp_unit)
+
     init {
         setAdjustmentFromSettings()
         changeKeyWidth(true)
@@ -147,9 +149,9 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
 
     private fun getWidthInNone(screenWidth: Int, code: Int): Int = when (code) {
         KeyNumbers.INDICATOR -> screenWidth
-        in KeyNumbers.LIST_FUNCTIONS -> (0.08 * screenWidth).toInt()
-        in KeyNumbers.LIST_NEXT_TO_FUNCTIONS -> (0.18 * screenWidth).toInt()
-        in KeyNumbers.LIST_VALID -> (0.16 * screenWidth).toInt()
+        in KeyNumbers.LIST_FUNCTIONS -> 5 * unitDP
+        in KeyNumbers.LIST_NEXT_TO_FUNCTIONS -> (0.23 * screenWidth).toInt()
+        in KeyNumbers.LIST_VALID -> (0.18 * screenWidth).toInt()
         else -> 0
     }
 
@@ -189,13 +191,17 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     }
 
     private fun setFunctionKeyFace(key: Keyboard.Key) {
-        val leftList  = KeyNumbers.LIST_LEFT_FUNCTIONS
-        val rightList = KeyNumbers.LIST_RIGHT_FUNCTIONS
-        key.label = when (key.codes[0]) {
-            in leftList  -> ">  "
-            in rightList -> "  <"
-            else -> return
+        if (key.codes[0] !in KeyNumbers.LIST_FUNCTIONS) return
+        val labelList = listOf("F1-3", "F4-6", "F7-9", "F10-12")
+        val functionList = when (adjustment) {
+            Adjustment.NONE  -> return
+            Adjustment.LEFT  -> KeyNumbers.LIST_RIGHT_FUNCTIONS
+            Adjustment.RIGHT -> KeyNumbers.LIST_LEFT_FUNCTIONS
         }
+        val index = functionList.indexOfFirst { it == key.codes[0] }
+        key.label = if ((index >= 0) and (index < labelList.size))
+            labelList[index] else ""
+
     }
 
 }
