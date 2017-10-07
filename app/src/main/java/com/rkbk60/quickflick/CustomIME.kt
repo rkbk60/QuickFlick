@@ -161,7 +161,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             -> flagTurnModKeyOff = false
 
             SpecialKeyCode.TOGGLE_ARROWKEY_MODES -> {
-                if (!canToggleArrowKey()) return
+                if ((onPressCode != KeyNumbers.ARROW) or !(arrowKey.toggleable)) return
                 arrowKey.toggle()
                 keyboardManager.updateArrowKeyFace(arrowKey.state)
                 keymapController.updateArrowKeymap(arrowKey.state)
@@ -272,7 +272,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
             else -> {
                 val char = code.toChar()
-                if (existEnabledModKey()) {
+                if (modKeyList.any { it.isEnabled() }) {
                     if (hasInputLimit()) return
                     modKeyList.forEach {
                         if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true)
@@ -347,9 +347,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private fun isTappingCharKey(): Boolean =
             listOf(7, 8, 9, 12, 13, 14, 17, 18, 19).any { it == onPressCode }
 
-    private fun canToggleArrowKey(): Boolean =
-            (onPressCode == KeyNumbers.ARROW) and (arrowKey.toggleable)
-
     private fun sendModKeyEvent(ic: InputConnection, modKey: ModKey, isDown: Boolean) {
         sendKeyEvent(ic, modKey.action, isDown, true)
     }
@@ -378,8 +375,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         modKeyList.forEach { if (it.isEnabled()) meta = meta or it.meta }
         return meta
     }
-
-    private fun existEnabledModKey(): Boolean = modKeyList.any { it.isEnabled() }
 
     private fun updateModKeyFace() {
         keyboardManager.updateMetaAltKeyFace(metaKey.isEnabled(), altKey.isEnabled())
