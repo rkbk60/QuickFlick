@@ -54,6 +54,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private var inputTypeClass = 0
     private var canInput = true
 
+    private lateinit var editorInfo: EditorInfo
+
 
 
     override fun onCreateInputView(): View {
@@ -129,6 +131,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
         super.onStartInputView(info, restarting)
+        editorInfo = info
         retrieveKey()
         flick.updateDistanceThreshold(keyboardView.context)
         multiTapSetting.updateSettings(keyboardView.context)
@@ -171,7 +174,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 keyboardManager.changeKeyAdjustmentAlign()
 
             SpecialKeyCode.BACKSPACE,
-            SpecialKeyCode.ENTER,
             SpecialKeyCode.DELETE,
             SpecialKeyCode.TAB,
             SpecialKeyCode.ESCAPE,
@@ -195,6 +197,22 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 sendSpecialKeyEvent(inputConnection, code)
             }
 
+            SpecialKeyCode.ENTER -> {
+                val action = editorInfo.imeOptions.and(
+                        EditorInfo.IME_MASK_ACTION or EditorInfo.IME_FLAG_NO_ENTER_ACTION)
+                when (action) {
+                    EditorInfo.IME_ACTION_GO,
+                    EditorInfo.IME_ACTION_DONE,
+                    EditorInfo.IME_ACTION_NEXT,
+                    EditorInfo.IME_ACTION_SEARCH,
+                    EditorInfo.IME_ACTION_SEND -> inputConnection.performEditorAction(action)
+                    else -> {
+                        modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
+                        sendSpecialKeyEvent(inputConnection, SpecialKeyCode.ENTER)
+                    }
+                }
+            }
+
             SpecialKeyCode.LEFT,
             SpecialKeyCode.RIGHT,
             SpecialKeyCode.DOWN,
@@ -202,6 +220,18 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 if ((lastActionCode == MotionEvent.ACTION_UP) and (arrowKey.isRepeatingMode())) return
                 modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
                 sendSpecialKeyEvent(inputConnection, code)
+            }
+
+            SpecialKeyCode.SHIFT_TAB -> {
+                shiftKey.turnOn()
+                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
+                sendSpecialKeyEvent(inputConnection, SpecialKeyCode.TAB)
+            }
+
+            SpecialKeyCode.SHIFT_ENTER -> {
+                shiftKey.turnOn()
+                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
+                sendSpecialKeyEvent(inputConnection, SpecialKeyCode.ENTER)
             }
 
             SpecialKeyCode.META -> {

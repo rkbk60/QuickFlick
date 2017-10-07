@@ -56,7 +56,8 @@ object SpecialKeyCode {
 
 
 
-    fun convertToKeyEventCode(code: Int): Int = code xor floor
+    fun convertToKeyEventCode(code: Int): Int =
+            code xor if (code and customFloor == customFloor) customFloor else floor
 
     fun convertToString(code: Int): String = when (convertToKeyEventCode(code)) {
         NULL -> ""
