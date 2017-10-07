@@ -16,14 +16,14 @@ internal class KeymapController {
 
     fun createInitialKeymap(): Keymap {
         generateBasicKeymap()
-        generateAllowKeymap()
+        generateArrowKeymap()
         generateCharKeymap()
         generateFnKeymap()
         return keymap
     }
 
     fun updateArrowKeymap(state: ArrowKey.State) {
-        generateAllowKeymap(state)
+        generateArrowKeymap(state)
     }
 
     private fun generateBasicKeymap() {
@@ -50,7 +50,7 @@ internal class KeymapController {
         }
     }
 
-    private fun generateAllowKeymap(state: ArrowKey.State = ArrowKey.State.DEFAULT) {
+    private fun generateArrowKeymap(state: ArrowKey.State = ArrowKey.State.DEFAULT) {
         keymap.apply {
             clear(3)
             put(3, SpecialKeyCode.TOGGLE_ARROWKEY_MODES, none)
