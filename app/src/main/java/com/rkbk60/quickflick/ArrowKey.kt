@@ -32,6 +32,7 @@ class ArrowKey(private val ime: CustomIME) {
     fun isRepeatingMode(): Boolean = state == State.REPEATING
 
     fun execRepeatingInput(code: Int) {
+        if (task.code != code) stopRepeatingInput()
         if (!running) {
             timer = Timer()
             task  = ArrowKeyTimerTask(ime)
