@@ -96,6 +96,11 @@ class Flick internal constructor(direction: Direction = Direction.NONE) {
         return Math.ceil(((distance - threshold1) / threshold2).toDouble()).toInt() + 1
     }
 
+    fun sync(flick: Flick) {
+        direction = flick.direction
+        distance  = flick.distance
+    }
+
     fun updateDistanceThreshold(context: Context) {
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
         val thou = (context.resources.getDimensionPixelSize(R.dimen.inch_unit)) * 0.001

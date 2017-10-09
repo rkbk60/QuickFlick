@@ -50,9 +50,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private val charConverter = CharConverter()
 
-    // TODO: remove these when refactoring
     private var inputTypeClass = 0
-    private var canInput = true
 
     private lateinit var editorInfo: EditorInfo
 
@@ -85,7 +83,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     val key = getTappingKey(x, y) ?: return@OnTouchListener true
                     if (key.codes[0] in KeyNumbers.LIST_VALID)  {
                         resetTapState(x, y)
-                        canInput = true
                         arrowKey.toggleable = true
                         false
                     } else {
@@ -103,16 +100,22 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (onPressCode !in KeyNumbers.LIST_VALID) return@OnTouchListener true
-                    flick.update(tapX, tapY, x, y)
-                    keyboardView.indicate(flick, onPressCode)
                     if ((onPressCode == KeyNumbers.ARROW) and (flick.direction != Flick.Direction.NONE)) {
                         arrowKey.toggleable = false
                         if (arrowKey.isRepeatingMode())
                             arrowKey.execRepeatingInput(keymap.searchKeycode(onPressCode, flick))
                     }
                     if (hasInputLimit()) {
-                        val char = keymap.searchKeycode(onPressCode, flick).toChar()
-                        canInput = !(isTappingCharKey() and getInputtableChars().none { it == char })
+                        val tmpFlick = Flick()
+                        tmpFlick.update(tapX, tapY, x, y)
+                        val char = keymap.searchKeycode(onPressCode, tmpFlick).toChar()
+                        if (isTappingCharKey() and getInputtableChars().any { it == char }) {
+                            flick.sync(tmpFlick)
+                            keyboardView.indicate(flick, onPressCode)
+                        }
+                    } else {
+                        flick.update(tapX, tapY, x, y)
+                        keyboardView.indicate(flick, onPressCode)
                     }
                     true
                 }
@@ -151,8 +154,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
 
         val inputConnection = currentInputConnection ?: return
-        if (onPressCode !in KeyNumbers.LIST_VALID) return
-
         val code = keymap.searchKeycode(onPressCode, flick)
         var flagTurnModKeyOff = true
 
@@ -235,37 +236,31 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             }
 
             SpecialKeyCode.META -> {
-                if (hasInputLimit()) return
                 metaKey.toggleOnOff()
                 flagTurnModKeyOff = false
             }
 
             SpecialKeyCode.CTRL -> {
-                if (hasInputLimit()) return
                 ctrlKey.toggleOnOff()
                 flagTurnModKeyOff = false
             }
 
             SpecialKeyCode.ALT -> {
-                if (hasInputLimit()) return
                 altKey.toggleOnOff()
                 flagTurnModKeyOff = false
             }
 
             SpecialKeyCode.META_LOCK -> {
-                if (hasInputLimit()) return
                 metaKey.toggleLock()
                 flagTurnModKeyOff = false
             }
 
             SpecialKeyCode.CTRL_LOCK -> {
-                if (hasInputLimit()) return
                 ctrlKey.toggleLock()
                 flagTurnModKeyOff = false
             }
 
             SpecialKeyCode.ALT_LOCK -> {
-                if (hasInputLimit()) return
                 altKey.toggleLock()
                 flagTurnModKeyOff = false
             }
@@ -273,7 +268,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             else -> {
                 val char = code.toChar()
                 if (modKeyList.any { it.isEnabled() }) {
-                    if (hasInputLimit()) return
                     modKeyList.forEach {
                         if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true)
                     }
@@ -307,13 +301,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun swipeDown() {}
 
     override fun swipeUp() {}
-
-
-
-    override fun sendKeyChar(charCode: Char) {
-        if (hasInputLimit() and !canInput) return
-        super.sendKeyChar(charCode)
-    }
 
 
 
