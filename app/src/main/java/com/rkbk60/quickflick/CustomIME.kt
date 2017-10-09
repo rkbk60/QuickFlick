@@ -27,7 +27,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private var tapX = 0
     private var tapY = 0
 
-    private lateinit var flick: Flick
+    private var flick = Flick()
 
     private lateinit var keymap: Keymap
     private lateinit var keymapController: KeymapController
@@ -68,9 +68,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         keyboardView.setKeyboard(keyboard, keymap)
         keyboardView.setOnKeyboardActionListener(this)
         keyboardView.isPreviewEnabled = false
-
-
-        flick = Flick()
 
         keyList = keyboard.keys
         keyboardView.setOnTouchListener OnTouchListener@ { _, event ->
