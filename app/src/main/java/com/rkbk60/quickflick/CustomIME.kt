@@ -70,9 +70,9 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         keyboardView.isPreviewEnabled = false
 
 
-        flick = Flick(Flick.Direction.NONE)
+        flick = Flick()
 
-        retrieveKey()
+        keyList = keyboard.keys
         keyboardView.setOnTouchListener OnTouchListener@ { _, event ->
             val x = event.x.toInt()
             val y = event.y.toInt()
@@ -80,7 +80,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             lastActionCode = actionCode
             return@OnTouchListener when (actionCode) {
                 MotionEvent.ACTION_DOWN -> {
-                    val key = getTappingKey(x, y) ?: return@OnTouchListener true
+                    val key = keyList.find { it.isInside(x, y) } ?: return@OnTouchListener true
                     if (key.codes[0] in KeyNumbers.LIST_VALID)  {
                         resetTapState(x, y)
                         arrowKey.toggleable = true
@@ -135,7 +135,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         editorInfo = info
-        retrieveKey()
+        keyList = keyboard.keys
         flick.updateDistanceThreshold(keyboardView.context)
         multiTapSetting.updateSettings(keyboardView.context)
         modKeyList.forEach { it.turnOff() }
@@ -289,7 +289,9 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             if (it.isEnabled()) sendModKeyEvent(inputConnection, it, false)
             it.turnOffUnlessLock()
         }
-        updateModKeyFace()
+
+        keyboardManager.updateMetaAltKeyFace(metaKey.isEnabled(), altKey.isEnabled())
+        keyboardManager.updateCtrlAltKeyFace(ctrlKey.isEnabled(), altKey.isEnabled())
     }
 
     override fun onText(text: CharSequence) {}
@@ -303,10 +305,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun swipeUp() {}
 
 
-
-    private fun retrieveKey() {
-        keyList = keyboard.keys
-    }
 
     private fun hasInputLimit(): Boolean = inputTypeClass > InputType.TYPE_CLASS_TEXT
 
@@ -327,9 +325,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         flick.reset()
         keyboardView.indicate(Flick(), 0)
     }
-
-    private fun getTappingKey(x: Int, y: Int): Keyboard.Key? =
-            keyboard.keys.find { it.isInside(x, y) }
 
     private fun isTappingCharKey(): Boolean =
             listOf(7, 8, 9, 12, 13, 14, 17, 18, 19).any { it == onPressCode }
@@ -361,11 +356,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         var meta = 0
         modKeyList.forEach { if (it.isEnabled()) meta = meta or it.meta }
         return meta
-    }
-
-    private fun updateModKeyFace() {
-        keyboardManager.updateMetaAltKeyFace(metaKey.isEnabled(), altKey.isEnabled())
-        keyboardManager.updateCtrlAltKeyFace(ctrlKey.isEnabled(), altKey.isEnabled())
     }
 
 }
