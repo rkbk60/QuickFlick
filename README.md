@@ -18,4 +18,3 @@ MIT License
 ## TODO
 * show custom pop-up preview
 * settings for change background and indicator color
-* implement F1-F12 and Insert key
