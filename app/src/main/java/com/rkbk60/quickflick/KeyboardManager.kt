@@ -172,8 +172,9 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     }
 
     private fun setAdjustmentFromSettings() {
-        val isEnable = defaultPreference.getBoolean(adjustmentKeyName, adjustmentDefaultBool)
-        adjustment = if (isEnable) getLastAdjustmentAlign() else Adjustment.NONE
+//        val isEnable = defaultPreference.getBoolean(adjustmentKeyName, adjustmentDefaultBool)
+//        adjustment = if (isEnable) getLastAdjustmentAlign() else Adjustment.NONE
+        adjustment = getLastAdjustmentAlign()
     }
 
     private fun getLastAdjustmentAlign(): Adjustment {
