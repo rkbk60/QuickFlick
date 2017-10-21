@@ -49,11 +49,4 @@
             android:title="@string/preferences_title_cancel_input"/>
     </PreferenceCategory>
 
-    <!--<PreferenceCategory android:title="@string/preferences_category_adjustment">-->
-        <!--<SwitchPreference-->
-            <!--android:defaultValue="@bool/preferences_enable_adjustment_default"-->
-            <!--android:key="@string/preferences_enable_adjustment"-->
-            <!--android:title="@string/preferences_title_enable_adjustment" />-->
-    <!--</PreferenceCategory>-->
-
 </PreferenceScreen>
