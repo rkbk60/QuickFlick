@@ -19,7 +19,7 @@
 
     <Row>
         <Key android:codes="1"
-            android:keyLabel="F1-"
+            android:keyIcon="@drawable/keyicon_f1_3"
             android:keyEdgeFlags="left"/>
         <Key
             android:codes="2"
@@ -37,12 +37,12 @@
             android:codes="6"
             android:keyIcon="@drawable/keyicon_tabenter"/>
         <Key android:codes="7"
-            android:keyLabel="F1-"
+            android:keyIcon="@drawable/keyicon_f1_3"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
         <Key android:codes="8"
-            android:keyLabel="F4-"
+            android:keyIcon="@drawable/keyicon_f4_6"
             android:keyEdgeFlags="left"/>
         <Key
             android:codes="9"
@@ -61,12 +61,12 @@
             android:keyIcon="@drawable/keyicon_delete"
             android:isRepeatable="true"/>
         <Key android:codes="14"
-            android:keyLabel="F4-"
+            android:keyIcon="@drawable/keyicon_f4_6"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
         <Key android:codes="15"
-            android:keyLabel="F7-"
+            android:keyIcon="@drawable/keyicon_f7_9"
             android:keyEdgeFlags="left"/>
         <Key
             android:codes="16"
@@ -85,12 +85,12 @@
             android:keyIcon="@drawable/keyicon_backspace"
             android:isRepeatable="true"/>
         <Key android:codes="21"
-            android:keyLabel="F7-"
+            android:keyIcon="@drawable/keyicon_f7_9"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
         <Key android:codes="22"
-            android:keyLabel="Fa-"
+            android:keyIcon="@drawable/keyicon_fa_c"
             android:keyEdgeFlags="left"/>
         <Key
             android:codes="23"
@@ -108,7 +108,7 @@
             android:codes="27"
             android:keyIcon="@drawable/keyicon_brackets_right"/>
         <Key android:codes="28"
-            android:keyLabel="Fa-"
+            android:keyIcon="@drawable/keyicon_fa_c"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row

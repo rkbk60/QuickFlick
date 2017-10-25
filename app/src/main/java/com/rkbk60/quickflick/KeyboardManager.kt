@@ -4,6 +4,8 @@ import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.preference.PreferenceManager
+import android.support.v4.content.ContextCompat
+import android.util.Log
 
 /**
  * Created by s-iwamoto on 9/29/17.
@@ -193,15 +195,23 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
 
     private fun setFunctionKeyFace(key: Keyboard.Key) {
         if (key.codes[0] !in KeyNumbers.LIST_FUNCTIONS) return
-        val labelList = listOf("F1-3", "F4-6", "F7-9", "F10-12")
+        val labelList = listOf(
+                R.drawable.keyicon_f1_3,
+                R.drawable.keyicon_f4_6,
+                R.drawable.keyicon_f7_9,
+                R.drawable.keyicon_fa_c
+        )
         val functionList = when (adjustment) {
             Adjustment.NONE  -> return
             Adjustment.LEFT  -> KeyNumbers.LIST_RIGHT_FUNCTIONS
             Adjustment.RIGHT -> KeyNumbers.LIST_LEFT_FUNCTIONS
         }
         val index = functionList.indexOfFirst { it == key.codes[0] }
-        key.label = if ((index >= 0) and (index < labelList.size))
-            labelList[index] else ""
+        Log.d("LocalLog", "index: $index")
+        val id = if ((index >= 0) and (index < labelList.size))
+            labelList[index] else R.drawable.empty
+        key.label = null
+        key.icon = ContextCompat.getDrawable(keyboardView.context, id)
 
     }
 

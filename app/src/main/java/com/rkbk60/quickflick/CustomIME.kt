@@ -289,6 +289,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
         keyboardManager.updateMetaAltKeyFace(metaKey.isEnabled(), altKey.isEnabled())
         keyboardManager.updateCtrlAltKeyFace(ctrlKey.isEnabled(), altKey.isEnabled())
+        keyboardView.invalidateAllKeys()
     }
 
     override fun onText(text: CharSequence) {}
