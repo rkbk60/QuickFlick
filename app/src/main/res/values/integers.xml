@@ -6,6 +6,7 @@
     <integer name="preferences_x2_default">150</integer>
     <integer name="preferences_y1_default">25</integer>
     <integer name="preferences_y2_default">120</integer>
+    <integer name="preferences_keys_height_default">32</integer>
 
     <!-- special keycode -->
     <integer name="number_indicator">0</integer>
