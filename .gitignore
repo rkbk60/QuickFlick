@@ -25,3 +25,5 @@ app/build/
 
 !.idea/gradle.xml
 !.idea/runConfigurations/*.xml
+
+/tools/output

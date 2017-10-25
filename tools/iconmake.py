@@ -40,7 +40,7 @@ key_icon_set = [
     KeyIcon("3", "DEF=+", "3"),
     KeyIcon("4", "GHI ; :", "4"),
     KeyIcon("5", "JKL &quot; &apos;", "5"),
-    KeyIcon("6", "MNO\_", "6"),
+    KeyIcon("6", "MNO\|", "6"),
     KeyIcon("7", "PQRS", "7"),
     KeyIcon("8", "TUV `~", "8"),
     KeyIcon("9", "WXYZ", "9"),
