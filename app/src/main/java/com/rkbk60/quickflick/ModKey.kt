@@ -32,6 +32,12 @@ class ModKey (val action: Int, val meta: Int) {
         if (state != State.LOCK) state = State.OFF
     }
 
+    fun getStatusAsInt(): Int = when (state) {
+        State.OFF  -> 0
+        State.ON   -> 1
+        State.LOCK -> 2
+    }
+
     override fun toString(): String = when (state) {
         State.OFF  -> "StateOFF"
         State.ON   -> "StateON"

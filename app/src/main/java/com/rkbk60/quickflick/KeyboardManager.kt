@@ -30,9 +30,6 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     companion object {
         var INDEX_INDICATOR = 0
             private set
-        private var INDEX_ARROW = 3
-        private var INDEX_META_ALT = 9
-        private var INDEX_CTRL_ALT = 16
     }
 
     private lateinit var keyArrow: Keyboard.Key
@@ -64,34 +61,49 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     }
 
     fun updateArrowKeyFace(state: ArrowKey.State) {
-        keyArrow.label = when (state) {
-            ArrowKey.State.DEFAULT -> "arw"
-            ArrowKey.State.REPEATING -> "ARW"
-            ArrowKey.State.PAGE_MOVE -> "pmv"
+        keyArrow.label = null
+        val id = when (state) {
+            ArrowKey.State.DEFAULT -> R.drawable.keyicon_arrow_mode1
+            ArrowKey.State.PAGE_MOVE -> R.drawable.keyicon_arrow_mode2
+            ArrowKey.State.REPEATING -> R.drawable.keyicon_arrow_mode3
         }
-        keyboardView.invalidateKey(INDEX_ARROW)
+        keyArrow.icon = ContextCompat.getDrawable(keyboardView.context, id)
     }
 
-    fun updateMetaAltKeyFace(enableMeta: Boolean, enableAlt: Boolean) {
-        val faceCode = (if (enableMeta) 0b10 else 0).or(if (enableAlt) 0b01 else 0)
-        keyMetaAlt.label = when (faceCode) {
-            0b11 -> "M/A"
-            0b10 -> "M/a"
-            0b01 -> "m/A"
-            else -> "m/a"
+    fun updateMetaAltKeyFace(metaKey: ModKey, altKey: ModKey) {
+        keyMetaAlt.label = null
+        val faceCode = 10 * metaKey.getStatusAsInt() + altKey.getStatusAsInt()
+        val id = when (faceCode) {
+            22 -> R.drawable.keyicon_meta_alt_lock_lock
+            21 -> R.drawable.keyicon_meta_alt_lock_on
+            20 -> R.drawable.keyicon_meta_alt_lock_off
+            12 -> R.drawable.keyicon_meta_alt_on_lock
+            11 -> R.drawable.keyicon_meta_alt_on_on
+            10 -> R.drawable.keyicon_meta_alt_on_off
+             2 -> R.drawable.keyicon_meta_alt_off_lock
+             1 -> R.drawable.keyicon_meta_alt_off_on
+             0 -> R.drawable.keyicon_meta_alt_off_off
+            else -> R.drawable.empty
         }
-        keyboardView.invalidateKey(INDEX_META_ALT)
+        keyMetaAlt.icon = ContextCompat.getDrawable(keyboardView.context, id)
     }
 
-    fun updateCtrlAltKeyFace(enableCtrl: Boolean, enableAlt: Boolean) {
-        val faceCode = (if (enableCtrl) 0b10 else 0).or(if (enableAlt) 0b01 else 0)
-        keyCtrlAlt.label = when (faceCode) {
-            0b11 -> "C/A"
-            0b10 -> "C/a"
-            0b01 -> "c/A"
-            else -> "c/a"
+    fun updateCtrlAltKeyFace(ctrlKey: ModKey, altKey: ModKey) {
+        keyMetaAlt.label = null
+        val faceCode = 10 * ctrlKey.getStatusAsInt() + altKey.getStatusAsInt()
+        val id = when (faceCode) {
+            22 -> R.drawable.keyicon_ctrl_alt_lock_lock
+            21 -> R.drawable.keyicon_ctrl_alt_lock_on
+            20 -> R.drawable.keyicon_ctrl_alt_lock_off
+            12 -> R.drawable.keyicon_ctrl_alt_on_lock
+            11 -> R.drawable.keyicon_ctrl_alt_on_on
+            10 -> R.drawable.keyicon_ctrl_alt_on_on
+             2 -> R.drawable.keyicon_ctrl_alt_off_lock
+             1 -> R.drawable.keyicon_ctrl_alt_off_on
+             0 -> R.drawable.keyicon_ctrl_alt_off_off
+            else -> R.drawable.empty
         }
-        keyboardView.invalidateKey(INDEX_CTRL_ALT)
+        keyCtrlAlt.icon = ContextCompat.getDrawable(keyboardView.context, id)
     }
 
     private fun changeKeyWidth(runKeyRecorder: Boolean = false) {
@@ -116,15 +128,12 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             if (runKeyRecorder) when (code) {
                 KeyNumbers.INDICATOR -> INDEX_INDICATOR = index
                 KeyNumbers.ARROW -> {
-                    INDEX_ARROW = index
                     keyArrow = key
                 }
                 KeyNumbers.META_ALT -> {
-                    INDEX_META_ALT = index
                     keyMetaAlt = key
                 }
                 KeyNumbers.CTRL_ALT -> {
-                    INDEX_CTRL_ALT = index
                     keyCtrlAlt = key
                 }
             }
@@ -187,6 +196,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     private fun setAdjustmentSettings(adjustment: Adjustment) {
         val edit = PreferenceManager.getDefaultSharedPreferences(keyboardView.context).edit()
         if (adjustment == Adjustment.NONE) {
+//            edit.putBoolean(adjustmentKeyName, false)
             return
         }
         val isRight = adjustment == Adjustment.RIGHT
@@ -207,7 +217,6 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             Adjustment.RIGHT -> KeyNumbers.LIST_LEFT_FUNCTIONS
         }
         val index = functionList.indexOfFirst { it == key.codes[0] }
-        Log.d("LocalLog", "index: $index")
         val id = if ((index >= 0) and (index < labelList.size))
             labelList[index] else R.drawable.empty
         key.label = null

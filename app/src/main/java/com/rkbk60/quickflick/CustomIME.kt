@@ -287,8 +287,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             it.turnOffUnlessLock()
         }
 
-        keyboardManager.updateMetaAltKeyFace(metaKey.isEnabled(), altKey.isEnabled())
-        keyboardManager.updateCtrlAltKeyFace(ctrlKey.isEnabled(), altKey.isEnabled())
+        keyboardManager.updateMetaAltKeyFace(metaKey, altKey)
+        keyboardManager.updateCtrlAltKeyFace(ctrlKey, altKey)
         keyboardView.invalidateAllKeys()
     }
 

@@ -26,7 +26,7 @@
             android:keyIcon="@drawable/keyicon_escape"/>
         <Key
             android:codes="3"
-            android:keyLabel="arw"/>
+            android:keyIcon="@drawable/keyicon_arrow_mode1"/>
         <Key
             android:codes="4"
             android:keyIcon="@drawable/keyicon_0"/>
@@ -46,7 +46,7 @@
             android:keyEdgeFlags="left"/>
         <Key
             android:codes="9"
-            android:keyLabel="m/a"/>
+            android:keyIcon="@drawable/keyicon_meta_alt_off_off"/>
         <Key
             android:codes="10"
             android:keyIcon="@drawable/keyicon_1"/>
@@ -70,7 +70,7 @@
             android:keyEdgeFlags="left"/>
         <Key
             android:codes="16"
-            android:keyLabel="c/a"/>
+            android:keyIcon="@drawable/keyicon_ctrl_alt_off_off"/>
         <Key
             android:codes="17"
             android:keyIcon="@drawable/keyicon_4"/>
