@@ -197,7 +197,8 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         val edit = PreferenceManager.getDefaultSharedPreferences(keyboardView.context).edit()
         if (adjustment == Adjustment.NONE) {
 //            edit.putBoolean(adjustmentKeyName, false)
-            return
+//            return
+            this.adjustment = Adjustment.RIGHT
         }
         val isRight = adjustment == Adjustment.RIGHT
         edit.putBoolean(adjustmentCacheName, isRight).commit()
