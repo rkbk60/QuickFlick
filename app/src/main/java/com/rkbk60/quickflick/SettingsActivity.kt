@@ -3,7 +3,9 @@ package com.rkbk60.quickflick
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.EditTextPreference
 import android.preference.PreferenceFragment
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 
@@ -177,9 +179,11 @@ class SettingsActivity: AppCompatActivity() {
 
         private fun updateKeysHeightSummary(sharedPreferences: SharedPreferences? = null) {
             val preference = sharedPreferences ?: preferenceScreen.sharedPreferences
-            val default = keysHeight.default
-            val newValue = preference.getString(keysHeight.keyName, default.toString())
-            findPreference(keysHeight.keyName).summary = "${newValue}dp (Default:$default)"
+            if (preference.contains(keysHeight.keyName)) {
+                val default = keysHeight.default
+                val newValue = preference.getString(keysHeight.keyName, default.toString())
+                findPreference(keysHeight.keyName).summary = "${newValue}dp (Default:$default)"
+            }
         }
 
         private fun updateThemeSummary(sharedPreferences: SharedPreferences? = null) {
