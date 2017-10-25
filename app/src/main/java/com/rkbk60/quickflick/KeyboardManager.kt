@@ -97,7 +97,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             20 -> R.drawable.keyicon_ctrl_alt_lock_off
             12 -> R.drawable.keyicon_ctrl_alt_on_lock
             11 -> R.drawable.keyicon_ctrl_alt_on_on
-            10 -> R.drawable.keyicon_ctrl_alt_on_on
+            10 -> R.drawable.keyicon_ctrl_alt_on_off
              2 -> R.drawable.keyicon_ctrl_alt_off_lock
              1 -> R.drawable.keyicon_ctrl_alt_off_on
              0 -> R.drawable.keyicon_ctrl_alt_off_off
