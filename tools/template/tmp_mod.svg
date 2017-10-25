@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px"
+        y="0px"
+        width="40px"
+        height="32px"
+        viewBox="0 0 40 32"
+        style="enable-background:new 0 0 40 32"
+        xml:space="preserve">
+    <g>
+        <text fill="#FFFFFF"
+                x="20px"
+                y="19px"
+                font-family="Roboto"
+                font-size="9px"
+                font-weight="400"
+                font-style="normal"
+                text-anchor="middle"
+                alignment-baseline="baseline">s1</text>
+    </g>
+    <g id="line_left">
+        <line stroke="#FFFFFF"
+                x1="12.0px"
+                x2="20px"
+                y1="22px"
+                y2="22px"
+                stroke-width="0.5px"
+                stroke-opacity="0.00"/>
+    </g>
+    <g id="line_right">
+        <line stroke="#FFFFFF"
+                x1="20px"
+                x2="28.0px"
+                y1="22px"
+                y2="22px"
+                stroke-width="0.5px"
+                stroke-opacity="0.00"/>
+    </g>
+</svg>
