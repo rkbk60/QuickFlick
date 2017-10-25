@@ -21,8 +21,8 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
     }
 
     private val defaultPreference = PreferenceManager.getDefaultSharedPreferences(keyboardView.context)
-    private val adjustmentKeyName = ime.resources.getString(R.string.preferences_enable_adjustment)
-    private val adjustmentDefaultBool = ime.resources.getBoolean(R.bool.preferences_enable_adjustment_default)
+//    private val adjustmentKeyName = ime.resources.getString(R.string.preferences_enable_adjustment)
+//    private val adjustmentDefaultBool = ime.resources.getBoolean(R.bool.preferences_enable_adjustment_default)
     private val adjustmentCacheName = "cache_last_adjustment_is_right"
 
     companion object {
