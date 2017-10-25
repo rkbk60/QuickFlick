@@ -49,4 +49,14 @@
             android:title="@string/preferences_title_cancel_input"/>
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/preferences_category_looking">
+        <ListPreference
+            android:defaultValue="@string/theme_base"
+            android:key="@string/preferences_theme_indicator"
+            android:title="@string/preferences_title_indicator"
+            android:entries="@array/theme_list"
+            android:entryValues="@array/theme_list">
+        </ListPreference>
+    </PreferenceCategory>
+
 </PreferenceScreen>

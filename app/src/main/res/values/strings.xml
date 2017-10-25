@@ -4,6 +4,10 @@
     <string name="app_label">Hacking English (US)</string>
     <string name="test_input_space">Test Input Space.</string>
 
+    <!-- Theme -->
+    <string name="theme_base">Base</string>
+    <string name="theme_lime">Lime</string>
+
     <!-- Preference key name -->
     <string name="preferences_x1">threshold_x1</string>
     <string name="preferences_x2">threshold_x2</string>
@@ -17,13 +21,14 @@
     <string name="preferences_category_horizontal">Horizontal flick threshold</string>
     <string name="preferences_category_vertical">Vertical flick threshold</string>
     <string name="preferences_category_canceler">Multi tap settings</string>
-    <string name="preferences_category_theme">Theme</string>
+    <string name="preferences_category_looking">Looking</string>
     <string name="preferences_title_threshold_x1">1st horizontal threshold</string>
     <string name="preferences_title_threshold_x2">2nd horizontal threshold</string>
     <string name="preferences_title_threshold_y1">1st horizontal threshold</string>
     <string name="preferences_title_threshold_y2">2nd horizontal threshold</string>
     <string name="preferences_title_cancel_flick">Flick reseter</string>
     <string name="preferences_title_cancel_input">Input canceler</string>
+    <string name="preferences_title_indicator">Indicator theme</string>
     <string name="preferences_summary_cancel_flick">Reset flicking state with multi tap</string>
     <string name="preferences_summary_cancel_input">Cancel input with twice tap</string>
 

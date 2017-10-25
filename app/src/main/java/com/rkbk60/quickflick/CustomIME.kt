@@ -139,6 +139,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         inputTypeClass = InputType.TYPE_MASK_CLASS and
                 (currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT)
         arrowKey.reset()
+        keyboardView.updateTheme()
     }
 
 

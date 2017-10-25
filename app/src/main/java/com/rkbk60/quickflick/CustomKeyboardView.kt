@@ -15,16 +15,20 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
 
     private var indicatorKey: Keyboard.Key? = null
     private var drawable: ShapeDrawable? = null
-    private val themeFactory = ThemeFactory(context, ThemeFactory.Theme.BASE)
+    private val themeFactory = ThemeFactory(context)
 
-    private val flickDefaultColor = themeFactory.getBackgroundColor()
-    private val flickLeftColor    = themeFactory.getLeftColor()
-    private val flickRightColor   = themeFactory.getRightColor()
-    private val flickUpColor      = themeFactory.getUpColor()
-    private val flickDownColor    = themeFactory.getDownColor()
+    private var flickDefaultColor = 0
+    private var flickLeftColor    = 0
+    private var flickRightColor   = 0
+    private var flickUpColor      = 0
+    private var flickDownColor    = 0
 
     private lateinit var keymap: Keymap
     private var maxFlickDistance = 1
+
+    init {
+        applyColors()
+    }
 
     fun setKeyboard(keyboard: Keyboard, keymap: Keymap) {
         super.setKeyboard(keyboard)
@@ -43,6 +47,11 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
     fun indicate(flick: Flick, initialCode: Int) {
         updateDrawable(flick, initialCode)
         invalidateKey(KeyboardManager.INDEX_INDICATOR)
+    }
+
+    fun updateTheme() {
+        themeFactory.changeTheme()
+        applyColors()
     }
 
     private fun updateDrawable(flick: Flick, initialCode: Int) {
@@ -92,6 +101,14 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
                 draw(canvas)
             }
         }
+    }
+
+    private fun applyColors() {
+        flickDefaultColor = themeFactory.getBackgroundColor()
+        flickLeftColor    = themeFactory.getLeftColor()
+        flickRightColor   = themeFactory.getRightColor()
+        flickUpColor      = themeFactory.getUpColor()
+        flickDownColor    = themeFactory.getDownColor()
     }
 
 }

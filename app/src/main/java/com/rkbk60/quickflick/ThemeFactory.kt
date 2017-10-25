@@ -1,19 +1,20 @@
 package com.rkbk60.quickflick
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
+import android.preference.PreferenceManager
 
 /**
  * Provide ColorTheme to CustomKeyboardView
  */
-class ThemeFactory(private val context: Context, theme: ThemeFactory.Theme): IndicatorThemeFactory(context) {
+class ThemeFactory(private val context: Context): IndicatorThemeFactory(context) {
 
-    enum class Theme { BASE, LIME, CUSTOM }
+    private val keynameBase = context.getString(R.string.theme_base)
+    private val keynameLime = context.getString(R.string.theme_lime)
 
     private lateinit var factory: IndicatorThemeFactory
 
     init {
-        changeTheme(theme)
+        changeTheme()
     }
 
     override fun getBackgroundColor(): Int = factory.getBackgroundColor()
@@ -22,11 +23,13 @@ class ThemeFactory(private val context: Context, theme: ThemeFactory.Theme): Ind
     override fun getUpColor(): Int = factory.getUpColor()
     override fun getDownColor(): Int = factory.getDownColor()
 
-    fun changeTheme(theme: ThemeFactory.Theme) {
-        factory = when (theme) {
-            Theme.BASE   -> BaseThemeFactory(context)
-            Theme.LIME   -> LimeThemeFactory(context)
-            Theme.CUSTOM -> BaseThemeFactory(context)
+    fun changeTheme() {
+        val prefTheme = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.preferences_theme_indicator), "")
+        factory = when (prefTheme) {
+            keynameBase -> BaseThemeFactory(context)
+            keynameLime -> LimeThemeFactory(context)
+            else -> BaseThemeFactory(context)
         }
     }
 
