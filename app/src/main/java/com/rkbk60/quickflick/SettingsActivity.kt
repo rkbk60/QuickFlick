@@ -1,12 +1,9 @@
 package com.rkbk60.quickflick
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 
@@ -50,7 +47,7 @@ class SettingsActivity: AppCompatActivity() {
 
         override fun onResume() {
             super.onResume()
-//            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
             updateAllThresholdSummary()
             updateThemeSummary()
         }
@@ -110,11 +107,17 @@ class SettingsActivity: AppCompatActivity() {
         }
 
         private fun validateThreshold(sharedPreferences: SharedPreferences?, target: PreferenceTuple) {
-            val newValue = sharedPreferences?.getString(target.keyName, "0") ?: return
-            if (newValue.toInt() < minimalThreshold) {
-                toast("Minimal threshold is 10 thou.")
+            val newValue = sharedPreferences?.getString(target.keyName, "") ?: return
+            if (newValue.trim() == "") {
+                toast("Set default value.")
                 preferenceScreen.sharedPreferences.edit()
-                        ?.putString(target.keyName, "$minimalThreshold")
+                        ?.putString(target.keyName, target.default.toString())
+                        ?.commit()
+                        ?: return
+            } else if (newValue.toInt() < minimalThreshold) {
+                toast("Minimal threshold is $minimalThreshold thou.")
+                preferenceScreen.sharedPreferences.edit()
+                        ?.putString(target.keyName, minimalThreshold.toString())
                         ?.commit()
                         ?: return
             }
@@ -122,8 +125,9 @@ class SettingsActivity: AppCompatActivity() {
 
         private fun updateThresholdSummary(sharedPreferences: SharedPreferences?, target: PreferenceTuple) {
             if (target.type != TYPE_THRESHOLD) return
+            val preference = sharedPreferences ?: preferenceScreen.sharedPreferences
             val default = target.default
-            val newValue = sharedPreferences?.getString(target.keyName, default.toString()) ?: return
+            val newValue = preference.getString(target.keyName, default.toString())
             findPreference(target.keyName).summary = "$newValue thou (Default:$default)"
         }
 
