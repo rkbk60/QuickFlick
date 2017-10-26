@@ -49,7 +49,7 @@
             android:title="@string/preferences_title_cancel_input"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/preferences_category_looking">
+    <PreferenceCategory android:title="@string/preferences_category_appearance">
         <!--<EditTextPreference-->
             <!--android:defaultValue="@integer/preferences_keys_height_default"-->
             <!--android:key="@string/preferences_keys_height"-->
