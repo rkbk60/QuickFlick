@@ -200,7 +200,7 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
             this.adjustment = Adjustment.RIGHT
         }
         val isRight = adjustment == Adjustment.RIGHT
-        edit.putBoolean(adjustmentCacheName, isRight).commit()
+        edit.putBoolean(adjustmentCacheName, isRight).apply()
     }
 
     private fun setFunctionKeyFace(key: Keyboard.Key) {

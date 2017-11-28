@@ -160,7 +160,7 @@ class SettingsActivity: AppCompatActivity() {
             if (fix > 0) {
                 preferenceScreen.sharedPreferences.edit()
                         .putString(keysHeight.keyName, fix.toString())
-                        .commit()
+                        .apply()
             }
         }
 
