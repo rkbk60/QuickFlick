@@ -3,5 +3,6 @@
     <string-array name="theme_list">
         <item>@string/theme_base</item>
         <item>@string/theme_lime</item>
+        <item>@string/theme_morse</item>
     </string-array>
 </resources>

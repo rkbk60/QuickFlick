@@ -7,6 +7,7 @@
     <!-- Theme -->
     <string name="theme_base">Base</string>
     <string name="theme_lime">Lime</string>
+    <string name="theme_morse">Morse</string>
 
     <!-- Preference key name -->
     <string name="preferences_x1">threshold_x1</string>

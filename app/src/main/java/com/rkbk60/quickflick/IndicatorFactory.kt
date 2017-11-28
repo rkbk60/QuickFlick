@@ -1,6 +1,7 @@
 package com.rkbk60.quickflick
 
 import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
@@ -17,11 +18,13 @@ class IndicatorFactory(private val keyboardView: KeyboardView, private val keyma
     private var top = 0
     private var bottom = 0
 
-    private var flick: Flick = Flick()
-    private var code = SpecialKeyCode.NULL
+    private var direction: Flick.Direction = Flick.Direction.NONE
+    private var maxDistance = 0
+    private var distance = 0
 
     private val keynameBase  = context.getString(R.string.theme_base)
     private val keynameLime  = context.getString(R.string.theme_lime)
+    private val keynameMorse = context.getString(R.string.theme_morse)
     private var theme = ""
 
     private var background = 0
@@ -40,6 +43,7 @@ class IndicatorFactory(private val keyboardView: KeyboardView, private val keyma
         when(theme) {
             keynameBase -> applyBaseTheme()
             keynameLime -> applyLimeTheme()
+            keynameMorse -> Unit
             else -> applyBaseTheme()
         }
     }
@@ -51,31 +55,29 @@ class IndicatorFactory(private val keyboardView: KeyboardView, private val keyma
             right  = left + key.width
             bottom = top  + key.height
         }
-        this.flick = flick
-        code = onTapKeycode
+        maxDistance = keymap.getMaxDistance(onTapKeycode, flick.direction)
+        distance = Math.min(flick.distance, maxDistance)
+        direction = if (maxDistance == 0) Flick.Direction.NONE else flick.direction
     }
 
     fun draw(canvas: Canvas) = when(theme) {
         keynameBase, keynameLime -> drawShape(canvas)
+        keynameMorse -> drawBitmap(canvas)
         else -> drawShape(canvas)
     }
 
     private fun drawShape(canvas: Canvas) {
-        val color = when (flick.direction) {
+        val color = when (direction) {
             Flick.Direction.NONE  -> background
             Flick.Direction.LEFT  -> leftColor
             Flick.Direction.RIGHT -> rightColor
             Flick.Direction.UP    -> upColor
             Flick.Direction.DOWN  -> downColor
         }
-        val maxDistance = keymap.getMaxDistance(code, flick.direction)
-        val distance = Math.min(flick.distance, maxDistance)
         ShapeDrawable().apply {
             setBounds(left, top, right, bottom)
-            paint.color = if (maxDistance == 0)
-                background else color
-            alpha = if ((flick.direction == Flick.Direction.NONE))
-                255 else 255 * distance / maxDistance
+            paint.color = if (maxDistance == 0) background else color
+            alpha = if ((direction == Flick.Direction.NONE)) 255 else 255 * distance / maxDistance
             draw(canvas)
         }
     }
@@ -96,5 +98,29 @@ class IndicatorFactory(private val keyboardView: KeyboardView, private val keyma
         rightColor = applyColor(R.color.themeLimeRight)
         upColor    = applyColor(R.color.themeLimeUp)
         downColor  = applyColor(R.color.themeLimeDown)
+    }
+
+    private fun drawBitmap(canvas: Canvas) {
+        if (direction == Flick.Direction.NONE) {
+            ShapeDrawable().apply {
+                setBounds(left, top, right, bottom)
+                paint.color = applyColor(R.color.backgroundIndicator)
+                draw(canvas)
+            }
+            return
+        }
+        val id = when (direction) {
+            Flick.Direction.LEFT  -> R.drawable.morse_left
+            Flick.Direction.RIGHT -> R.drawable.morse_right
+            Flick.Direction.UP    -> R.drawable.morse_up
+            Flick.Direction.DOWN  -> R.drawable.morse_down
+            else -> return
+        }
+        val bitmap = ContextCompat.getDrawable(context, id) as BitmapDrawable
+        bitmap.apply {
+            setBounds(left, top, right, bottom)
+            alpha = if ((direction == Flick.Direction.NONE)) 255 else 255 * distance / maxDistance
+            draw(canvas)
+        }
     }
 }
