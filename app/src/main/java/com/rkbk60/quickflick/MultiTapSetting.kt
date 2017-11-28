@@ -15,7 +15,7 @@ class MultiTapSetting {
 
     fun updateSettings(context: Context) {
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        cancelFlick = pref.getBoolean("cancel_input", false)
+        cancelFlick = pref.getBoolean("cancel_flick", false)
         cancelInput = pref.getBoolean("cancel_input", false)
     }
 
