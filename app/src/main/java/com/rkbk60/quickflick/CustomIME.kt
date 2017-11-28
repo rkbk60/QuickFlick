@@ -334,6 +334,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         tapY = y
         flick.reset()
         keyboardView.indicate(Flick(), 0)
+        arrowKey.stopRepeatingInput()
     }
 
     private fun isTappingCharKey(): Boolean =
