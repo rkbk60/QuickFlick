@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 
 /**
- * Created by s-iwamoto on 9/29/17.
+ * supply functions which modify keyboard
  */
 
 class KeyboardManager(ime: InputMethodService, private val keyboardView: KeyboardView) {

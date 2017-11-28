@@ -1,10 +1,7 @@
 package com.rkbk60.quickflick
 
-import android.util.Log
-
-
 /**
- * Created by s-iwamoto on 9/30/17.
+ * provide code @ res/xml/keyboard.xml - keyboard.keys
  */
 object KeyNumbers {
 

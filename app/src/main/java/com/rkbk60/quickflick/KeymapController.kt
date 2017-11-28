@@ -1,7 +1,7 @@
 package com.rkbk60.quickflick
 
 /**
- * 
+ * keymap facade class
  */
 
 internal class KeymapController {
