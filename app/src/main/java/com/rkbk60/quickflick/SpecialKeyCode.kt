@@ -28,7 +28,6 @@ object SpecialKeyCode {
     val DOWN      = KeyEvent.KEYCODE_DPAD_DOWN or floor
     val INSERT    = KeyEvent.KEYCODE_INSERT or floor
     val DELETE    = KeyEvent.KEYCODE_FORWARD_DEL or floor
-    val FUNCTION  = KeyEvent.KEYCODE_FUNCTION or floor
     val F1        = KeyEvent.KEYCODE_F1 or floor
     val F2        = KeyEvent.KEYCODE_F2 or floor
     val F3        = KeyEvent.KEYCODE_F3 or floor
@@ -59,7 +58,7 @@ object SpecialKeyCode {
     fun convertToKeyEventCode(code: Int): Int =
             code xor if (code and customFloor == customFloor) customFloor else floor
 
-    fun convertToString(code: Int): String = when (convertToKeyEventCode(code)) {
+    fun convertToString(code: Int): String = when (code) {
         NULL -> ""
         BACKSPACE -> "BS"
         TAB -> "Tab"
@@ -72,9 +71,8 @@ object SpecialKeyCode {
         PAGE_DOWN -> "PDown"
         END -> "End"
         HOME -> "Home"
-        LEFT, RIGHT, UP, DOWN -> ""
+        LEFT, RIGHT, UP, DOWN -> "Arrow"
         INSERT -> "Insert"
-        FUNCTION -> "Fn"
         F1 -> "F1"
         F2 -> "F2"
         F3 -> "F3"

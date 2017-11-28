@@ -101,6 +101,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         arrowKey.toggleable = false
                         if (arrowKey.isRepeatingMode())
                             arrowKey.execRepeatingInput(keymap.searchKeycode(onPressCode, flick))
+                    } else {
+                        arrowKey.stopRepeatingInput()
                     }
                     if (hasInputLimit()) {
                         val tmpFlick = Flick()
@@ -140,6 +142,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 (currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT)
         arrowKey.reset()
         keyboardView.updateTheme()
+        updateAllKeysFace()
     }
 
 
@@ -150,9 +153,22 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onRelease(primaryCode: Int) {}
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
+        sendKeycode(keymap.searchKeycode(onPressCode, flick))
+        updateAllKeysFace()
+    }
 
-        val inputConnection = currentInputConnection ?: return
-        val code = keymap.searchKeycode(onPressCode, flick)
+    override fun onText(text: CharSequence) {}
+
+    override fun swipeLeft() {}
+
+    override fun swipeRight() {}
+
+    override fun swipeDown() {}
+
+    override fun swipeUp() {}
+
+    fun sendKeycode(code: Int) {
+        val ic = currentInputConnection ?: return
         var flagTurnModKeyOff = true
 
         when (code) {
@@ -171,6 +187,15 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
             SpecialKeyCode.TOGGLE_ADJUSTMENT_ALIGN ->
                 keyboardManager.changeKeyAdjustmentAlign()
+
+            SpecialKeyCode.LEFT,
+            SpecialKeyCode.RIGHT,
+            SpecialKeyCode.DOWN,
+            SpecialKeyCode.UP -> {
+                if ((lastActionCode == MotionEvent.ACTION_UP) and (arrowKey.isRepeatingMode())) return
+                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
+                sendSpecialKeyEvent(ic, code)
+            }
 
             SpecialKeyCode.BACKSPACE,
             SpecialKeyCode.DELETE,
@@ -192,8 +217,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             SpecialKeyCode.END,
             SpecialKeyCode.PAGE_DOWN,
             SpecialKeyCode.PAGE_UP -> {
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
-                sendSpecialKeyEvent(inputConnection, code)
+                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
+                sendSpecialKeyEvent(ic, code)
             }
 
             SpecialKeyCode.ENTER -> {
@@ -204,33 +229,24 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     EditorInfo.IME_ACTION_DONE,
                     EditorInfo.IME_ACTION_NEXT,
                     EditorInfo.IME_ACTION_SEARCH,
-                    EditorInfo.IME_ACTION_SEND -> inputConnection.performEditorAction(action)
+                    EditorInfo.IME_ACTION_SEND -> ic.performEditorAction(action)
                     else -> {
-                        modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
-                        sendSpecialKeyEvent(inputConnection, SpecialKeyCode.ENTER)
+                        modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
+                        sendSpecialKeyEvent(ic, SpecialKeyCode.ENTER)
                     }
                 }
             }
 
-            SpecialKeyCode.LEFT,
-            SpecialKeyCode.RIGHT,
-            SpecialKeyCode.DOWN,
-            SpecialKeyCode.UP -> {
-                if ((lastActionCode == MotionEvent.ACTION_UP) and (arrowKey.isRepeatingMode())) return
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
-                sendSpecialKeyEvent(inputConnection, code)
-            }
-
             SpecialKeyCode.SHIFT_TAB -> {
                 shiftKey.turnOn()
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
-                sendSpecialKeyEvent(inputConnection, SpecialKeyCode.TAB)
+                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
+                sendSpecialKeyEvent(ic, SpecialKeyCode.TAB)
             }
 
             SpecialKeyCode.SHIFT_ENTER -> {
                 shiftKey.turnOn()
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true) }
-                sendSpecialKeyEvent(inputConnection, SpecialKeyCode.ENTER)
+                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
+                sendSpecialKeyEvent(ic, SpecialKeyCode.ENTER)
             }
 
             SpecialKeyCode.META -> {
@@ -267,15 +283,15 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 val char = code.toChar()
                 if (modKeyList.any { it.isEnabled() }) {
                     modKeyList.forEach {
-                        if (it.isEnabled()) sendModKeyEvent(inputConnection, it, true)
+                        if (it.isEnabled()) sendModKeyEvent(ic, it, true)
                     }
                     if (char.isUpperCase()) {
                         shiftKey.turnOn()
-                        sendModKeyEvent(inputConnection, shiftKey, true)
-                        sendCharKeyEvent(inputConnection, char.toLowerCase())
-                        sendModKeyEvent(inputConnection, shiftKey, false)
+                        sendModKeyEvent(ic, shiftKey, true)
+                        sendCharKeyEvent(ic, char.toLowerCase())
+                        sendModKeyEvent(ic, shiftKey, false)
                     } else {
-                        sendCharKeyEvent(inputConnection, char)
+                        sendCharKeyEvent(ic, char)
                     }
                 } else {
                     sendKeyChar(char)
@@ -284,24 +300,19 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         }
 
         if (flagTurnModKeyOff) modKeyList.forEach {
-            if (it.isEnabled()) sendModKeyEvent(inputConnection, it, false)
+            if (it.isEnabled()) sendModKeyEvent(ic, it, false)
             it.turnOffUnlessLock()
         }
-
-        keyboardManager.updateMetaAltKeyFace(metaKey, altKey)
-        keyboardManager.updateCtrlAltKeyFace(ctrlKey, altKey)
-        keyboardView.invalidateAllKeys()
     }
 
-    override fun onText(text: CharSequence) {}
-
-    override fun swipeLeft() {}
-
-    override fun swipeRight() {}
-
-    override fun swipeDown() {}
-
-    override fun swipeUp() {}
+    fun updateAllKeysFace() {
+        keyboardManager.apply {
+            updateMetaAltKeyFace(metaKey, altKey)
+            updateCtrlAltKeyFace(ctrlKey, altKey)
+            updateArrowKeyFace(arrowKey.state)
+        }
+        keyboardView.invalidateAllKeys()
+    }
 
 
 
@@ -338,7 +349,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         sendKeyEvent(ic, keycode, false, true)
     }
 
-    fun sendSpecialKeyEvent(ic: InputConnection, code: Int) {
+    private fun sendSpecialKeyEvent(ic: InputConnection, code: Int) {
         val trueCode = SpecialKeyCode.convertToKeyEventCode(code)
         sendKeyEvent(ic, trueCode, true,  true)
         sendKeyEvent(ic, trueCode, false, true)

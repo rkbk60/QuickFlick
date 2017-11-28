@@ -65,7 +65,6 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         val id = when (state) {
             ArrowKey.State.DEFAULT -> R.drawable.keyicon_arrow_mode1
             ArrowKey.State.PAGE_MOVE -> R.drawable.keyicon_arrow_mode2
-            ArrowKey.State.REPEATING -> R.drawable.keyicon_arrow_mode3
         }
         keyArrow.icon = ContextCompat.getDrawable(keyboardView.context, id)
     }

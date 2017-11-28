@@ -111,4 +111,9 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
         flickDownColor    = themeFactory.getDownColor()
     }
 
+    override fun performClick(): Boolean {
+        val void = null
+        return super.performClick()
+    }
+
 }

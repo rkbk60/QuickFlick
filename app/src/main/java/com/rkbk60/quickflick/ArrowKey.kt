@@ -8,7 +8,7 @@ import java.util.*
  */
 class ArrowKey(private val ime: CustomIME) {
 
-    enum class State { DEFAULT, PAGE_MOVE, REPEATING }
+    enum class State { DEFAULT, PAGE_MOVE }
     var state = State.DEFAULT
         private set
 
@@ -18,34 +18,42 @@ class ArrowKey(private val ime: CustomIME) {
     private var task = ArrowKeyTimerTask(ime)
     private var repeatTime = ViewConfiguration.getKeyRepeatDelay().toLong()
     private var running = false
+    private var isFirstRun = true
 
     fun toggle() {
         if (!toggleable) return
         state = when (state) {
             State.DEFAULT -> State.PAGE_MOVE
-            State.PAGE_MOVE -> State.REPEATING
-            State.REPEATING -> State.DEFAULT
+            State.PAGE_MOVE -> State.DEFAULT
         }
         toggleable = true
     }
 
-    fun isRepeatingMode(): Boolean = state == State.REPEATING
+    fun isRepeatingMode(): Boolean = state != State.PAGE_MOVE
 
     fun execRepeatingInput(code: Int) {
-        if (task.code != code) stopRepeatingInput()
-        if (!running) {
-            timer = Timer()
-            task  = ArrowKeyTimerTask(ime)
-            task.code = code
-            timer.scheduleAtFixedRate(task, 0, repeatTime)
-            running = true
+        val checkedKeycode = filterKeycode(code)
+        if ((task.code == checkedKeycode)) return
+        stopRepeatingInput(false)
+        if (isFirstRun) {
+            ime.apply {
+                sendKeycode(checkedKeycode)
+                updateAllKeysFace()
+            }
+            isFirstRun = false
         }
+        task.code = checkedKeycode
+        timer.scheduleAtFixedRate(task, repeatTime * 20, repeatTime)
+        running = true
     }
 
-    fun stopRepeatingInput() {
+    fun stopRepeatingInput(resetFlag: Boolean = true) {
         if (running) {
             timer.cancel()
+            timer = Timer()
+            task = ArrowKeyTimerTask(ime)
             running = false
+            if (resetFlag) isFirstRun = true
         }
     }
 
@@ -54,24 +62,19 @@ class ArrowKey(private val ime: CustomIME) {
         state = State.DEFAULT
     }
 
+    private fun filterKeycode(code: Int): Int = when (code) {
+        SpecialKeyCode.LEFT,
+        SpecialKeyCode.RIGHT,
+        SpecialKeyCode.DOWN,
+        SpecialKeyCode.UP -> code
+        else -> SpecialKeyCode.NULL
+    }
+
     inner class ArrowKeyTimerTask(private val ime: CustomIME): TimerTask() {
-
-        private var ic = ime.currentInputConnection
-
         var code = SpecialKeyCode.NULL
-            set(value) {
-                field = when (value) {
-                    SpecialKeyCode.LEFT,
-                    SpecialKeyCode.RIGHT,
-                    SpecialKeyCode.DOWN,
-                    SpecialKeyCode.UP -> value
-                    else -> SpecialKeyCode.NULL
-                }
-            }
 
         override fun run() {
-            if ((ic == null) or (code == SpecialKeyCode.NULL)) return
-            ime.sendSpecialKeyEvent(ic, code)
+            ime.sendKeycode(code)
         }
 
     }
