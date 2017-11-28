@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.ShapeDrawable
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 
 /**
@@ -14,70 +15,31 @@ import android.util.AttributeSet
 class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(context, attrs) {
 
     private var indicatorKey: Keyboard.Key? = null
-    private var drawable: ShapeDrawable? = null
-    private val themeFactory = ThemeFactory(context)
-
-    private var flickDefaultColor = 0
-    private var flickLeftColor    = 0
-    private var flickRightColor   = 0
-    private var flickUpColor      = 0
-    private var flickDownColor    = 0
-
+    private lateinit var indicatorFactory: IndicatorFactory
     private lateinit var keymap: Keymap
-    private var maxFlickDistance = 1
-
-    init {
-        applyColors()
-    }
+    private val separatorColor = ContextCompat.getColor(context, R.color.backgroundIndicator)
 
     fun setKeyboard(keyboard: Keyboard, keymap: Keymap) {
         super.setKeyboard(keyboard)
         indicatorKey = keyboard.keys.find { it.codes[0] == KeyNumbers.INDICATOR}
         this.keymap = keymap
-        maxFlickDistance = keymap.maxDistance
-        updateDrawable(Flick(), 0)
+        indicatorFactory = IndicatorFactory(this, keymap)
+        indicatorFactory.updateInfo(indicatorKey, Flick(), SpecialKeyCode.NULL)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        drawable?.draw(canvas)
+        indicatorFactory.draw(canvas)
         drawKeySeparator(canvas)
     }
 
     fun indicate(flick: Flick, initialCode: Int) {
-        updateDrawable(flick, initialCode)
+        indicatorFactory.updateInfo(indicatorKey, flick, initialCode)
         invalidateKey(KeyboardManager.INDEX_INDICATOR)
     }
 
     fun updateTheme() {
-        themeFactory.changeTheme()
-        applyColors()
-    }
-
-    private fun updateDrawable(flick: Flick, initialCode: Int) {
-        if (indicatorKey == null) return
-        val shape = ShapeDrawable()
-        val x = indicatorKey!!.x + x.toInt()
-        val y = indicatorKey!!.y + y.toInt()
-        val width = indicatorKey!!.width
-        val height = indicatorKey!!.height
-        val color = when (flick.direction) {
-            Flick.Direction.NONE  -> flickDefaultColor
-            Flick.Direction.LEFT  -> flickLeftColor
-            Flick.Direction.RIGHT -> flickRightColor
-            Flick.Direction.UP    -> flickUpColor
-            Flick.Direction.DOWN  -> flickDownColor
-        }
-        val maxDistance = keymap.getMaxDistance(initialCode, flick.direction)
-        val distance = Math.min(flick.distance, maxDistance)
-        shape.apply {
-            setBounds(x, y, x + width, y + height)
-            paint.color = if (maxDistance == 0)
-                flickDefaultColor else color
-            alpha = if ((flick.direction == Flick.Direction.NONE) or (maxDistance == 0))
-                255 else 255 * distance / maxDistance
-        }
-        drawable = shape
+        indicatorFactory.changeTheme()
     }
 
     private fun drawKeySeparator(canvas: Canvas) {
@@ -88,7 +50,7 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
         val sizeX = 1
         val top = { key: Keyboard.Key -> (key.y + 0.05 * keyboard.height).toInt() }
         val bottom = { key: Keyboard.Key -> (key.y + 0.95 * keyboard.height).toInt() }
-        val color = flickDefaultColor
+        val color = separatorColor
         keys.forEach { it ->
             ShapeDrawable().apply {
                 setBounds(it.x, top(it), it.x + sizeX, bottom(it)) // left border
@@ -101,14 +63,6 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
                 draw(canvas)
             }
         }
-    }
-
-    private fun applyColors() {
-        flickDefaultColor = themeFactory.getBackgroundColor()
-        flickLeftColor    = themeFactory.getLeftColor()
-        flickRightColor   = themeFactory.getRightColor()
-        flickUpColor      = themeFactory.getUpColor()
-        flickDownColor    = themeFactory.getDownColor()
     }
 
     override fun performClick(): Boolean {
