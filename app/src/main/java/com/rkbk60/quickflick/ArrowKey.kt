@@ -43,7 +43,7 @@ class ArrowKey(private val ime: CustomIME) {
             isFirstRun = false
         }
         task.code = checkedKeycode
-        timer.scheduleAtFixedRate(task, repeatTime * 20, repeatTime)
+        timer.scheduleAtFixedRate(task, repeatTime * 10, repeatTime)
         running = true
     }
 
