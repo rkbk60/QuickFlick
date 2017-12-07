@@ -20,6 +20,7 @@ proguard/
 *.ipr
 *.iws
 app/build/
+app/release
 
 .idea/*.xml
 
