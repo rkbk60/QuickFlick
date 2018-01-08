@@ -32,7 +32,13 @@ class ArrowKey(private val ime: CustomIME) {
     fun isRepeatingMode(): Boolean = state != State.PAGE_MOVE
 
     fun execRepeatingInput(code: Int) {
-        val checkedKeycode = filterKeycode(code)
+        val checkedKeycode = when(code) {
+            SpecialKeyCode.LEFT,
+            SpecialKeyCode.RIGHT,
+            SpecialKeyCode.UP,
+            SpecialKeyCode.DOWN -> code
+            else -> SpecialKeyCode.NULL
+        }
         if ((task.code == checkedKeycode)) return
         stopRepeatingInput(false)
         if (isFirstRun) {
@@ -60,14 +66,6 @@ class ArrowKey(private val ime: CustomIME) {
     fun reset() {
         stopRepeatingInput()
         state = State.DEFAULT
-    }
-
-    private fun filterKeycode(code: Int): Int = when (code) {
-        SpecialKeyCode.LEFT,
-        SpecialKeyCode.RIGHT,
-        SpecialKeyCode.DOWN,
-        SpecialKeyCode.UP -> code
-        else -> SpecialKeyCode.NULL
     }
 
     inner class ArrowKeyTimerTask(private val ime: CustomIME): TimerTask() {
