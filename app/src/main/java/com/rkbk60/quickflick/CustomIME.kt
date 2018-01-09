@@ -135,7 +135,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         super.onStartInputView(info, restarting)
         editorInfo = info
         keyList = keyboard.keys
-        flick.updateDistanceThreshold(keyboardView.context)
+        Flick.updateDistanceThreshold(keyboardView.context)
         multiTapSetting.updateSettings(keyboardView.context)
         modKeyList.forEach { it.turnOff() }
         inputTypeClass = InputType.TYPE_MASK_CLASS and

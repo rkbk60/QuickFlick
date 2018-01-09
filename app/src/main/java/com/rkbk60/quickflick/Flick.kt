@@ -50,6 +50,16 @@ class Flick internal constructor(direction: Direction = Direction.NONE) {
         private var thresholdY1: Int = minimalThreshold
         private var thresholdX2: Int = minimalThreshold
         private var thresholdY2: Int = minimalThreshold
+
+        fun updateDistanceThreshold(context: Context) {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            val thou = (context.resources.getDimensionPixelSize(R.dimen.inch_unit)) * 0.001
+            thresholdX1 = (pref.getString("threshold_x1", "50" ).toInt() * thou).toInt()
+            thresholdX2 = (pref.getString("threshold_x2", "300").toInt() * thou).toInt()
+            thresholdY1 = (pref.getString("threshold_y1", "50" ).toInt() * thou).toInt()
+            thresholdY2 = (pref.getString("threshold_y2", "150").toInt() * thou).toInt()
+        }
+
     }
 
     init {
@@ -99,15 +109,6 @@ class Flick internal constructor(direction: Direction = Direction.NONE) {
     fun sync(flick: Flick) {
         direction = flick.direction
         distance  = flick.distance
-    }
-
-    fun updateDistanceThreshold(context: Context) {
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        val thou = (context.resources.getDimensionPixelSize(R.dimen.inch_unit)) * 0.001
-        thresholdX1 = (pref.getString("threshold_x1", "50" ).toInt() * thou).toInt()
-        thresholdX2 = (pref.getString("threshold_x2", "300").toInt() * thou).toInt()
-        thresholdY1 = (pref.getString("threshold_y1", "50" ).toInt() * thou).toInt()
-        thresholdY2 = (pref.getString("threshold_y2", "150").toInt() * thou).toInt()
     }
 
     override fun toString(): String = "$direction.$distance"
