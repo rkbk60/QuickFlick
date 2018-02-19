@@ -22,3 +22,4 @@ MIT License
 ## TODO
 * show custom pop-up preview
 * settings for change background and key height
+* refact project, add test
