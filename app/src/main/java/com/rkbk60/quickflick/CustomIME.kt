@@ -77,13 +77,13 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             lastActionCode = actionCode
             return@OnTouchListener when (actionCode) {
                 MotionEvent.ACTION_DOWN -> {
+                    onPressCode = SpecialKeyCode.NULL
                     val key = keyList.find { it.isInside(x, y) } ?: return@OnTouchListener true
                     if (key.codes[0] in KeyNumbers.LIST_VALID)  {
                         resetTapState(x, y)
                         arrowKey.toggleable = true
                         false
                     } else {
-                        onPressCode = SpecialKeyCode.NULL
                         true
                     }
                 }
