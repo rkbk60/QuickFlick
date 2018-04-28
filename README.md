@@ -20,6 +20,32 @@ Check [Wiki](https://github.com/rkbk60/QuickFlick/wiki/).
 MIT License
 
 ## TODO
-* show custom pop-up preview
-* settings for change background and key height
-* refact project, add test
+### redesign app
+This app is too complex to add features, to fix bug. and to test these.  
+By remake model or application layor, we will be able to:
+* fix keyboard layout to input easily, when device has rotated
+* change keys height from preference
+* add unit/ui tests
+* maintain easily
+* make release cycle more faster
+
+### make new Keyboard/KeyboardView framework
+Android Keyboard/KeyboardView have these issues:
+* cannot show dynamic previews
+* previews are partly racking when it is outside of KeyboardView
+* hard to place keys flexibily
+* hard to change keyboard height without preference activity
+
+If we can make new framework, we will be able to
+* implement preview popup
+* set key/keyboard height or style easily
+
+### others
+**must**
+* first-run-tutorial
+* offline document(wiki)
+* check multi-modified-key behavior
+
+**maybe**
+* add lockable Shift key
+* custom background/indicator theme
