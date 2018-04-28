@@ -57,6 +57,11 @@
             <!--android:selectAllOnFocus="true"-->
             <!--android:singleLine="true"-->
             <!--android:title="@string/preferences_title_keys_height" />-->
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/preferences_keys_adjustment"
+            android:summary="@string/preferences_summary_keys_adjustment"
+            android:title="@string/preferences_title_keys_adjustment"/>
         <ListPreference
             android:defaultValue="@string/theme_base"
             android:key="@string/preferences_theme_indicator"

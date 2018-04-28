@@ -15,17 +15,18 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
 
     val keyboard = Keyboard(ime, R.xml.keyboard)
 
-    enum class Adjustment { NONE, LEFT, RIGHT }
-    private var adjustment = Adjustment.NONE
-    set(value) {
-        field = value
-        setAdjustmentSettings(value)
-    }
-
     private val defaultPreference = PreferenceManager.getDefaultSharedPreferences(keyboardView.context)
 //    private val adjustmentKeyName = ime.resources.getString(R.string.preferences_enable_adjustment)
 //    private val adjustmentDefaultBool = ime.resources.getBoolean(R.bool.preferences_enable_adjustment_default)
-    private val adjustmentCacheName = "cache_last_adjustment_is_right"
+    private val adjustmentCacheName =
+            ime.resources.getString(R.string.preferences_keys_adjustment)
+
+    enum class Adjustment { NONE, LEFT, RIGHT }
+    private var adjustment = getLastAdjustmentAlign()
+        set(value) {
+            field = value
+            setAdjustmentSettings(value)
+        }
 
     companion object {
         var INDEX_INDICATOR = 0
@@ -58,6 +59,11 @@ class KeyboardManager(ime: InputMethodService, private val keyboardView: Keyboar
         }
         changeKeyWidth()
         keyboardView.invalidateAllKeys()
+    }
+
+    fun updateKeyboard() {
+        setAdjustmentFromSettings()
+        changeKeyWidth()
     }
 
     fun updateArrowKeyFace(state: ArrowKey.State) {

@@ -28,6 +28,7 @@ class SettingsActivity: AppCompatActivity() {
         private val TYPE_THRESHOLD = 0
         private val TYPE_THEME = 1
         private val TYPE_HEIGHT = 2
+        private var TYPE_ADJUSTMENT = 3
 
         private val minimalThreshold = 10
 
@@ -38,6 +39,7 @@ class SettingsActivity: AppCompatActivity() {
         private lateinit var thresholdY2: PreferenceTuple
         private lateinit var keysHeight: PreferenceTuple
         private lateinit var themeIndicator: PreferenceTuple
+        private lateinit var keyboardAdjustment: PreferenceTuple
 
         private lateinit var localContext: Context
 
@@ -118,6 +120,11 @@ class SettingsActivity: AppCompatActivity() {
                     resources.getString(R.string.preferences_theme_indicator),
                     resources.getString(R.string.theme_base),
                     TYPE_THEME
+            )
+            keyboardAdjustment = PreferenceTuple(
+                    resources.getString(R.string.preferences_keys_adjustment),
+                    false,
+                    TYPE_ADJUSTMENT
             )
         }
 

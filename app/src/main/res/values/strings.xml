@@ -18,6 +18,7 @@
     <string name="preferences_cancel_input">cancel_input</string>
     <string name="preferences_keys_height">keys_height</string>
     <string name="preferences_theme_indicator">theme_indicator</string>
+    <string name="preferences_keys_adjustment">cache_last_adjustment_is_right</string>
 
     <!-- Preference Labels -->
     <string name="preferences_category_horizontal">Horizontal flick threshold</string>
@@ -32,7 +33,9 @@
     <string name="preferences_title_cancel_input">Input canceler</string>
     <string name="preferences_title_keys_height">Key height</string>
     <string name="preferences_title_indicator">Indicator theme</string>
+    <string name="preferences_title_keys_adjustment">Toggle layout to right</string>
     <string name="preferences_summary_cancel_flick">Reset flicking state with multi tap</string>
     <string name="preferences_summary_cancel_input">Cancel input with twice tap</string>
+    <string name="preferences_summary_keys_adjustment">It can also change from keyboard.</string>
 
 </resources>

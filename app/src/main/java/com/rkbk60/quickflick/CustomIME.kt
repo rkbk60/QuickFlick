@@ -109,9 +109,19 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         val tmpFlick = Flick()
                         tmpFlick.update(tapX, tapY, x, y)
                         val char = keymap.searchKeycode(onPressCode, tmpFlick).toChar()
-                        if (isTappingCharKey() and getInputtableChars().any { it == char }) {
+                        if (isTappingLimitedKey() and getInputtableChars().any { it == char }) {
                             flick.sync(tmpFlick)
                             keyboardView.indicate(flick, onPressCode)
+                        } else if (isTappingLimitedKey() and (onPressCode in KeyNumbers.LIST_FUNCTIONS)) {
+                            when (tmpFlick.direction) {
+                                Flick.Direction.NONE,
+                                Flick.Direction.UP,
+                                Flick.Direction.DOWN -> {
+                                    flick.sync(tmpFlick)
+                                    keyboardView.indicate(flick, onPressCode)
+                                }
+                                else -> Unit
+                            }
                         }
                     } else {
                         flick.update(tapX, tapY, x, y)
@@ -135,6 +145,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         editorInfo = info
+        keyboardManager.updateKeyboard()
         keyList = keyboard.keys
         Flick.updateDistanceThreshold(keyboardView.context)
         multiTapSetting.updateSettings(keyboardView.context)
@@ -338,8 +349,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         arrowKey.stopRepeatingInput()
     }
 
-    private fun isTappingCharKey(): Boolean =
-            listOf(7, 8, 9, 12, 13, 14, 17, 18, 19).any { it == onPressCode }
+    private fun isTappingLimitedKey(): Boolean =
+            onPressCode in KeyNumbers.LIST_VALID_ON_NUM
 
     private fun sendModKeyEvent(ic: InputConnection, modKey: ModKey, isDown: Boolean) {
         sendKeyEvent(ic, modKey.action, isDown, true)

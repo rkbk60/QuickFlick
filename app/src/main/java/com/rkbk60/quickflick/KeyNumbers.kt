@@ -42,4 +42,6 @@ object KeyNumbers {
         return@lazy list.toList()
     }
 
+    val LIST_VALID_ON_NUM = LIST_VALID.filterNot{ LIST_NEXT_TO_FUNCTIONS.contains(it) }
+
 }
