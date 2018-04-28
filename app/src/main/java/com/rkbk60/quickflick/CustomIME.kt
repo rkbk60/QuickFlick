@@ -93,6 +93,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         multiTapSetting.canCancelInput() -> onPressCode = SpecialKeyCode.NULL
                         multiTapSetting.canCancelFlick() -> resetTapState(x, y)
                     }
+                    keyboardView.indicate(flick, onPressCode)
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
