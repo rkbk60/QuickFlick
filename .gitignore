@@ -27,5 +27,3 @@ app/release
 
 !.idea/gradle.xml
 !.idea/runConfigurations/*.xml
-
-/tools/output
