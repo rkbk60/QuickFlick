@@ -18,7 +18,7 @@ class Height:
 class Orientation:
     def __init__(self, name: str, value: int) -> None:
         self.name = name
-        self.id = name[0:2].capitalize()
+        self.id = name[0:3]
         self.value = "%ddp" % value
         self.info = "for %s (footer:%s)" % (name, self.value)
 
@@ -26,12 +26,12 @@ class Orientation:
 class Adjustment:
     def __init__(self, is_right: bool) -> None:
         self.name = "right" if is_right else "left"
-        self.id = self.name[0:1].upper()
+        self.id = self.name[0:1]
         if is_right:
             self.width_left = "17%p"
-            self.width_right = "0"
+            self.width_right = "0dp"
         else:
-            self.width_left = "0"
+            self.width_left = "0dp"
             self.width_right = "17%p"
         self.info = "for " + self.name + " hand"
 
