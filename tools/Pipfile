@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [dev-packages]
+"flake8" = "*"
+"flake8-mypy" = "*"
 
 [packages]
 cairosvg = "*"

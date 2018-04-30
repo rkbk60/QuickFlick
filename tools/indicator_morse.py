@@ -16,7 +16,7 @@ class MorseSignal:
     SIGNAL_3 = "-"
     SIGNAL_EDGE = "/"
 
-    def __init__(self, filename: str, signal: str):
+    def __init__(self, filename: str, signal: str) -> None:
         self.filename = filename
         self.signal = signal
         self.width = 0
@@ -38,9 +38,10 @@ class MorseSignal:
                 self_size = self.SIZE_RATE * 3
                 self.svg += self.rect % (self.width, self_size, "#222222")
                 self.width += self_size
-        print("%s:\n%s" % (self.filename, self.svg)) if DEBUG_MODE else None
+        if DEBUG_MODE:
+            print("%s:\n%s" % (self.filename, self.svg))
 
-    def __getTrueSignal(self, signal: str):
+    def __getTrueSignal(self, signal: str) -> str:
         return self.SIGNAL_0.join(signal) + self.SIGNAL_EDGE
 
 
@@ -59,8 +60,8 @@ if os.path.exists(tmp_dir):
     shutil.rmtree(tmp_dir)
 os.mkdir(tmp_dir)
 
-output_dirs = {'drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi', 'drawable-xxhdpi',
-               'drawable-xxxhdpi'}
+output_dirs = {'drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi',
+               'drawable-xxhdpi', 'drawable-xxxhdpi'}
 for output_dir in output_dirs:
     output_dir = "%s/output/%s/" % (current_dir, output_dir)
     if os.path.exists(output_dir) & DEBUG_MODE:
@@ -92,4 +93,5 @@ for morse in morse_set:
         path_png = "output/%s/indicator_morse_%s.png" % (output, morse.filename)
         cairosvg.svg2png(url=path_svg, write_to=path_png, scale=size)
 
-shutil.rmtree("%s/tmp" % current_dir) if not DEBUG_MODE else None
+if not DEBUG_MODE:
+    shutil.rmtree("%s/tmp" % current_dir)

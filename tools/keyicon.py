@@ -8,7 +8,8 @@ DEBUG_MODE = False
 
 
 class KeyIcon:
-    def __init__(self, filename: str, text_center: str = "", text_bottom: str = ""):
+    def __init__(self, filename: str, text_center: str = "",
+                 text_bottom: str = "") -> None:
         self.name = filename
         self.text1 = text_center
         self.text2 = text_bottom
@@ -16,9 +17,12 @@ class KeyIcon:
 
 
 class ModKeyIcon(KeyIcon):
-    def __init__(self, filename: str, text_left: str, text_right, type_left: int, type_right: int):
-        text_left = text_left.lower() if (type_left == 0) else text_left.upper()
-        text_right = text_right.lower() if (type_right == 0) else text_right.upper()
+    def __init__(self, filename: str, text_left: str,
+                 text_right, type_left: int, type_right: int) -> None:
+        text_left = text_left.lower() \
+            if (type_left == 0) else text_left.upper()
+        text_right = text_right.lower() \
+            if (type_right == 0) else text_right.upper()
         super().__init__(filename, "%s%s" % (text_left, text_right))
         self.flag_left = type_left > 1
         self.flag_right = type_right > 1
@@ -26,7 +30,7 @@ class ModKeyIcon(KeyIcon):
 
 
 class FnKeyIcon(KeyIcon):
-    def __init__(self, filename: str, text: str):
+    def __init__(self, filename: str, text: str) -> None:
         super().__init__(filename, "F", text)
         self.template = "keyicon_fn.svg"
 
@@ -94,8 +98,8 @@ if os.path.exists(tmp_dir):
     shutil.rmtree(tmp_dir)
 os.mkdir(tmp_dir)
 
-output_dirs = ['drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi', 'drawable-xxhdpi',
-               'drawable-xxxhdpi']
+output_dirs = ['drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi',
+               'drawable-xxhdpi', 'drawable-xxxhdpi']
 for output_dir in output_dirs:
     output_dir = "%s/output/%s/" % (current_dir, output_dir)
     if os.path.exists(output_dir) & DEBUG_MODE:
@@ -119,7 +123,8 @@ for icon in key_icon_set:
                 flag_modkey = icon.flag_left
             elif "line_right" in newline:
                 flag_modkey = icon.flag_right
-            newline = newline.replace("0.00", "1.00") if flag_modkey else newline
+            newline = newline.replace("0.00", "1.00") \
+                if flag_modkey else newline
         newtext = "%s%s" % (newtext, newline)
     template.close()
     name = "%s/tmp/keyicon_%s" % (current_dir, icon.name)
@@ -136,4 +141,5 @@ for icon in key_icon_set:
         cairosvg.svg2png(url=svgpath, write_to=pngpath, scale=size)
     newsvg.close()
 
-shutil.rmtree("%s/tmp" % current_dir) if not DEBUG_MODE else None
+if not DEBUG_MODE:
+    shutil.rmtree("%s/tmp" % current_dir)
