@@ -1,15 +1,21 @@
 
+# Note: For run this script, you have to install Roboto in system.
 import cairosvg
 import io
+import json
 import os
-import shutil
+import sys
 
-DEBUG_MODE = False
+
+DEBUG_MODE = json.loads(sys.argv[1].lower())
+
+
+def log(s: str) -> None:
+    print("  >> " + s)
 
 
 class KeyIcon:
-    def __init__(self, filename: str, text_center: str = "",
-                 text_bottom: str = "") -> None:
+    def __init__(self, filename: str, text_center: str = "", text_bottom: str = "") -> None:
         self.name = filename
         self.text1 = text_center
         self.text2 = text_bottom
@@ -33,10 +39,6 @@ class FnKeyIcon(KeyIcon):
     def __init__(self, filename: str, text: str) -> None:
         super().__init__(filename, "F", text)
         self.template = "keyicon_fn.svg"
-
-
-def log(s: str):
-    print("  >> %s" % s)
 
 
 key_icon_set = [
@@ -93,18 +95,15 @@ if DEBUG_MODE:
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-tmp_dir = "%s/tmp/" % current_dir
-if os.path.exists(tmp_dir):
-    shutil.rmtree(tmp_dir)
-os.mkdir(tmp_dir)
+tmp_dir = "%s/tmp/icons" % current_dir
+if not os.path.exists(tmp_dir):
+    os.mkdir(tmp_dir)
 
 output_dirs = ['drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi',
                'drawable-xxhdpi', 'drawable-xxxhdpi']
 for output_dir in output_dirs:
-    output_dir = "%s/output/%s/" % (current_dir, output_dir)
-    if os.path.exists(output_dir) & DEBUG_MODE:
-        shutil.rmtree(output_dir)
-    elif not os.path.exists(output_dir):
+    output_dir = "%s/output/icons/%s/" % (current_dir, output_dir)
+    if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
 os.chdir(current_dir)
@@ -127,7 +126,7 @@ for icon in key_icon_set:
                 if flag_modkey else newline
         newtext = "%s%s" % (newtext, newline)
     template.close()
-    name = "%s/tmp/keyicon_%s" % (current_dir, icon.name)
+    name = "%s/keyicon_%s" % (tmp_dir, icon.name)
     newsvg = io.open("%s.svg" % name, "w+")
     newsvg.write(newtext)
     newsvg.close()
@@ -137,9 +136,8 @@ for icon in key_icon_set:
     for output in output_dirs:
         size += 1
         svgpath = "/%s.svg" % name
-        pngpath = "output/%s/keyicon_%s.png" % (output, icon.name)
+        pngpath = "output/icons/%s/keyicon_%s.png" % (output, icon.name)
         cairosvg.svg2png(url=svgpath, write_to=pngpath, scale=size)
+        log("generate: ./" + pngpath)
     newsvg.close()
-
-if not DEBUG_MODE:
-    shutil.rmtree("%s/tmp" % current_dir)
+print()

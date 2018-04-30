@@ -1,16 +1,21 @@
 
 import itertools
 import io
+import json
 import os
-import shutil
+import sys
 
-DEBUG_MODE = False
+DEBUG_MODE = json.loads(sys.argv[1].lower())
+
+
+def log(s: str):
+    print("  >> %s" % s)
 
 
 class Height:
     def __init__(self, name: str, height_level: int) -> None:
         self.name = name
-        self.id = str(height_level)
+        self.id = str(height_level).lower()
         self.value = "key_height_" + name
         self.info = "@dimen/%s (Lv.%d)" % (self.value, height_level)
 
@@ -18,7 +23,7 @@ class Height:
 class Orientation:
     def __init__(self, name: str, value: int) -> None:
         self.name = name
-        self.id = name[0:3]
+        self.id = name[0:3].lower()
         self.value = "%ddp" % value
         self.info = "for %s (footer:%s)" % (name, self.value)
 
@@ -56,15 +61,16 @@ adjustments = [
 
 
 if DEBUG_MODE:
-    orders = [(Height("tD", 0), Orientation("tO", 10), Adjustment(True))]
+    orders = [(Height("td", 0), Orientation("to", 10), Adjustment(True))]
 else:
     orders = list(itertools.product(heights, orientations, adjustments))
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-output_dir = current_dir + "/output/keyboard/"
-if os.path.exists(output_dir):
-    shutil.rmtree(output_dir)
-os.makedirs(output_dir)
+output_dir = "output/keyboard/xml/"
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+os.chdir(current_dir)
 
 for (hei, ori, adj) in orders:
     template = io.open("%s/template/keyboard.xml" % current_dir)
@@ -79,8 +85,9 @@ for (hei, ori, adj) in orders:
         newline = newline.replace("$KEY_WIDTH_RIGHT", adj.width_right)
         newtext += newline
     template.close()
-    filename = "keyboard_%s_%s_%s.xml" % (hei.name, ori.name, adj.name)
-    filename = "keyboard_" + adj.id + ori.id + hei.id + ".xml"
+    filename = "keyboard_%s_%s_%s.xml" % (adj.id, ori.id, hei.id)
     newxml = io.open(output_dir + filename, "w+")
     newxml.write(newtext)
     newxml.close()
+    log("generate: ./" + output_dir + filename)
+print()

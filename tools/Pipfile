@@ -12,3 +12,5 @@ cairosvg = "*"
 
 [requires]
 python_version = "3.6"
+
+# vim: set filetype=toml

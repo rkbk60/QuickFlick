@@ -1,11 +1,16 @@
 
 import cairosvg
 import io
+import json
 import os
 import shutil
+import sys
+
+DEBUG_MODE = json.loads(sys.argv[1].lower())
 
 
-DEBUG_MODE = False
+def log(s: str) -> None:
+    print("  >> " + s)
 
 
 class MorseSignal:
@@ -21,7 +26,7 @@ class MorseSignal:
         self.signal = signal
         self.width = 0
         self.svg = ""
-        for pulse in self.__getTrueSignal(signal):
+        for pulse in (self.SIGNAL_0.join(signal) + self.SIGNAL_EDGE):
             if pulse == self.SIGNAL_0:
                 self_size = self.SIZE_RATE
                 self.svg += self.rect % (self.width, self_size, "#222222")
@@ -38,11 +43,6 @@ class MorseSignal:
                 self_size = self.SIZE_RATE * 3
                 self.svg += self.rect % (self.width, self_size, "#222222")
                 self.width += self_size
-        if DEBUG_MODE:
-            print("%s:\n%s" % (self.filename, self.svg))
-
-    def __getTrueSignal(self, signal: str) -> str:
-        return self.SIGNAL_0.join(signal) + self.SIGNAL_EDGE
 
 
 morse_set = [
@@ -63,10 +63,8 @@ os.mkdir(tmp_dir)
 output_dirs = {'drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi',
                'drawable-xxhdpi', 'drawable-xxxhdpi'}
 for output_dir in output_dirs:
-    output_dir = "%s/output/%s/" % (current_dir, output_dir)
-    if os.path.exists(output_dir) & DEBUG_MODE:
-        shutil.rmtree(output_dir)
-    elif not os.path.exists(output_dir):
+    output_dir = "%s/output/indicator/%s/" % (current_dir, output_dir)
+    if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
 os.chdir(current_dir)
@@ -90,8 +88,7 @@ for morse in morse_set:
     for output in output_dirs:
         size += 1
         path_svg = "/%s.svg" % name
-        path_png = "output/%s/indicator_morse_%s.png" % (output, morse.filename)
+        path_png = "output/indicator/%s/indicator_morse_%s.png" % (output, morse.filename)
         cairosvg.svg2png(url=path_svg, write_to=path_png, scale=size)
-
-if not DEBUG_MODE:
-    shutil.rmtree("%s/tmp" % current_dir)
+        log("generate: ./" + path_png)
+print()
