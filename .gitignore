@@ -29,3 +29,5 @@ app/release
 !.idea/runConfigurations/*.xml
 
 /tools/output
+/tools/tmp
+/tools/.*
