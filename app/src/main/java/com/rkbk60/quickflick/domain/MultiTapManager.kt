@@ -2,37 +2,14 @@ package com.rkbk60.quickflick.domain
 
 /**
  * simple class to memory multi tap count and preferences.
- * @param server object which can get current multi tap settings
+ * @param cancelFlick can or cannot cancel flick with multi tap
+ * @param cancelInput can or cannot cancel input only with multi tap twice
  */
-class MultiTapManager(server: PreferenceServer) {
-    /**
-     * Data set containing multi tap settings.
-     * @param cancelFlick can or cannot cancel flick with multi tap
-     * @param cancelInput can or cannot cancel input only with multi tap twice
-     */
-    data class Preference(val cancelFlick: Boolean, val cancelInput: Boolean)
-
-    /**
-     * Interface to get MultiTapManager.Preference.
-     */
-    interface PreferenceServer {
-        fun getMultiTapPref(): Preference
-    }
-
+class MultiTapManager(private val cancelFlick: Boolean, private val cancelInput: Boolean) {
     /**
      * Counter to decide to effect.
      */
     private var tapCount = 0
-
-    private var cancelFlick = false
-    private var cancelInput = false
-
-    init {
-        server.getMultiTapPref().also {
-            cancelFlick = it.cancelFlick
-            cancelInput = it.cancelInput
-        }
-    }
 
     /**
      * Add tap count.

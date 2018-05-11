@@ -25,7 +25,7 @@ class ModKeyStorage {
     /**
      * Update mod key mode.
      * @param mod mod key object
-     * @param isSubMod when mod is KeyInfo.mods element, this parameter will be true.
+     * @param isSubMod when [mod] parameter is KeyInfo.mods element, this will be true.
      */
     fun update(mod: ModKeyInfo, isSubMod: Boolean = false) {
         val key = when (mod) {
@@ -47,29 +47,31 @@ class ModKeyStorage {
               LOCK       ->      off            off              LOCK           LOCK
          */
         states[key] = when (states[key]) {
-            State.OFF -> if (mod.lockable) State.LOCK else State.ON
-            State.ON -> if (isSubMod) State.ON else if (mod.lockable) State.LOCK else State.OFF
+            State.OFF  -> if (mod.lockable) State.LOCK else State.ON
+            State.ON   -> if (isSubMod) State.ON else if (mod.lockable) State.LOCK else State.OFF
             State.LOCK -> if (isSubMod) State.LOCK else State.OFF
             else -> return
         }
     }
 
     /**
-     * Get states as list of mod keys.
+     * Get states as set of mod keys.
      * If mode is LOCK then keyInfo will be lockable object.
-     * @return list of mod keys
+     * @return set of enable ModKeyInfo
      */
-    fun toList(): List<ModKeyInfo> = states.filterValues { it != State.OFF }.map {
-        if (it.value == State.LOCK)
-            when (it.key) {
-                ModKeyInfo.CTRL  -> ModKeyInfo.CTRL_LOCK
-                ModKeyInfo.ALT   -> ModKeyInfo.ALT_LOCK
-                ModKeyInfo.META  -> ModKeyInfo.META_LOCK
-                ModKeyInfo.SHIFT -> ModKeyInfo.SHIFT_LOCK
-                else -> it.key
-            }
-        else
-            it.key
+    fun toSet(): Set<ModKeyInfo> {
+        return states.filterValues { it != State.OFF }.map {
+            if (it.value == State.LOCK)
+                when (it.key) {
+                    ModKeyInfo.CTRL  -> ModKeyInfo.CTRL_LOCK
+                    ModKeyInfo.ALT   -> ModKeyInfo.ALT_LOCK
+                    ModKeyInfo.META  -> ModKeyInfo.META_LOCK
+                    ModKeyInfo.SHIFT -> ModKeyInfo.SHIFT_LOCK
+                    else -> it.key
+                }
+            else
+                it.key
+        }.toSet()
     }
 
     /**

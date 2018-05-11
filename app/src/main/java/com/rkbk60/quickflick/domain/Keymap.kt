@@ -126,7 +126,7 @@ class Keymap {
          */
         fun getKey(flick: Flick): KeyInfo {
             return (listMap[flick.direction] ?: return onTapKeyInfo)
-                    .filterIndexed { i, _ -> i <= flick.distance }
+                    .filterIndexed { i, _ -> i < flick.distance }
                     .lastOrNull()
                     ?: onTapKeyInfo
         }

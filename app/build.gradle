@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+//apply plugin: 'de.mannodermaus.android-junit5'
+
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
@@ -31,6 +33,16 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
+
+dependencies {
+    // android-junit5
+//    testImplementation junit5.unitTests()
+//    testCompileOnly junit5.unitTestsRuntime()
+
+    // Kluent
+    testImplementation "org.amshove.kluent:kluent-android:$kluentVersion"
+}
+
 repositories {
     mavenCentral()
 }

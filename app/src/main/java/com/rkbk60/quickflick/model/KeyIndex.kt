@@ -49,6 +49,10 @@ object KeyIndex {
     const val F4 = 27
     const val G4 = 28
 
+    val INDEX_ARROW = C1
+    val INDEX_META_ALT = B2
+    val INDEX_CTRL_ALT = B3
+
     fun isLeftFunctions(index: Int): Boolean = index in listOf(A1, A2, A3, A4)
 
     fun isRightFunctions(index: Int): Boolean = index in listOf(G1, G2, G3, G4)

@@ -31,23 +31,31 @@ class KeyInfoStorage {
     }
 
     /**
-     * Returns current KeyInfo and list of enabled mod key.
-     * After call this method, this class call reset(clearAllModsState = false) oneself.
-     * @return Pair of KeyInfo and list of mod key.
+     * Returns current KeyInfo and set of enabled mod key.
+     * After call this method, inner [keyInfo] is changed to KeyInfo.NULL
+     * and modifier key states are turned off unless that LOCK.
+     * @return Pair of KeyInfo and set of mod key.
      */
-    fun output(): Pair<KeyInfo, List<ModKeyInfo>> {
-        val result = Pair(keyInfo, mods.toList())
-        reset(false)
+    fun output(): Pair<KeyInfo, Set<ModKeyInfo>> {
+        val result = Pair(keyInfo, mods.toSet())
+        keyInfo = KeyInfo.NULL
+        mods.resetUnlessLock()
         return result
     }
 
     /**
-     * Resets keyInfo and each mod key states.
-     * @param resetAll if true, all states will be to OFF.
-     *                 If false, only keys which are ON will turn off.
+     * Resets keyInfo and each modifier key states to OFF.
      */
-    fun reset(resetAll: Boolean) {
+    fun resetUnlessLock() {
         keyInfo = KeyInfo.NULL
-        if (resetAll) mods.reset() else mods.resetUnlessLock()
+        mods.resetUnlessLock()
+    }
+
+    /**
+     * Resets keyInfo and each modifier key states to OFF.
+     */
+    fun reset() {
+        keyInfo = KeyInfo.NULL
+        mods.reset()
     }
 }

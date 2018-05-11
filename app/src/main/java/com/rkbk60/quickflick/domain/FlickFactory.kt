@@ -6,27 +6,8 @@ import com.rkbk60.quickflick.model.Flick
  * Class to construct Flick object more safety and more accurately.
  * @param server object implemented FlickFactory.Preference
  */
-class FlickFactory(server: PreferenceServer) {
-    /**
-     * Data set containing flick threshold related numbers.
-     * Unit of [x1], [x2], [y1], [y2] is thou(milli inch), [inch] unit is px.
-     * These values are used in Flick constructor to define true-threshold.
-     * @param x1 threshold of x-direction to decide tap or flick
-     * @param x2 threshold of x-direction to calculate flick distance level
-     * @param y1 threshold of y-direction to decide tap or flick
-     * @param y2 threshold of y-direction to calculate flick distance level
-     * @param inch raw pixel size to convert from thou to px, equal to 1 inch.
-     *             Use Resource.getDimensionPixelSize to set this value.
-     */
-    data class Preference(val x1: Int, val x2: Int, val y1: Int, val y2: Int, val inch: Int)
-
-    /**
-     * Interface to get [FlickFactory.Preference].
-     */
-    interface PreferenceServer {
-        fun getFlickPref(): Preference
-    }
-
+class FlickFactory(
+        thresholdX1: Int, thresholdX2: Int, thresholdY1: Int, thresholdY2: Int) {
     companion object {
         /**
          * Set of numbers used in [FlickFactory.makeWith] as threshold.
@@ -41,13 +22,11 @@ class FlickFactory(server: PreferenceServer) {
     }
 
     init {
-        val pref = server.getFlickPref()
-        fun valueOf(x: Int): Int = Math.max((x * 0.001 * pref.inch).toInt(), 1)
-        threshold.apply {
-            x1 = valueOf(pref.x1)
-            x2 = valueOf(pref.x2)
-            y1 = valueOf(pref.y1)
-            y2 = valueOf(pref.y2)
+        with(threshold) {
+            x1 = thresholdX1
+            x2 = thresholdX2
+            y1 = thresholdY1
+            y2 = thresholdY2
         }
     }
 

@@ -5,11 +5,16 @@ import com.rkbk60.quickflick.model.KeyInfo
 import com.rkbk60.quickflick.model.ModKeyInfo
 import java.util.*
 
+private typealias LEFT  = AsciiKeyInfo.LEFT
+private typealias RIGHT = AsciiKeyInfo.RIGHT
+private typealias UP    = AsciiKeyInfo.UP
+private typealias DOWN  = AsciiKeyInfo.DOWN
+
 /**
  * Arrow key object, managing modes and repeating input.
  * @param sendKey action to send KeyEvent
  */
-class ArrowKey(private val sendKey: (KeyInfo, List<ModKeyInfo>) -> Unit) {
+class ArrowKey(private val sendKey: (KeyInfo, Set<ModKeyInfo>) -> Unit) {
     /**
      * Enum class to show current arrow key modes.
      */
@@ -20,7 +25,7 @@ class ArrowKey(private val sendKey: (KeyInfo, List<ModKeyInfo>) -> Unit) {
      * @param sendKey action to send KeyEvent
      */
     private inner class ArrowKeyTimerTask
-    (private val sendKey: (KeyInfo, List<ModKeyInfo>) -> Unit): TimerTask() {
+            (private val sendKey: (KeyInfo, Set<ModKeyInfo>) -> Unit): TimerTask() {
         /**
          * KeyInfo that will be input by [run].
          */
@@ -29,7 +34,7 @@ class ArrowKey(private val sendKey: (KeyInfo, List<ModKeyInfo>) -> Unit) {
         /**
          * Current enabled modifier keys.
          */
-        val mods = mutableListOf<ModKeyInfo>()
+        val mods = mutableSetOf<ModKeyInfo>()
 
         /**
          * Flag to show whether task is running.
@@ -63,14 +68,21 @@ class ArrowKey(private val sendKey: (KeyInfo, List<ModKeyInfo>) -> Unit) {
     private var task = ArrowKeyTimerTask(sendKey)
 
     /**
-     * Time of repeating input.
+     * Interval time on repeating input.
      */
     private val repeatTime = 50L
 
     /**
      * Delay time from first input to next input.
      */
-    private val delayTime  = repeatTime * 10
+    private val delayTime = 500L
+
+    /**
+     * Flag to show whether task is running.
+     */
+    var running = false
+        get() = task.running
+        private set
 
     /**
      * Toggles [mode].
@@ -99,15 +111,16 @@ class ArrowKey(private val sendKey: (KeyInfo, List<ModKeyInfo>) -> Unit) {
      *             Other AsciiKeyInfo also can assign, but they will be ignored.
      * @param mods list of current enabled modifier keys
      */
-    fun startInput(key: AsciiKeyInfo, mods: List<ModKeyInfo>) {
-        if (mode != Mode.DEFAULT
-                || task.running
-                || key !in listOf(AsciiKeyInfo.LEFT, AsciiKeyInfo.RIGHT, AsciiKeyInfo.UP, AsciiKeyInfo.DOWN)
-        ) return
+    fun startInput(key: KeyInfo, mods: Set<ModKeyInfo>) {
+        if (task.running || key !in setOf(LEFT, RIGHT, UP, DOWN)) {
+            return
+        }
         sendKey(key, mods)
-        task.key = key
-        task.mods.addAll(mods.filter { it.lockable })
-        timer.scheduleAtFixedRate(task, delayTime, repeatTime)
+        if (mode == Mode.DEFAULT) {
+            task.key = key
+            task.mods.addAll(mods.filter { it.lockable })
+            timer.scheduleAtFixedRate(task, delayTime, repeatTime)
+        }
     }
 
     /**
@@ -126,9 +139,9 @@ class ArrowKey(private val sendKey: (KeyInfo, List<ModKeyInfo>) -> Unit) {
     fun stopInput() {
         if (task.running) {
             timer.cancel()
-            timer = Timer()
-            task = ArrowKeyTimerTask(sendKey)
         }
+        timer = Timer()
+        task = ArrowKeyTimerTask(sendKey)
     }
 
     @Suppress("ProtectedInFinal", "unused")
