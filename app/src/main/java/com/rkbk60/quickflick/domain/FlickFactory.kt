@@ -69,8 +69,4 @@ class FlickFactory(
 
         return Flick(direction, distance)
     }
-
-    fun makeEmptyFlick(): Flick {
-        return Flick(Flick.Direction.NONE, 0)
-    }
 }

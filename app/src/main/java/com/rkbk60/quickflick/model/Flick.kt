@@ -21,5 +21,9 @@ data class Flick(val direction: Direction, val distance: Int) {
         else -> distance > 0
     }
 
+    companion object {
+        val NONE = Flick(Direction.NONE, 0)
+    }
+
     override fun toString(): String = "Flick($direction, $distance)"
 }

@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.KeyboardView
+import android.util.Log
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import com.rkbk60.quickflick.domain.FlickFactory
-import com.rkbk60.quickflick.domain.KeyInfoStorage
 import com.rkbk60.quickflick.domain.KeymapController
+import com.rkbk60.quickflick.domain.ModKeyStorage
 import com.rkbk60.quickflick.model.*
 
 /**
@@ -21,7 +23,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private val keyboardController by lazy { KeyboardController(this) }
 
     private val keymap = KeymapController()
-    private val keyInfoStorage = KeyInfoStorage()
+    private val modStorage = ModKeyStorage()
     private val flickFactory = FlickFactory(10, 10, 10, 10)
 
     // current keyboard information
@@ -38,9 +40,9 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private var tapY = -1
     private var lastAction = 0
     private var onPressCode = KeyIndex.NOTHING
-    private var flick = flickFactory.makeEmptyFlick()
+    private var flick = Flick.NONE
 
-    private var editorInfo: EditorInfo? = null
+    private lateinit var editorInfo: EditorInfo
 
     @SuppressLint("InflateParams")
     override fun onCreateInputView(): View {
@@ -57,14 +59,16 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                 when (action) {
                     MotionEvent.ACTION_DOWN -> {
                         onPressCode = KeyIndex.NOTHING
-                        keyInfoStorage.resetUnlessLock()
+                        flick = Flick.NONE
                         tapX = x
                         tapY = y
                         return@Listener false
                     }
+                    MotionEvent.ACTION_MOVE -> {
+                        flick = flickFactory.makeWith(tapX, tapY, x, y)
+                        return@Listener true
+                    }
                     MotionEvent.ACTION_UP -> {
-                        isRight = !isRight
-                        setInputView(onCreateInputView())
                         return@Listener false
                     }
                 }
@@ -75,7 +79,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
-        editorInfo = info
+        editorInfo = info ?: EditorInfo()
         setInputView(onCreateInputView())
     }
 
@@ -83,20 +87,82 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         onPressCode = primaryCode
     }
 
-    override fun onRelease(primaryCode: Int) {
-    }
+    override fun onRelease(primaryCode: Int) {}
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+        val key = keymap.getKey(onPressCode, flick)
+        if (key is ModKeyInfo) {
+            modStorage.update(key, isSubMod = false)
+            return
+        }
+        if (key.mods.isNotEmpty()) {
+            key.mods.map { modStorage.update(it, isSubMod = true) }
+        }
+        sendKey(key, modStorage.toSet())
+        modStorage.resetUnlessLock()
     }
 
     private fun sendKey(key: KeyInfo, mods: Set<ModKeyInfo>) {
+        if (key === AsciiKeyInfo.ENTER && mods.isEmpty()) {
+            val editorAction = editorInfo.actionId.and(
+                    EditorInfo.IME_MASK_ACTION or EditorInfo.IME_FLAG_NO_ENTER_ACTION)
+            when (editorAction) {
+                EditorInfo.IME_ACTION_GO,
+                EditorInfo.IME_ACTION_DONE,
+                EditorInfo.IME_ACTION_NEXT,
+                EditorInfo.IME_ACTION_SEARCH,
+                EditorInfo.IME_ACTION_SEND -> {
+                    currentInputConnection?.performEditorAction(editorAction)
+                    return
+                }
+            }
+        }
+
+        if (key is AsciiKeyInfo && key is AsciiKeyInfo.Modifiable) {
+            val ic = currentInputConnection ?: return
+            val now = System.currentTimeMillis()
+            val modsList: List<Pair<ModKeyInfo, Int>> = mods.fold(listOf(), { list, mod ->
+                if (list.isEmpty()) {
+                    listOf(Pair(mod, 0))
+                } else {
+                    list.toMutableList().plus(
+                            Pair(mod, list.last().first.meta or list.last().second)
+                    ).toList()
+                }
+            })
+            val lastMeta = modsList.lastOrNull()?.let { it.first.meta or it.second } ?: 0
+            modsList.map {
+                ic.sendKeyEvent(KeyEvent(
+                        now, now, KeyEvent.ACTION_DOWN, it.first.code, 0, it.first.meta or it.second))
+            }
+            listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP).map {
+                ic.sendKeyEvent(KeyEvent(
+                        now, now, it, key.code, 0, lastMeta))
+            }
+            modsList.reversed().map {
+                ic.sendKeyEvent(KeyEvent(
+                        now, now, KeyEvent.ACTION_UP, it.first.code, 0, it.second))
+            }
+            modStorage.resetUnlessLock()
+            return
+        }
+
+        if (key is AsciiKeyInfo.CharKey && key !is AsciiKeyInfo.Modifiable) {
+            super.sendKeyChar(key.char)
+            modStorage.resetUnlessLock()
+            return
+        }
+
+        if (key === TriggerKeyInfo.KEYBOARD_LAYOUT) {
+            isRight = !isRight
+            setInputView(onCreateInputView())
+            return
+        }
     }
 
-    private fun resetTapState() {
+    private fun resetTapPoint() {
         tapX = -1
         tapY = -1
-        onPressCode = KeyIndex.NOTHING
-        flick = flickFactory.makeEmptyFlick()
     }
 
     override fun swipeLeft() {}

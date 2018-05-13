@@ -1,12 +1,14 @@
 package com.rkbk60.quickflick.model
 
+import android.view.KeyEvent
+
 /**
  * Modifier key information.
  */
 sealed class ModKeyInfo: KeyInfo() {
     /**
      * Int code equaled to KeyEvent.mCode.
-     * Use left modifier code. It equals to KeyEvent.KEYCODE_META_XXX_LEFT.
+     * Use left modifier code. It equals to KeyEvent.KEYCODE_XXX_LEFT.
      */
     abstract val code: Int
 
@@ -23,8 +25,8 @@ sealed class ModKeyInfo: KeyInfo() {
     open val lockable = false
 
     object SHIFT : ModKeyInfo() {
-        override val code = 0b1
-        override val meta = 0b10
+        override val code = KeyEvent.KEYCODE_SHIFT_LEFT
+        override val meta = KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON
     }
 
     object SHIFT_LOCK : ModKeyInfo() {
@@ -34,8 +36,8 @@ sealed class ModKeyInfo: KeyInfo() {
     }
 
     object CTRL : ModKeyInfo() {
-        override val code = 0b100
-        override val meta = 0b1000
+        override val code = KeyEvent.KEYCODE_CTRL_LEFT
+        override val meta = KeyEvent.META_CTRL_ON or KeyEvent.META_CTRL_LEFT_ON
     }
 
     object CTRL_LOCK : ModKeyInfo() {
@@ -45,8 +47,8 @@ sealed class ModKeyInfo: KeyInfo() {
     }
 
     object ALT : ModKeyInfo() {
-        override val code = 0b10000
-        override val meta = 0b100000
+        override val code = KeyEvent.KEYCODE_ALT_LEFT
+        override val meta = KeyEvent.META_ALT_ON or KeyEvent.META_ALT_LEFT_ON
     }
 
     object ALT_LOCK : ModKeyInfo() {
@@ -56,8 +58,8 @@ sealed class ModKeyInfo: KeyInfo() {
     }
 
     object META : ModKeyInfo() {
-        override val code = 0b1000000
-        override val meta = 0b10000000
+        override val code = KeyEvent.KEYCODE_META_LEFT
+        override val meta = KeyEvent.META_META_ON or KeyEvent.META_META_LEFT_ON
     }
 
     object META_LOCK : ModKeyInfo() {
