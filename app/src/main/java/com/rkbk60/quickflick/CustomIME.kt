@@ -25,22 +25,17 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private val keymap = KeymapController()
     private val modStorage = ModKeyStorage()
-
-
-    private val flickFactory by lazy {
-        with(resourceServer) {
-            return@lazy FlickFactory(thresholdX1.current, thresholdX2.current,
-                                     thresholdY1.current, thresholdY2.current)
-        }
-    }
+    private lateinit var flickFactory: FlickFactory
 
     // current keyboard information
-    private var isRight = true
+    private var isRight
+        get() = resourceServer.keyboardIsRight.current
+        set(value) { resourceServer.keyboardIsRight.current = value }
     private var isPortrait
         get()  = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
         set(_) = Unit
     private var heightLevel
-        get()  = 2
+        get()  = resourceServer.keyboardHeight.current.toInt()
         set(_) = Unit
 
     // current action information
@@ -88,6 +83,10 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         editorInfo = info ?: EditorInfo()
+        flickFactory = FlickFactory(resourceServer.thresholdX1.current,
+                                    resourceServer.thresholdX2.current,
+                                    resourceServer.thresholdY1.current,
+                                    resourceServer.thresholdY2.current)
         setInputView(onCreateInputView())
     }
 

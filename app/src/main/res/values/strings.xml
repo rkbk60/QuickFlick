@@ -9,6 +9,13 @@
     <string name="theme_lime">Lime</string>
     <string name="theme_morse">Morse</string>
 
+    <!-- Keyboard Height Level -->
+    <string name="keyboard_height_1">level_1</string>
+    <string name="keyboard_height_2">level_2</string>
+    <string name="keyboard_height_3">level_3</string>
+    <string name="keyboard_height_4">level_4</string>
+    <string name="keyboard_height_5">level_5</string>
+
     <!-- Preference key name -->
     <string name="preferences_x1">threshold_x1</string>
     <string name="preferences_x2">threshold_x2</string>
@@ -16,7 +23,7 @@
     <string name="preferences_y2">threshold_y2</string>
     <string name="preferences_cancel_flick">cancel_flick</string>
     <string name="preferences_cancel_input">cancel_input</string>
-    <string name="preferences_keys_height">keys_height</string>
+    <string name="preferences_keyboard_height">keyboard_height</string>
     <string name="preferences_theme_indicator">theme_indicator</string>
     <string name="preferences_keys_adjustment">cache_last_adjustment_is_right</string>
 

@@ -3,9 +3,7 @@ package com.rkbk60.quickflick
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.EditTextPreference
 import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 
@@ -37,7 +35,7 @@ class SettingsActivity: AppCompatActivity() {
         private lateinit var thresholdX2: PreferenceTuple
         private lateinit var thresholdY1: PreferenceTuple
         private lateinit var thresholdY2: PreferenceTuple
-        private lateinit var keysHeight: PreferenceTuple
+        private lateinit var keyboardHeight: PreferenceTuple
         private lateinit var themeIndicator: PreferenceTuple
         private lateinit var keyboardAdjustment: PreferenceTuple
 
@@ -70,7 +68,7 @@ class SettingsActivity: AppCompatActivity() {
                 thresholdX2.keyName -> thresholdX2
                 thresholdY1.keyName -> thresholdY1
                 thresholdY2.keyName -> thresholdY2
-                keysHeight.keyName -> keysHeight
+                keyboardHeight.keyName -> keyboardHeight
                 themeIndicator.keyName -> themeIndicator
                 else -> return
             }
@@ -111,9 +109,9 @@ class SettingsActivity: AppCompatActivity() {
                     resources.getInteger(R.integer.preferences_y2_default),
                     TYPE_THRESHOLD
             )
-            keysHeight = PreferenceTuple(
-                    resources.getString(R.string.preferences_keys_height),
-                    resources.getInteger(R.integer.preferences_keys_height_default),
+            keyboardHeight = PreferenceTuple(
+                    resources.getString(R.string.preferences_keyboard_height),
+                    resources.getString(R.string.keyboard_height_2),
                     TYPE_HEIGHT
             )
             themeIndicator = PreferenceTuple(
@@ -146,14 +144,14 @@ class SettingsActivity: AppCompatActivity() {
         }
 
         private fun validateKeysHeight(sharedPreferences: SharedPreferences?) {
-            val newValue = sharedPreferences?.getString(keysHeight.keyName, "") ?: return
+            val newValue = sharedPreferences?.getString(keyboardHeight.keyName, "") ?: return
             var fix = 0
             val min = 32
             val max = 48
             when {
                 (newValue.trim() == "") -> {
                     toast("Set default value.")
-                    fix = keysHeight.default.toString().toInt()
+                    fix = keyboardHeight.default.toString().toInt()
                 }
                 (newValue.toInt() < min) -> {
                     toast("Minimal key height value is ${min}dp.")
@@ -166,7 +164,7 @@ class SettingsActivity: AppCompatActivity() {
             }
             if (fix > 0) {
                 preferenceScreen.sharedPreferences.edit()
-                        .putString(keysHeight.keyName, fix.toString())
+                        .putString(keyboardHeight.keyName, fix.toString())
                         .apply()
             }
         }
@@ -186,10 +184,10 @@ class SettingsActivity: AppCompatActivity() {
 
         private fun updateKeysHeightSummary(sharedPreferences: SharedPreferences? = null) {
             val preference = sharedPreferences ?: preferenceScreen.sharedPreferences
-            if (preference.contains(keysHeight.keyName)) {
-                val default = keysHeight.default
-                val newValue = preference.getString(keysHeight.keyName, default.toString())
-                findPreference(keysHeight.keyName).summary = "${newValue}dp (Default:$default)"
+            if (preference.contains(keyboardHeight.keyName)) {
+                val default = keyboardHeight.default
+                val newValue = preference.getString(keyboardHeight.keyName, default.toString())
+                findPreference(keyboardHeight.keyName).summary = "${newValue}dp (Default:$default)"
             }
         }
 
