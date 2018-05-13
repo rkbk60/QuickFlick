@@ -32,12 +32,6 @@ class Adjustment:
     def __init__(self, is_right: bool) -> None:
         self.name = "right" if is_right else "left"
         self.id = self.name[0:1]
-        if is_right:
-            self.width_left = "17%p"
-            self.width_right = "0dp"
-        else:
-            self.width_left = "0dp"
-            self.width_right = "17%p"
         self.info = "for " + self.name + " hand"
 
 
@@ -73,7 +67,8 @@ if not os.path.exists(output_dir):
 os.chdir(current_dir)
 
 for (hei, ori, adj) in orders:
-    template = io.open("%s/template/keyboard.xml" % current_dir)
+    template = io.open(
+        "%s/template/keyboard_%s_hand.xml" % (current_dir, adj.name))
     newtext = ""
     for newline in template:
         newline = newline.replace("$KEY_HEIGHT_INFO", hei.info)
@@ -81,8 +76,6 @@ for (hei, ori, adj) in orders:
         newline = newline.replace("$ORIENTATION_INFO", ori.info)
         newline = newline.replace("$FOOTER_HEIGHT_DP", ori.value)
         newline = newline.replace("$ADJUSTMENT_INFO", adj.info)
-        newline = newline.replace("$KEY_WIDTH_LEFT", adj.width_left)
-        newline = newline.replace("$KEY_WIDTH_RIGHT", adj.width_right)
         newtext += newline
     template.close()
     filename = "keyboard_%s_%s_%s.xml" % (adj.id, ori.id, hei.id)

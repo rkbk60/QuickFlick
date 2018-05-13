@@ -40,10 +40,7 @@
             android:keyIcon="@drawable/keyicon_space"/>
         <Key
             android:codes="6"
-            android:keyIcon="@drawable/keyicon_tabenter"/>
-        <Key android:codes="7"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
+            android:keyIcon="@drawable/keyicon_tabenter"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
@@ -66,10 +63,7 @@
         <Key
             android:codes="13"
             android:keyIcon="@drawable/keyicon_delete"
-            android:isRepeatable="true"/>
-        <Key android:codes="14"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
+            android:isRepeatable="true"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
@@ -92,10 +86,7 @@
         <Key
             android:codes="20"
             android:keyIcon="@drawable/keyicon_backspace"
-            android:isRepeatable="true"/>
-        <Key android:codes="21"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
+            android:isRepeatable="true"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
@@ -117,10 +108,7 @@
             android:keyIcon="@drawable/keyicon_9"/>
         <Key
             android:codes="27"
-            android:keyIcon="@drawable/keyicon_brackets_right"/>
-        <Key android:codes="28"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
+            android:keyIcon="@drawable/keyicon_brackets_right"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row

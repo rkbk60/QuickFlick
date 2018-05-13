@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- NOTE:
-    - this file is made automaticaly by (project-root)/tools/layout.py:
-        adjustment  -> $ADJUSTMENT_INFO
+    - this file is made automatically by (project-root)/tools/layout.py:
+        adjustment  -> for right hand
         key height  -> $KEY_HEIGHT_INFO
         orientation -> $ORIENTATION_INFO
     - actual keymap is defined in KeymapController.kt
@@ -23,7 +23,7 @@
 
     <Row>
         <Key android:codes="1"
-            android:keyWidth="$KEY_WIDTH_LEFT"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f1_3"
             android:keyEdgeFlags="left"/>
         <Key
@@ -40,15 +40,12 @@
             android:keyIcon="@drawable/keyicon_space"/>
         <Key
             android:codes="6"
-            android:keyIcon="@drawable/keyicon_tabenter"/>
-        <Key android:codes="7"
-            android:keyWidth="$KEY_WIDTH_RIGHT"
-            android:keyIcon="@drawable/keyicon_f1_3"
+            android:keyIcon="@drawable/keyicon_tabenter"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
         <Key android:codes="8"
-            android:keyWidth="$KEY_WIDTH_LEFT"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f4_6"
             android:keyEdgeFlags="left"/>
         <Key
@@ -66,15 +63,12 @@
         <Key
             android:codes="13"
             android:keyIcon="@drawable/keyicon_delete"
-            android:isRepeatable="true"/>
-        <Key android:codes="14"
-            android:keyWidth="$KEY_WIDTH_RIGHT"
-            android:keyIcon="@drawable/keyicon_f4_6"
+            android:isRepeatable="true"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
         <Key android:codes="15"
-            android:keyWidth="$KEY_WIDTH_LEFT"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f7_9"
             android:keyEdgeFlags="left"/>
         <Key
@@ -92,15 +86,12 @@
         <Key
             android:codes="20"
             android:keyIcon="@drawable/keyicon_backspace"
-            android:isRepeatable="true"/>
-        <Key android:codes="21"
-            android:keyWidth="$KEY_WIDTH_RIGHT"
-            android:keyIcon="@drawable/keyicon_f7_9"
+            android:isRepeatable="true"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
         <Key android:codes="22"
-            android:keyWidth="$KEY_WIDTH_LEFT"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_fa_c"
             android:keyEdgeFlags="left"/>
         <Key
@@ -117,10 +108,7 @@
             android:keyIcon="@drawable/keyicon_9"/>
         <Key
             android:codes="27"
-            android:keyIcon="@drawable/keyicon_brackets_right"/>
-        <Key android:codes="28"
-            android:keyWidth="$KEY_WIDTH_RIGHT"
-            android:keyIcon="@drawable/keyicon_fa_c"
+            android:keyIcon="@drawable/keyicon_brackets_right"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row

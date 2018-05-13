@@ -22,13 +22,10 @@
     </Row>
 
     <Row>
-        <Key android:codes="1"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="2"
-            android:keyIcon="@drawable/keyicon_escape"/>
+            android:keyIcon="@drawable/keyicon_escape"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="3"
             android:keyIcon="@drawable/keyicon_arrow_mode1"/>
@@ -47,13 +44,10 @@
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="8"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="9"
-            android:keyIcon="@drawable/keyicon_meta_alt_off_off"/>
+            android:keyIcon="@drawable/keyicon_meta_alt_off_off"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="10"
             android:keyIcon="@drawable/keyicon_1"/>
@@ -73,13 +67,10 @@
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="15"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="16"
-            android:keyIcon="@drawable/keyicon_ctrl_alt_off_off"/>
+            android:keyIcon="@drawable/keyicon_ctrl_alt_off_off"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="17"
             android:keyIcon="@drawable/keyicon_4"/>
@@ -99,13 +90,10 @@
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="22"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/empty"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="23"
-            android:keyIcon="@drawable/keyicon_brackets_left"/>
+            android:keyIcon="@drawable/keyicon_brackets_left"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="24"
             android:keyIcon="@drawable/keyicon_7"/>

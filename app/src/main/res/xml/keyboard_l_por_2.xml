@@ -22,13 +22,10 @@
     </Row>
 
     <Row>
-        <Key android:codes="1"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/keyicon_f1_3"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="2"
-            android:keyIcon="@drawable/keyicon_escape"/>
+            android:keyIcon="@drawable/keyicon_escape"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="3"
             android:keyIcon="@drawable/keyicon_arrow_mode1"/>
@@ -42,18 +39,15 @@
             android:codes="6"
             android:keyIcon="@drawable/keyicon_tabenter"/>
         <Key android:codes="7"
-            android:keyWidth="17%p"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f1_3"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="8"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/keyicon_f4_6"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="9"
-            android:keyIcon="@drawable/keyicon_meta_alt_off_off"/>
+            android:keyIcon="@drawable/keyicon_meta_alt_off_off"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="10"
             android:keyIcon="@drawable/keyicon_1"/>
@@ -68,18 +62,15 @@
             android:keyIcon="@drawable/keyicon_delete"
             android:isRepeatable="true"/>
         <Key android:codes="14"
-            android:keyWidth="17%p"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f4_6"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="15"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/keyicon_f7_9"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="16"
-            android:keyIcon="@drawable/keyicon_ctrl_alt_off_off"/>
+            android:keyIcon="@drawable/keyicon_ctrl_alt_off_off"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="17"
             android:keyIcon="@drawable/keyicon_4"/>
@@ -94,18 +85,15 @@
             android:keyIcon="@drawable/keyicon_backspace"
             android:isRepeatable="true"/>
         <Key android:codes="21"
-            android:keyWidth="17%p"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f7_9"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="22"
-            android:keyWidth="0dp"
-            android:keyIcon="@drawable/keyicon_fa_c"
-            android:keyEdgeFlags="left"/>
         <Key
             android:codes="23"
-            android:keyIcon="@drawable/keyicon_brackets_left"/>
+            android:keyIcon="@drawable/keyicon_brackets_left"
+            android:keyEdgeFlags="left"/>
         <Key
             android:codes="24"
             android:keyIcon="@drawable/keyicon_7"/>
@@ -119,7 +107,7 @@
             android:codes="27"
             android:keyIcon="@drawable/keyicon_brackets_right"/>
         <Key android:codes="28"
-            android:keyWidth="17%p"
+            android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_fa_c"
             android:keyEdgeFlags="right"/>
     </Row>
