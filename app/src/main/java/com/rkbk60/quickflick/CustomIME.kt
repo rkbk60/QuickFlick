@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.KeyboardView
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import com.rkbk60.quickflick.domain.FlickFactory
-import com.rkbk60.quickflick.domain.IndicatorFactory
 import com.rkbk60.quickflick.domain.KeyInfoStorage
 import com.rkbk60.quickflick.domain.KeymapController
 import com.rkbk60.quickflick.model.*
@@ -48,7 +46,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onCreateInputView(): View {
         keyboardView = layoutInflater.inflate(R.layout.keyboardview, null) as CustomKeyboardView
         return keyboardView.apply {
-            keyboard = keyboardController.inflateKeyboard(isRight, isPortrait, heightLevel)
+            setKeyboardWith(keyboardController, isRight, isPortrait, heightLevel)
             isPreviewEnabled = false
             setOnKeyboardActionListener(this@CustomIME)
             setOnTouchListener Listener@ { _, event ->
