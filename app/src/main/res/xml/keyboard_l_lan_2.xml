@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NOTE:
+    - this file is made automatically by (project-root)/tools/layout.py:
+        adjustment  -> for left hand
+        key height  -> @dimen/key_height_semi_small (Lv.2)
+        orientation -> for landscape (footer:16dp)
+    - actual keymap is defined in KeymapController.kt
+-->
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="17%p"
+    android:horizontalGap="0dp"
+    android:verticalGap="0dp"
+    android:keyHeight="@dimen/key_height_semi_small"
+    android:isRepeatable="false">
+
+    <Row android:keyHeight="5dp"/>
+    <Row android:keyHeight="2dp">
+        <!-- Flick Indicator -->
+        <Key
+            android:codes="@integer/number_indicator"
+            android:keyWidth="100%p"/>
+    </Row>
+
+    <Row>
+        <Key android:codes="1"
+            android:keyWidth="0dp"
+            android:keyIcon="@drawable/keyicon_f1_3"
+            android:keyEdgeFlags="left"/>
+        <Key
+            android:codes="2"
+            android:keyIcon="@drawable/keyicon_escape"/>
+        <Key
+            android:codes="3"
+            android:keyIcon="@drawable/keyicon_arrow_mode1"/>
+        <Key
+            android:codes="4"
+            android:keyIcon="@drawable/keyicon_0"/>
+        <Key
+            android:codes="5"
+            android:keyIcon="@drawable/keyicon_space"/>
+        <Key
+            android:codes="6"
+            android:keyIcon="@drawable/keyicon_tabenter"/>
+        <Key android:codes="7"
+            android:keyWidth="17%p"
+            android:keyIcon="@drawable/keyicon_f1_3"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="8"
+            android:keyWidth="0dp"
+            android:keyIcon="@drawable/keyicon_f4_6"
+            android:keyEdgeFlags="left"/>
+        <Key
+            android:codes="9"
+            android:keyIcon="@drawable/keyicon_meta_alt_off_off"/>
+        <Key
+            android:codes="10"
+            android:keyIcon="@drawable/keyicon_1"/>
+        <Key
+            android:codes="11"
+            android:keyIcon="@drawable/keyicon_2"/>
+        <Key
+            android:codes="12"
+            android:keyIcon="@drawable/keyicon_3"/>
+        <Key
+            android:codes="13"
+            android:keyIcon="@drawable/keyicon_delete"
+            android:isRepeatable="true"/>
+        <Key android:codes="14"
+            android:keyWidth="17%p"
+            android:keyIcon="@drawable/keyicon_f4_6"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="15"
+            android:keyWidth="0dp"
+            android:keyIcon="@drawable/keyicon_f7_9"
+            android:keyEdgeFlags="left"/>
+        <Key
+            android:codes="16"
+            android:keyIcon="@drawable/keyicon_ctrl_alt_off_off"/>
+        <Key
+            android:codes="17"
+            android:keyIcon="@drawable/keyicon_4"/>
+        <Key
+            android:codes="18"
+            android:keyIcon="@drawable/keyicon_5"/>
+        <Key
+            android:codes="19"
+            android:keyIcon="@drawable/keyicon_6"/>
+        <Key
+            android:codes="20"
+            android:keyIcon="@drawable/keyicon_backspace"
+            android:isRepeatable="true"/>
+        <Key android:codes="21"
+            android:keyWidth="17%p"
+            android:keyIcon="@drawable/keyicon_f7_9"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="22"
+            android:keyWidth="0dp"
+            android:keyIcon="@drawable/keyicon_fa_c"
+            android:keyEdgeFlags="left"/>
+        <Key
+            android:codes="23"
+            android:keyIcon="@drawable/keyicon_brackets_left"/>
+        <Key
+            android:codes="24"
+            android:keyIcon="@drawable/keyicon_7"/>
+        <Key
+            android:codes="25"
+            android:keyIcon="@drawable/keyicon_8"/>
+        <Key
+            android:codes="26"
+            android:keyIcon="@drawable/keyicon_9"/>
+        <Key
+            android:codes="27"
+            android:keyIcon="@drawable/keyicon_brackets_right"/>
+        <Key android:codes="28"
+            android:keyWidth="17%p"
+            android:keyIcon="@drawable/keyicon_fa_c"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row
+        android:rowEdgeFlags="bottom"
+        android:keyHeight="16dp"/>
+
+</Keyboard>
