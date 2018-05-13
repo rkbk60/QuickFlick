@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.KeyboardView
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -22,9 +21,18 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private lateinit var keyboardView: CustomKeyboardView
     private val keyboardController by lazy { KeyboardController(this) }
 
+    private val resourceServer by lazy { ResourceServer(this) }
+
     private val keymap = KeymapController()
     private val modStorage = ModKeyStorage()
-    private val flickFactory = FlickFactory(10, 10, 10, 10)
+
+
+    private val flickFactory by lazy {
+        with(resourceServer) {
+            return@lazy FlickFactory(thresholdX1.current, thresholdX2.current,
+                                     thresholdY1.current, thresholdY2.current)
+        }
+    }
 
     // current keyboard information
     private var isRight = true
