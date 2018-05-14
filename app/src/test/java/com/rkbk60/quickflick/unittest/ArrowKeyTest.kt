@@ -48,7 +48,7 @@ class ArrowKeyTest {
             startInput(AR, setOf())
             Thread.sleep(1500L)
             stopInput()
-        } shouldBe 1
+        } shouldBe 0
     }
 
     @Test fun `test to input on toggle mode twice`() {

@@ -551,19 +551,21 @@ sealed class AsciiKeyInfo : KeyInfo() {
         override val code = KeyEvent.KEYCODE_DEL
     }
 
-    object LEFT : UnCharKey() {
+    abstract class DirectionKey : UnCharKey()
+
+    object LEFT : DirectionKey() {
         override val code = KeyEvent.KEYCODE_DPAD_LEFT
     }
 
-    object RIGHT : UnCharKey() {
+    object RIGHT : DirectionKey() {
         override val code = KeyEvent.KEYCODE_DPAD_RIGHT
     }
 
-    object UP : UnCharKey() {
+    object UP : DirectionKey() {
         override val code = KeyEvent.KEYCODE_DPAD_UP
     }
 
-    object DOWN : UnCharKey() {
+    object DOWN : DirectionKey() {
         override val code = KeyEvent.KEYCODE_DPAD_DOWN
     }
 
