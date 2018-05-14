@@ -132,8 +132,9 @@ class KeyboardController(private val context: Context) {
     }
 
     private fun toCode(key: ModKeyInfo, mods: Set<ModKeyInfo>): Int {
-        val mod = mods.find { it.code == key.code } ?: return 0
-        return if (mod.lockable) 2 else 1
+        val list = mods.filter { it.code == key.code }
+        return if (list.isEmpty()) 0
+               else (if (list.any { it.lockable }) 2 else 1)
     }
 
 }

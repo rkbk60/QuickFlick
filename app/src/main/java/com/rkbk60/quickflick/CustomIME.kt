@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.KeyboardView
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -74,7 +73,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         when {
                             multiTapManager.canCancelInput() -> {
                                 arrowKey.stopInput()
-                                resetTapPoint()
+                                tapX = -1
+                                tapY = -1
                                 canInput = false
                                 onPressCode = KeyIndex.NOTHING
                                 flick = Flick.NONE
@@ -149,7 +149,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onRelease(primaryCode: Int) {
         arrowKey.stopInput()
-        resetTapPoint()
+        tapX = -1
+        tapY = -1
         onPressCode = KeyIndex.NOTHING
         canInput = true
         flick = Flick.NONE
@@ -163,13 +164,14 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         val key = keymap.getKey(onPressCode, flick)
         if (key is ModKeyInfo) {
             modStorage.update(key, isSubMod = false)
+            keyboardController.updateModKeyFace(modStorage.toSet())
+            keyboardView.invalidateAllKeys()
             return
         }
         if (key.mods.isNotEmpty()) {
             key.mods.map { modStorage.update(it, isSubMod = true) }
         }
         sendKey(key, modStorage.toSet())
-        modStorage.resetUnlessLock()
     }
 
     private fun sendKey(key: KeyInfo, mods: Set<ModKeyInfo>) {
@@ -199,12 +201,16 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             val ic = currentInputConnection ?: return
             sendModifiableKeys(ic, KeyEventOrder(key, mods))
             modStorage.resetUnlessLock()
+            keyboardController.updateModKeyFace(modStorage.toSet())
+            keyboardView.invalidateAllKeys()
             return
         }
 
         if (key is AsciiKeyInfo.CharKey && key !is AsciiKeyInfo.Modifiable) {
             super.sendKeyChar(key.char)
             modStorage.resetUnlessLock()
+            keyboardController.updateModKeyFace(modStorage.toSet())
+            keyboardView.invalidateAllKeys()
             return
         }
 
@@ -243,11 +249,6 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             indicator = indicatorFactory.makeIndicator()
             invalidateKey(KeyIndex.INDICATOR)
         }
-    }
-
-    private fun resetTapPoint() {
-        tapX = -1
-        tapY = -1
     }
 
     override fun swipeLeft() {}
