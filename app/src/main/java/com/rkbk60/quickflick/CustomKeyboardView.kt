@@ -19,7 +19,7 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
     private var isLayoutForRightHand = false
 
     init {
-        val borderColor = ContextCompat.getColor(context, R.color.backgroundIndicator)
+        val borderColor = ContextCompat.getColor(context, R.color.separator)
         borderLeft.paint.color = borderColor
         borderRight.paint.color = borderColor
     }

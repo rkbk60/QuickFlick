@@ -9,6 +9,7 @@ class IndicatorFactory(var backgrounds: BackgroundDrawables) {
      */
     class BackgroundDrawables(
             val default: BitmapDrawable,
+            val onTap:   BitmapDrawable,
             val onLeft:  BitmapDrawable,
             val onRight: BitmapDrawable,
             val onUp:    BitmapDrawable,
@@ -17,78 +18,62 @@ class IndicatorFactory(var backgrounds: BackgroundDrawables) {
     /**
      * Size of indicator.
      */
-    private val size = object {
-        var left   = 0
-        var right  = 0
-        var top    = 0
-        var bottom = 0
-
-        /**
-         * Sets indicator size.
-         * This function arguments matches Drawable.setBounds().
-         */
-        fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
-            this.left   = left
-            this.right  = right
-            this.top    = top
-            this.bottom = bottom
-        }
-    }
+    var left   = 0
+    var right  = 0
+    var top    = 0
+    var bottom = 0
 
     /**
      * Flag whether or not show indicator.
      */
     var enable = true
-        set(value) {
-            field = value
-            if (!value) {
-                direction = Flick.Direction.NONE
-                currentDistance = 0
-                maxDistance = 0
-            }
-        }
+
+    /**
+     * Flag of whether or not to press any key.
+     */
+    var isDuringInput = false
 
     /**
      * Current flick direction.
      */
     var direction = Flick.Direction.NONE
-        set(value) {
-            if (enable) field = value
-        }
 
     /**
      * Current flick distance.
      */
     var currentDistance = 0
-        set(value) {
-            if (enable && value >= 0 && direction != Flick.Direction.NONE) field = value
-        }
 
     /**
      * Max of flick distance in tapping key/direction.
      */
     var maxDistance = 0
-        set(value) {
-            if (enable && value >= 0 && direction != Flick.Direction.NONE) field = value
-        }
 
     /**
      * Generates BitmapDrawable showing current flick state.
      */
     fun makeIndicator(): BitmapDrawable {
         return with(backgrounds) {
-            when (direction) {
-                Flick.Direction.NONE  -> default
-                Flick.Direction.LEFT  -> onLeft
-                Flick.Direction.RIGHT -> onRight
-                Flick.Direction.UP    -> onUp
-                Flick.Direction.DOWN  -> onDown
+            if (!isDuringInput) {
+                default
+            } else if (maxDistance <= 0) {
+                onTap
+            } else {
+                when (direction) {
+                    Flick.Direction.NONE  -> onTap
+                    Flick.Direction.LEFT  -> onLeft
+                    Flick.Direction.RIGHT -> onRight
+                    Flick.Direction.UP    -> onUp
+                    Flick.Direction.DOWN  -> onDown
+                }
             }
         }.apply {
-            setBounds(size.left, size.top, size.right, size.bottom)
+            setBounds(left, top, right, bottom)
             alpha = when {
                 !enable -> 0
+                !isDuringInput -> 255
                 direction == Flick.Direction.NONE -> 255
+                maxDistance <= 0 -> 255
+                currentDistance >= maxDistance -> 255
                 else -> 255 * currentDistance / maxDistance
             }
         }
