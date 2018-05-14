@@ -191,5 +191,5 @@ class ResourceServer(private val context: Context) {
             ContextCompat.getColor(context, id)
 
     private fun bitmapResourceOf(@DrawableRes id: Int): BitmapDrawable =
-            ContextCompat.getDrawable(context, id)/*.mutate()*/ as BitmapDrawable
+            ContextCompat.getDrawable(context, id)?.mutate() as BitmapDrawable
 }
