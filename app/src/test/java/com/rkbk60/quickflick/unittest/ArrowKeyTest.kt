@@ -73,7 +73,7 @@ class ArrowKeyTest {
 
     private fun counterObject(applyInThread: ArrowKey.() -> Unit): Int {
         var c = 0
-        val a = ArrowKey { _, _ -> c++ }
+        val a = ArrowKey { _ -> c++ }
         try {
             a.apply(applyInThread)
         } catch (e: java.lang.Exception) {

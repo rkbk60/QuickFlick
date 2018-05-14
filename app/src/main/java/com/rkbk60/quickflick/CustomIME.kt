@@ -4,10 +4,11 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.KeyboardView
-import android.view.KeyEvent
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
 import com.rkbk60.quickflick.domain.*
 import com.rkbk60.quickflick.model.*
 
@@ -25,6 +26,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private val modStorage = ModKeyStorage()
     private lateinit var flickFactory: FlickFactory
     private lateinit var multiTapManager: MultiTapManager
+    private lateinit var arrowKey: ArrowKey
 
     // current keyboard information
     private var isRight
@@ -71,12 +73,14 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         multiTapManager.addTapCount()
                         when {
                             multiTapManager.canCancelInput() -> {
+                                arrowKey.stopInput()
                                 resetTapPoint()
                                 canInput = false
                                 onPressCode = KeyIndex.NOTHING
                                 flick = Flick.NONE
                             }
                             multiTapManager.canCancelFlick() -> {
+                                arrowKey.stopInput()
                                 tapX = x
                                 tapY = y
                                 flick = Flick.NONE
@@ -87,10 +91,26 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     }
                     MotionEvent.ACTION_MOVE -> {
                         flick = flickFactory.makeWith(tapX, tapY, x, y)
+                        if (onPressCode == KeyIndex.INDEX_ARROW && arrowKey.mode == ArrowKey.Mode.DEFAULT) {
+                            if (flick == Flick.NONE) {
+                                arrowKey.stopInput()
+                            } else {
+                                val key = keymap.getKey(KeyIndex.INDEX_ARROW, flick)
+                                if (key is AsciiKeyInfo.DirectionKey) {
+                                    if (arrowKey.isStandby) {
+                                        arrowKey.changeKeyInfo(key)
+                                    } else {
+                                        arrowKey.startInput(key, modStorage.toSet())
+                                    }
+                                }
+                            }
+
+                        }
                         indicateFlickState()
                         return@Listener true
                     }
                     MotionEvent.ACTION_UP -> {
+                        arrowKey.stopInput()
                         indicateFlickState()
                         multiTapManager.resetTapCount()
                         return@Listener false
@@ -113,6 +133,12 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         indicatorFactory = IndicatorFactory(resourceServer.supplyIndicatorBackground())
         setInputView(onCreateInputView())
         indicateFlickState()
+        arrowKey = ArrowKey { order ->
+            val ic = currentInputConnection ?: return@ArrowKey
+            if (order.mainKey is AsciiKeyInfo.DirectionKey) {
+                sendModifiableKeys(ic, order)
+            }
+        }
     }
 
     override fun onPress(primaryCode: Int) {
@@ -122,6 +148,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     }
 
     override fun onRelease(primaryCode: Int) {
+        arrowKey.stopInput()
         resetTapPoint()
         onPressCode = KeyIndex.NOTHING
         canInput = true
@@ -161,31 +188,16 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             }
         }
 
+        if (key is AsciiKeyInfo.DirectionKey) {
+            if (arrowKey.isStandby && lastAction == MotionEvent.ACTION_UP) {
+                arrowKey.stopInput()
+                return
+            }
+        }
+
         if (key is AsciiKeyInfo && key is AsciiKeyInfo.Modifiable) {
             val ic = currentInputConnection ?: return
-            val now = System.currentTimeMillis()
-            val modsList: List<Pair<ModKeyInfo, Int>> = mods.fold(listOf(), { list, mod ->
-                if (list.isEmpty()) {
-                    listOf(Pair(mod, 0))
-                } else {
-                    list.toMutableList().plus(
-                            Pair(mod, list.last().first.meta or list.last().second)
-                    ).toList()
-                }
-            })
-            val lastMeta = modsList.lastOrNull()?.let { it.first.meta or it.second } ?: 0
-            modsList.map {
-                ic.sendKeyEvent(KeyEvent(
-                        now, now, KeyEvent.ACTION_DOWN, it.first.code, 0, it.first.meta or it.second))
-            }
-            listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP).map {
-                ic.sendKeyEvent(KeyEvent(
-                        now, now, it, key.code, 0, lastMeta))
-            }
-            modsList.reversed().map {
-                ic.sendKeyEvent(KeyEvent(
-                        now, now, KeyEvent.ACTION_UP, it.first.code, 0, it.second))
-            }
+            sendModifiableKeys(ic, KeyEventOrder(key, mods))
             modStorage.resetUnlessLock()
             return
         }
@@ -196,11 +208,22 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             return
         }
 
+        if (key === TriggerKeyInfo.ARROWKEY_MODE) {
+            arrowKey.toggleMode()
+            keymap.updateArrowKeymap(arrowKey.mode)
+            keyboardController.updateArrowKeyFace(arrowKey.mode)
+        }
+
         if (key === TriggerKeyInfo.KEYBOARD_LAYOUT) {
             isRight = !isRight
             setInputView(onCreateInputView())
             return
         }
+    }
+
+    private fun sendModifiableKeys(ic: InputConnection, order: KeyEventOrder) {
+        val time = System.currentTimeMillis()
+        order.toKeyEventList(time).map { ic.sendKeyEvent(it) }
     }
 
     private fun indicateFlickState() {
