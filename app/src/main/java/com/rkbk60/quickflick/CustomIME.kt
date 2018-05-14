@@ -8,10 +8,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import com.rkbk60.quickflick.domain.FlickFactory
-import com.rkbk60.quickflick.domain.IndicatorFactory
-import com.rkbk60.quickflick.domain.KeymapController
-import com.rkbk60.quickflick.domain.ModKeyStorage
+import com.rkbk60.quickflick.domain.*
 import com.rkbk60.quickflick.model.*
 
 /**
@@ -27,6 +24,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private val keymap = KeymapController()
     private val modStorage = ModKeyStorage()
     private lateinit var flickFactory: FlickFactory
+    private lateinit var multiTapManager: MultiTapManager
 
     // current keyboard information
     private var isRight
@@ -45,6 +43,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private var lastAction = MotionEvent.ACTION_UP
     private var onPressCode = KeyIndex.NOTHING
     private var flick = Flick.NONE
+    private var canInput = true
 
     private lateinit var indicatorFactory: IndicatorFactory
 
@@ -68,6 +67,24 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                         tapY = y
                         return@Listener false
                     }
+                    MotionEvent.ACTION_POINTER_DOWN -> {
+                        multiTapManager.addTapCount()
+                        when {
+                            multiTapManager.canCancelInput() -> {
+                                resetTapPoint()
+                                canInput = false
+                                onPressCode = KeyIndex.NOTHING
+                                flick = Flick.NONE
+                            }
+                            multiTapManager.canCancelFlick() -> {
+                                tapX = x
+                                tapY = y
+                                flick = Flick.NONE
+                            }
+                        }
+                        indicateFlickState()
+                        return@Listener true
+                    }
                     MotionEvent.ACTION_MOVE -> {
                         flick = flickFactory.makeWith(tapX, tapY, x, y)
                         indicateFlickState()
@@ -75,6 +92,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     }
                     MotionEvent.ACTION_UP -> {
                         indicateFlickState()
+                        multiTapManager.resetTapCount()
                         return@Listener false
                     }
                 }
@@ -90,6 +108,8 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                                     resourceServer.thresholdX2.current,
                                     resourceServer.thresholdY1.current,
                                     resourceServer.thresholdY2.current)
+        multiTapManager = MultiTapManager(resourceServer.canCancelFlick.current,
+                                          resourceServer.canCancelInput.current)
         indicatorFactory = IndicatorFactory(resourceServer.supplyIndicatorBackground())
         setInputView(onCreateInputView())
         indicateFlickState()
@@ -97,17 +117,22 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     override fun onPress(primaryCode: Int) {
         onPressCode = primaryCode
+        canInput = KeyIndex.isValid(primaryCode)
         indicateFlickState()
     }
 
     override fun onRelease(primaryCode: Int) {
         resetTapPoint()
         onPressCode = KeyIndex.NOTHING
+        canInput = true
         flick = Flick.NONE
         indicateFlickState()
     }
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+        if (!canInput) {
+            return
+        }
         val key = keymap.getKey(onPressCode, flick)
         if (key is ModKeyInfo) {
             modStorage.update(key, isSubMod = false)
@@ -180,16 +205,16 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private fun indicateFlickState() {
         val key = keyboardView.keyboard.keys.first { it.codes[0] == KeyIndex.INDICATOR } ?: return
-        indicatorFactory.apply {
-            enable = true
-            isDuringInput = lastAction != MotionEvent.ACTION_UP
-            left = key.x
-            right = key.x + key.width
-            top = key.y
-            bottom = key.y + key.height
-            direction = flick.direction
-            currentDistance = flick.distance
-            maxDistance = keymap.getMaxDistance(onPressCode, flick.direction)
+        indicatorFactory.also {
+            it.enable = canInput
+            it.isDuringInput = lastAction != MotionEvent.ACTION_UP
+            it.left = key.x
+            it.right = key.x + key.width
+            it.top = key.y
+            it.bottom = key.y + key.height
+            it.direction = flick.direction
+            it.currentDistance = flick.distance
+            it.maxDistance = keymap.getMaxDistance(onPressCode, flick.direction)
         }
         keyboardView.apply {
             indicator = indicatorFactory.makeIndicator()

@@ -13,7 +13,8 @@ class IndicatorFactory(var backgrounds: BackgroundDrawables) {
             val onLeft:  BitmapDrawable,
             val onRight: BitmapDrawable,
             val onUp:    BitmapDrawable,
-            val onDown:  BitmapDrawable)
+            val onDown:  BitmapDrawable,
+            val disable: BitmapDrawable)
 
     /**
      * Size of indicator.
@@ -53,7 +54,9 @@ class IndicatorFactory(var backgrounds: BackgroundDrawables) {
      */
     fun makeIndicator(): BitmapDrawable {
         return with(backgrounds) {
-            if (!isDuringInput) {
+            if (!enable) {
+                disable
+            } else if (!isDuringInput) {
                 default
             } else if (maxDistance <= 0) {
                 onTap
@@ -69,7 +72,7 @@ class IndicatorFactory(var backgrounds: BackgroundDrawables) {
         }.apply {
             setBounds(left, top, right, bottom)
             alpha = when {
-                !enable -> 0
+                !enable -> 255
                 !isDuringInput -> 255
                 direction == Flick.Direction.NONE -> 255
                 maxDistance <= 0 -> 255
