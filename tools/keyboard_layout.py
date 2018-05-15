@@ -21,10 +21,10 @@ class Height:
 
 
 class Orientation:
-    def __init__(self, name: str, value: int) -> None:
+    def __init__(self, name: str, value: str) -> None:
         self.name = name
         self.id = name[0:3].lower()
-        self.value = "%ddp" % value
+        self.value = value
         self.info = "for %s (footer:%s)" % (name, self.value)
 
 
@@ -44,8 +44,8 @@ heights = [
 ]
 
 orientations = [
-    Orientation("portrait", 8),
-    Orientation("landscape", 16)
+    Orientation("portrait", "8dp"),
+    Orientation("landscape", "0.12in")
 ]
 
 adjustments = [
@@ -55,7 +55,7 @@ adjustments = [
 
 
 if DEBUG_MODE:
-    orders = [(Height("td", 0), Orientation("to", 10), Adjustment(True))]
+    orders = [(Height("td", 0), Orientation("to", "10dp"), Adjustment(True))]
 else:
     orders = list(itertools.product(heights, orientations, adjustments))
 
