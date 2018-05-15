@@ -6,6 +6,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.preference.PreferenceManager
 import android.support.annotation.*
 import android.support.v4.content.ContextCompat
+import android.util.Log
+import android.widget.Toast
 
 /**
  * Class that defines functions/classes using in ResourceServer.
@@ -32,6 +34,10 @@ abstract class ResourceServerBase(protected val context: Context) {
             set(value) { setT(value).commit() }
 
         override fun toString(): String = "$key: $current(default: $default)"
+
+        protected fun toast(s: String) {
+            Toast.makeText(context, s, Toast.LENGTH_LONG).show()
+        }
     }
 
     /**
@@ -40,8 +46,18 @@ abstract class ResourceServerBase(protected val context: Context) {
      * @param default default value
      */
     inner class PreferenceIntText(@StringRes keyId: Int, default: Int) : PreferenceData<Int>(keyId, default) {
-        override val getT = { preference.getString(key, default.toString()).toInt() }
+        override val getT = getter@ {
+            try {
+                return@getter preference.getString(key, default.toString()).toInt()
+            } catch (e: java.lang.Exception) {
+                return@getter default
+            }
+        }
         override val setT = { value: Int -> editor.putString(key, value.toString()) }
+
+        fun getCurrentAsString(): String {
+            return preference.getString(key, default.toString())
+        }
     }
 
     /**

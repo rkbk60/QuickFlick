@@ -3,6 +3,7 @@ package com.rkbk60.quickflick
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.EditTextPreference
 import android.preference.PreferenceFragment
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
@@ -22,10 +23,10 @@ class SettingsActivity: AppCompatActivity() {
     class SettingsFragment:
             PreferenceFragment(),
             SharedPreferences.OnSharedPreferenceChangeListener {
-        private val localContext by lazy { activity.applicationContext }
-        private val rServer by lazy { ResourceServer(localContext) }
+        private lateinit var rServer: ResourceServer
 
         override fun onCreate(savedInstanceState: Bundle?) {
+            rServer = ResourceServer(activity.applicationContext)
             super.onCreate(savedInstanceState)
 //            PreferenceManager.getDefaultSharedPreferences(context)?.edit()?.clear()?.commit() // for debug
             addPreferencesFromResource(R.xml.preferences)
@@ -76,14 +77,18 @@ class SettingsActivity: AppCompatActivity() {
         }
 
         private fun validateThreshold(target: ResourceServerBase.PreferenceIntText) {
-            val newValue = target.current
-            val minimal  = 10
-            if (newValue.toString().trim() == "") {
+            try {
+                val newValue = target.getCurrentAsString().toInt()
+                val minimal  = 10
+                if (newValue < minimal) {
+                    toast("Minimal value is $minimal thou.")
+                    target.also { it.current = minimal }
+                    (findPreference(target.key) as? EditTextPreference)?.text = minimal.toString()
+                }
+            } catch (_: java.lang.Exception) {
                 toast("Set default value.")
-                rServer.thresholdX1.apply { current = default }
-            } else if (newValue < minimal) {
-                toast("Minimal target is $minimal thou.")
-                rServer.thresholdX1.apply { current = minimal }
+                target.also { it.current = it.default }
+                (findPreference(target.key) as? EditTextPreference)?.text = target.default.toString()
             }
         }
 
@@ -111,7 +116,7 @@ class SettingsActivity: AppCompatActivity() {
         }
 
         private fun toast(s: String) {
-            Toast.makeText(localContext, s, Toast.LENGTH_LONG).show()
+            Toast.makeText(activity.applicationContext, s, Toast.LENGTH_LONG).show()
         }
 
     }
