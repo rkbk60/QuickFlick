@@ -10,11 +10,11 @@
     <string name="theme_morse">Morse</string>
 
     <!-- Keyboard Height Level -->
-    <string name="keyboard_height_1">level_1</string>
-    <string name="keyboard_height_2">level_2</string>
-    <string name="keyboard_height_3">level_3</string>
-    <string name="keyboard_height_4">level_4</string>
-    <string name="keyboard_height_5">level_5</string>
+    <string name="keyboard_height_1">Smallest</string>
+    <string name="keyboard_height_2">Small</string>
+    <string name="keyboard_height_3">Medium</string>
+    <string name="keyboard_height_4">Large</string>
+    <string name="keyboard_height_5">Largest</string>
 
     <!-- Preference key name -->
     <string name="preferences_x1">threshold_x1</string>
@@ -39,7 +39,7 @@
     <string name="preferences_title_threshold_y2">2nd horizontal threshold</string>
     <string name="preferences_title_cancel_flick">Flick reseter</string>
     <string name="preferences_title_cancel_input">Input canceler</string>
-    <string name="preferences_title_keys_height">Key height</string>
+    <string name="preferences_title_keys_height">Keyboard height</string>
     <string name="preferences_title_indicator">Indicator theme</string>
     <string name="preferences_title_keys_adjustment">Toggle layout to right</string>
     <string name="preferences_summary_cancel_flick">Reset flicking state with multi tap</string>

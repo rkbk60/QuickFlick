@@ -50,13 +50,13 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preferences_category_appearance">
-        <!--<EditTextPreference-->
-            <!--android:defaultValue="@integer/preferences_keys_height_default"-->
-            <!--android:key="@string/preferences_keys_height"-->
-            <!--android:numeric="integer"-->
-            <!--android:selectAllOnFocus="true"-->
-            <!--android:singleLine="true"-->
-            <!--android:title="@string/preferences_title_keys_height" />-->
+        <ListPreference
+            android:defaultValue="@string/keyboard_height_2"
+            android:key="@string/preferences_keyboard_height"
+            android:title="@string/preferences_title_keys_height"
+            android:entries="@array/key_height_list"
+            android:entryValues="@array/key_height_list">
+        </ListPreference>
         <SwitchPreference
             android:defaultValue="true"
             android:key="@string/preferences_keys_adjustment"

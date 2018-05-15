@@ -38,7 +38,7 @@ class SettingsActivity: AppCompatActivity() {
                 updateThresholdSummary(it)
             }
             updateThemeSummary()
-//            updateKeysHeightSummary()
+            updateKeysHeightSummary()
         }
 
         override fun onPause() {
