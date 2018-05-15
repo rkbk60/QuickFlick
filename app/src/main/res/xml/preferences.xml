@@ -69,6 +69,12 @@
             android:entries="@array/theme_list"
             android:entryValues="@array/theme_list">
         </ListPreference>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/preferences_keyboard_footer"
+            android:title="@string/preferences_title_keyboard_footer"
+            android:summary="@string/preferences_summary_keyboard_footer">
+        </SwitchPreference>
     </PreferenceCategory>
 
 </PreferenceScreen>

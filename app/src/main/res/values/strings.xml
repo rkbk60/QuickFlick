@@ -40,10 +40,12 @@
     <string name="preferences_title_cancel_flick">Flick reseter</string>
     <string name="preferences_title_cancel_input">Input canceler</string>
     <string name="preferences_title_keys_height">Keyboard height</string>
+    <string name="preferences_title_keyboard_footer">Use keyboard footer</string>
     <string name="preferences_title_indicator">Indicator theme</string>
     <string name="preferences_title_keys_adjustment">Toggle layout to right</string>
     <string name="preferences_summary_cancel_flick">Reset flicking state with multi tap</string>
     <string name="preferences_summary_cancel_input">Cancel input with twice tap</string>
     <string name="preferences_summary_keys_adjustment">It can also change from keyboard.</string>
+    <string name="preferences_summary_keyboard_footer">Lift keyboard when device is landscape</string>
 
 </resources>
