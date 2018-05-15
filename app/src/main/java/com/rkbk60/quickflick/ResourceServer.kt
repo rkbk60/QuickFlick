@@ -38,10 +38,10 @@ class ResourceServer(context: Context) : ResourceServerBase(context) {
         }
     }
 
-    private val indicatorTheme = PreferenceEnum(R.string.preferences_theme_indicator,
+    val indicatorTheme = PreferenceEnum(R.string.preferences_theme_indicator,
                                                 IndicatorTheme.Base,
                                                 enumValues())
-    private enum class IndicatorTheme : ResourceEnum {
+    enum class IndicatorTheme : ResourceEnum {
         Base, Lime, Morse;
 
         override fun toResourceId(): Int = when (this) {

@@ -22,39 +22,23 @@ class SettingsActivity: AppCompatActivity() {
     class SettingsFragment:
             PreferenceFragment(),
             SharedPreferences.OnSharedPreferenceChangeListener {
-
-        private val TYPE_THRESHOLD = 0
-        private val TYPE_THEME = 1
-        private val TYPE_HEIGHT = 2
-        private var TYPE_ADJUSTMENT = 3
-
-        private val minimalThreshold = 10
-
-        private data class PreferenceTuple(val keyName: String, val default: Any, val type: Int)
-        private lateinit var thresholdX1: PreferenceTuple
-        private lateinit var thresholdX2: PreferenceTuple
-        private lateinit var thresholdY1: PreferenceTuple
-        private lateinit var thresholdY2: PreferenceTuple
-        private lateinit var keyboardHeight: PreferenceTuple
-        private lateinit var themeIndicator: PreferenceTuple
-        private lateinit var keyboardAdjustment: PreferenceTuple
-
-        private lateinit var localContext: Context
-
+        private val localContext by lazy { activity.applicationContext }
+        private val rServer by lazy { ResourceServer(localContext) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 //            PreferenceManager.getDefaultSharedPreferences(context)?.edit()?.clear()?.commit() // for debug
             addPreferencesFromResource(R.xml.preferences)
-            lateinit()
         }
 
         override fun onResume() {
             super.onResume()
             preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-            updateAllThresholdSummary()
-            updateKeysHeightSummary()
+            rServer.run { setOf(thresholdX1, thresholdX2, thresholdY1, thresholdY2) }.map {
+                updateThresholdSummary(it)
+            }
             updateThemeSummary()
+//            updateKeysHeightSummary()
         }
 
         override fun onPause() {
@@ -63,139 +47,67 @@ class SettingsActivity: AppCompatActivity() {
         }
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-            val target = when (key) {
-                thresholdX1.keyName -> thresholdX1
-                thresholdX2.keyName -> thresholdX2
-                thresholdY1.keyName -> thresholdY1
-                thresholdY2.keyName -> thresholdY2
-                keyboardHeight.keyName -> keyboardHeight
-                themeIndicator.keyName -> themeIndicator
-                else -> return
-            }
-            when (target.type) {
-                TYPE_THRESHOLD -> {
-                    validateThreshold(sharedPreferences, target)
-                    updateThresholdSummary(sharedPreferences, target)
-                }
-                TYPE_HEIGHT -> {
-                    validateKeysHeight(sharedPreferences)
-                    updateKeysHeightSummary(sharedPreferences)
-                }
-                TYPE_THEME -> {
-                    updateThemeSummary(sharedPreferences)
+            with (rServer) {
+                when (key) {
+                    thresholdX1.key -> {
+                        validateThreshold(thresholdX1)
+                        updateThresholdSummary(thresholdX1)
+                    }
+                    thresholdX2.key -> {
+                        validateThreshold(thresholdX2)
+                        updateThresholdSummary(thresholdX2)
+                    }
+                    thresholdY1.key -> {
+                        validateThreshold(thresholdY1)
+                        updateThresholdSummary(thresholdY1)
+                    }
+                    thresholdY2.key -> {
+                        validateThreshold(thresholdY2)
+                        updateThresholdSummary(thresholdY2)
+                    }
+                    keyboardHeight.key -> {
+                        updateKeysHeightSummary()
+                    }
+                    indicatorTheme.key -> {
+                        updateThemeSummary()
+                    }
                 }
             }
         }
 
-        private fun lateinit() {
-            localContext = activity.applicationContext
-            thresholdX1 = PreferenceTuple(
-                    resources.getString(R.string.preferences_x1),
-                    resources.getInteger(R.integer.preferences_x1_default),
-                    TYPE_THRESHOLD
-            )
-            thresholdX2 = PreferenceTuple(
-                    resources.getString(R.string.preferences_x2),
-                    resources.getInteger(R.integer.preferences_x2_default),
-                    TYPE_THRESHOLD
-            )
-            thresholdY1 = PreferenceTuple(
-                    resources.getString(R.string.preferences_y1),
-                    resources.getInteger(R.integer.preferences_y1_default),
-                    TYPE_THRESHOLD
-            )
-            thresholdY2 = PreferenceTuple(
-                    resources.getString(R.string.preferences_y2),
-                    resources.getInteger(R.integer.preferences_y2_default),
-                    TYPE_THRESHOLD
-            )
-            keyboardHeight = PreferenceTuple(
-                    resources.getString(R.string.preferences_keyboard_height),
-                    resources.getString(R.string.keyboard_height_2),
-                    TYPE_HEIGHT
-            )
-            themeIndicator = PreferenceTuple(
-                    resources.getString(R.string.preferences_theme_indicator),
-                    resources.getString(R.string.theme_base),
-                    TYPE_THEME
-            )
-            keyboardAdjustment = PreferenceTuple(
-                    resources.getString(R.string.preferences_keys_adjustment),
-                    false,
-                    TYPE_ADJUSTMENT
-            )
-        }
-
-        private fun validateThreshold(sharedPreferences: SharedPreferences?, target: PreferenceTuple) {
-            val newValue = sharedPreferences?.getString(target.keyName, "") ?: return
-            if (newValue.trim() == "") {
+        private fun validateThreshold(target: ResourceServerBase.PreferenceIntText) {
+            val newValue = target.current
+            val minimal  = 10
+            if (newValue.toString().trim() == "") {
                 toast("Set default value.")
-                preferenceScreen.sharedPreferences.edit()
-                        ?.putString(target.keyName, target.default.toString())
-                        ?.commit()
-                        ?: return
-            } else if (newValue.toInt() < minimalThreshold) {
-                toast("Minimal threshold is $minimalThreshold thou.")
-                preferenceScreen.sharedPreferences.edit()
-                        ?.putString(target.keyName, minimalThreshold.toString())
-                        ?.commit()
-                        ?: return
+                rServer.thresholdX1.apply { current = default }
+            } else if (newValue < minimal) {
+                toast("Minimal target is $minimal thou.")
+                rServer.thresholdX1.apply { current = minimal }
             }
         }
 
-        private fun validateKeysHeight(sharedPreferences: SharedPreferences?) {
-            val newValue = sharedPreferences?.getString(keyboardHeight.keyName, "") ?: return
-            var fix = 0
-            val min = 32
-            val max = 48
-            when {
-                (newValue.trim() == "") -> {
-                    toast("Set default value.")
-                    fix = keyboardHeight.default.toString().toInt()
-                }
-                (newValue.toInt() < min) -> {
-                    toast("Minimal key height value is ${min}dp.")
-                    fix = min
-                }
-                (newValue.toInt() > max) -> {
-                    toast("Maximal key height value is ${max}dp.")
-                    fix = max
-                }
+        private fun updateThresholdSummary(target: ResourceServerBase.PreferenceIntText) {
+            findPreference(target.key).summary =
+                    "${target.current} thou (Default:${target.default})"
+        }
+
+        private fun updateKeysHeightSummary() {
+            val current = rServer.keyboardHeight.current
+            val subContent = when (current) {
+                ResourceServer.KeyboardHeight.Lv1 -> "smallest"
+                ResourceServer.KeyboardHeight.Lv2 -> "small"
+                ResourceServer.KeyboardHeight.Lv3 -> "medium"
+                ResourceServer.KeyboardHeight.Lv4 -> "large"
+                ResourceServer.KeyboardHeight.Lv5 -> "largest"
             }
-            if (fix > 0) {
-                preferenceScreen.sharedPreferences.edit()
-                        .putString(keyboardHeight.keyName, fix.toString())
-                        .apply()
-            }
+            findPreference(rServer.keyboardHeight.key).summary =
+                    "Level ${current.toInt()} ($subContent)"
         }
 
-        private fun updateThresholdSummary(sharedPreferences: SharedPreferences?, target: PreferenceTuple) {
-            if (target.type != TYPE_THRESHOLD) return
-            val preference = sharedPreferences ?: preferenceScreen.sharedPreferences
-            val default = target.default
-            val newValue = preference.getString(target.keyName, default.toString())
-            findPreference(target.keyName).summary = "$newValue thou (Default:$default)"
-        }
-
-        private fun updateAllThresholdSummary() {
-            val targets = listOf(thresholdX1, thresholdX2, thresholdY1, thresholdY2)
-            for (target in targets) updateThresholdSummary(preferenceScreen.sharedPreferences, target)
-        }
-
-        private fun updateKeysHeightSummary(sharedPreferences: SharedPreferences? = null) {
-            val preference = sharedPreferences ?: preferenceScreen.sharedPreferences
-            if (preference.contains(keyboardHeight.keyName)) {
-                val default = keyboardHeight.default
-                val newValue = preference.getString(keyboardHeight.keyName, default.toString())
-                findPreference(keyboardHeight.keyName).summary = "${newValue}dp (Default:$default)"
-            }
-        }
-
-        private fun updateThemeSummary(sharedPreferences: SharedPreferences? = null) {
-            val preference = sharedPreferences ?: preferenceScreen.sharedPreferences
-            val default = themeIndicator.default
-            val newValue = preference.getString(themeIndicator.keyName, default.toString())
-            findPreference(themeIndicator.keyName).summary = newValue
+        private fun updateThemeSummary() {
+            findPreference(rServer.indicatorTheme.key).summary =
+                    rServer.indicatorTheme.current.toString()
         }
 
         private fun toast(s: String) {
