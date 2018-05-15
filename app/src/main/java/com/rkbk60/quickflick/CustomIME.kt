@@ -19,7 +19,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private lateinit var keyboardView: CustomKeyboardView
     private val keyboardController by lazy { KeyboardController(this) }
 
-    private val resourceServer by lazy { ResourceServer(this) }
+    private val rServer by lazy { ResourceServer(this) }
 
     private val keymap = KeymapController()
     private val modStorage = ModKeyStorage()
@@ -29,14 +29,14 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     // current keyboard information
     private var isRight
-        get() = resourceServer.keyboardIsRight.current
-        set(value) { resourceServer.keyboardIsRight.current = value }
+        get() = rServer.keyboardIsRight.current
+        set(value) { rServer.keyboardIsRight.current = value }
     private var useFooter
         get()  = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-                    && resourceServer.keyboardUseFooter.current
+                    && rServer.keyboardUseFooter.current
         set(_) = Unit
     private var heightLevel
-        get()  = resourceServer.keyboardHeight.current.toInt()
+        get()  = rServer.keyboardHeight.current.toInt()
         set(_) = Unit
 
     // current action information
@@ -125,13 +125,13 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         editorInfo = info ?: EditorInfo()
-        flickFactory = FlickFactory(resourceServer.thresholdX1.current,
-                                    resourceServer.thresholdX2.current,
-                                    resourceServer.thresholdY1.current,
-                                    resourceServer.thresholdY2.current)
-        multiTapManager = MultiTapManager(resourceServer.canCancelFlick.current,
-                                          resourceServer.canCancelInput.current)
-        indicatorFactory = IndicatorFactory(resourceServer.supplyIndicatorBackground())
+        flickFactory = FlickFactory(rServer.thresholdX1.current,
+                                    rServer.thresholdX2.current,
+                                    rServer.thresholdY1.current,
+                                    rServer.thresholdY2.current)
+        multiTapManager = MultiTapManager(rServer.canCancelFlick.current,
+                                          rServer.canCancelInput.current)
+        indicatorFactory = IndicatorFactory(rServer.supplyIndicatorBackground())
         setInputView(onCreateInputView())
         indicateFlickState()
         arrowKey = ArrowKey { order ->
