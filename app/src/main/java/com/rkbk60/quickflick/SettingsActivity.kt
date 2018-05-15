@@ -1,6 +1,5 @@
 package com.rkbk60.quickflick
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.EditTextPreference
@@ -23,10 +22,9 @@ class SettingsActivity: AppCompatActivity() {
     class SettingsFragment:
             PreferenceFragment(),
             SharedPreferences.OnSharedPreferenceChangeListener {
-        private lateinit var rServer: ResourceServer
+        private val rServer by lazy { ResourceServer(activity.applicationContext) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
-            rServer = ResourceServer(activity.applicationContext)
             super.onCreate(savedInstanceState)
 //            PreferenceManager.getDefaultSharedPreferences(context)?.edit()?.clear()?.commit() // for debug
             addPreferencesFromResource(R.xml.preferences)
@@ -39,7 +37,7 @@ class SettingsActivity: AppCompatActivity() {
                 updateThresholdSummary(it)
             }
             updateThemeSummary()
-            updateKeysHeightSummary()
+            updateKeyboardHeightSummary()
         }
 
         override fun onPause() {
@@ -67,7 +65,7 @@ class SettingsActivity: AppCompatActivity() {
                         updateThresholdSummary(thresholdY2)
                     }
                     keyboardHeight.key -> {
-                        updateKeysHeightSummary()
+                        updateKeyboardHeightSummary()
                     }
                     indicatorTheme.key -> {
                         updateThemeSummary()
@@ -97,7 +95,7 @@ class SettingsActivity: AppCompatActivity() {
                     "${target.current} thou (Default:${target.default})"
         }
 
-        private fun updateKeysHeightSummary() {
+        private fun updateKeyboardHeightSummary() {
             val current = rServer.keyboardHeight.current
             val subContent = when (current) {
                 ResourceServer.KeyboardHeight.Lv1 -> "smallest"
