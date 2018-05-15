@@ -20,8 +20,8 @@ abstract class ResourceServerBase(protected val context: Context) {
      * @param keyId preference key name id
      * @param default default value
      */
-    abstract inner class PreferenceData <T: Any> (@StringRes keyId: Int, private val default: T) {
-        protected val key: String = context.getString(keyId) ?: throw Error("failed to detect key name id")
+    abstract inner class PreferenceData <T: Any> (@StringRes keyId: Int, val default: T) {
+        val key: String = context.getString(keyId) ?: throw Error("failed to detect key name id")
         protected abstract val getT: ()  -> T?
         protected abstract val setT: (T) -> SharedPreferences.Editor
         /**
@@ -70,11 +70,11 @@ abstract class ResourceServerBase(protected val context: Context) {
      * @param candidates enumValues() or values that this application may use
      */
     inner class PreferenceEnum <T>(@StringRes keyId: Int,
-                                   private val default: T,
+                                   val default: T,
                                    private val candidates: Array<T>)
             where T : Enum<T>, T : ResourceEnum {
-        private val key = context.getString(keyId) ?: throw Error("failed to detect key string id")
-        private val defaultString = resStringOf(default)
+        val key = context.getString(keyId) ?: throw Error("failed to detect key string id")
+        val defaultString = resStringOf(default)
         private val candidateMap = candidates.map { Pair(it, resStringOf(it)) }
 
         /**
