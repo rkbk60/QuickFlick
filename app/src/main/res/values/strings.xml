@@ -29,8 +29,8 @@
     <string name="preferences_keys_adjustment">cache_last_adjustment_is_right</string>
 
     <!-- Preference Labels -->
-    <string name="preferences_category_horizontal">Horizontal flick threshold</string>
-    <string name="preferences_category_vertical">Vertical flick threshold</string>
+    <string name="preferences_category_horizontal">Horizontal flick sensitivity</string>
+    <string name="preferences_category_vertical">Vertical flick sensitivity</string>
     <string name="preferences_category_canceler">Multi tap settings</string>
     <string name="preferences_category_appearance">Appearance</string>
     <string name="preferences_title_threshold_x1">1st horizontal threshold</string>

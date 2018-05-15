@@ -51,6 +51,13 @@
 
     <PreferenceCategory android:title="@string/preferences_category_appearance">
         <ListPreference
+            android:defaultValue="@string/theme_base"
+            android:key="@string/preferences_theme_indicator"
+            android:title="@string/preferences_title_indicator"
+            android:entries="@array/theme_list"
+            android:entryValues="@array/theme_list">
+        </ListPreference>
+        <ListPreference
             android:defaultValue="@string/keyboard_height_2"
             android:key="@string/preferences_keyboard_height"
             android:title="@string/preferences_title_keys_height"
@@ -62,13 +69,6 @@
             android:key="@string/preferences_keys_adjustment"
             android:summary="@string/preferences_summary_keys_adjustment"
             android:title="@string/preferences_title_keys_adjustment"/>
-        <ListPreference
-            android:defaultValue="@string/theme_base"
-            android:key="@string/preferences_theme_indicator"
-            android:title="@string/preferences_title_indicator"
-            android:entries="@array/theme_list"
-            android:entryValues="@array/theme_list">
-        </ListPreference>
         <SwitchPreference
             android:defaultValue="false"
             android:key="@string/preferences_keyboard_footer"
