@@ -16,12 +16,23 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
     private val borderLeft  = ShapeDrawable()
     private val borderRight = ShapeDrawable()
 
+    private lateinit var onCloseListener: () -> Unit
+
     private var isLayoutForRightHand = false
 
     init {
         val borderColor = ContextCompat.getColor(context, R.color.separator)
         borderLeft.paint.color = borderColor
         borderRight.paint.color = borderColor
+    }
+
+    override fun closing() {
+        onCloseListener()
+        super.closing()
+    }
+
+    fun setOnCloseListener(lambda: () -> Unit) {
+        onCloseListener = lambda
     }
 
     override fun onDraw(canvas: Canvas?) {

@@ -57,6 +57,16 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         return keyboardView.apply {
             setKeyboardWith(keyboardController, isRight, useFooter, heightLevel)
             isPreviewEnabled = false
+            setOnCloseListener {
+                arrowKey.stopInput()
+                lastAction = MotionEvent.ACTION_UP
+                tapX = -1
+                tapY = -1
+                onPressCode = KeyIndex.NOTHING
+                canInput = true
+                flick = Flick.NONE
+                indicateFlickState()
+            }
             setOnKeyboardActionListener(this@CustomIME)
             setOnTouchListener Listener@ { _, event ->
                 val x = event.x.toInt()
