@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- NOTE:
-    - this file is made automatically by (project-root)/tools/layout.py:
-        adjustment  -> for right hand
-        key height  -> @dimen/key_height_large (Lv.5)
-        orientation -> for portrait (footer:8dp)
+    - this file is made automatically by (project-root)/tools/keyboard_layout.py:
+        adjustment    -> for right hand
+        key height    -> @dimen/key_height_semi_large (Lv.4)
+        footer height -> for high (footer:0.12in)
     - actual keymap is defined in KeymapController.kt
 -->
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
     android:keyWidth="17%p"
     android:horizontalGap="0dp"
     android:verticalGap="0dp"
-    android:keyHeight="@dimen/key_height_large"
+    android:keyHeight="@dimen/key_height_semi_large"
     android:isRepeatable="false">
 
     <Row android:keyHeight="5dp"/>
@@ -113,6 +113,6 @@
     </Row>
     <Row
         android:rowEdgeFlags="bottom"
-        android:keyHeight="8dp"/>
+        android:keyHeight="0.12in"/>
 
 </Keyboard>

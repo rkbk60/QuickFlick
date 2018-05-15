@@ -12,7 +12,7 @@ def log(s: str):
     print("  >> %s" % s)
 
 
-class Height:
+class KeyHeight:
     def __init__(self, name: str, height_level: int) -> None:
         self.name = name
         self.id = str(height_level).lower()
@@ -20,10 +20,10 @@ class Height:
         self.info = "@dimen/%s (Lv.%d)" % (self.value, height_level)
 
 
-class Orientation:
+class FooterHeight:
     def __init__(self, name: str, value: str) -> None:
         self.name = name
-        self.id = name[0:3].lower()
+        self.id = name[0:1].lower()
         self.value = value
         self.info = "for %s (footer:%s)" % (name, self.value)
 
@@ -35,17 +35,17 @@ class Adjustment:
         self.info = "for " + self.name + " hand"
 
 
-heights = [
-    Height("small", 1),
-    Height("semi_small", 2),
-    Height("medium", 3),
-    Height("semi_large", 4),
-    Height("large", 5)
+key_heights = [
+    KeyHeight("small", 1),
+    KeyHeight("semi_small", 2),
+    KeyHeight("medium", 3),
+    KeyHeight("semi_large", 4),
+    KeyHeight("large", 5)
 ]
 
-orientations = [
-    Orientation("portrait", "8dp"),
-    Orientation("landscape", "0.12in")
+footer_heights = [
+    FooterHeight("low", "8dp"),
+    FooterHeight("high", "0.12in")
 ]
 
 adjustments = [
@@ -55,9 +55,9 @@ adjustments = [
 
 
 if DEBUG_MODE:
-    orders = [(Height("td", 0), Orientation("to", "10dp"), Adjustment(True))]
+    orders = [(KeyHeight("td", 0), FooterHeight("tf", "10dp"), Adjustment(True))]
 else:
-    orders = list(itertools.product(heights, orientations, adjustments))
+    orders = list(itertools.product(key_heights, footer_heights, adjustments))
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 output_dir = "output/keyboard/xml/"
@@ -66,19 +66,19 @@ if not os.path.exists(output_dir):
 
 os.chdir(current_dir)
 
-for (hei, ori, adj) in orders:
+for (kh, fh, adj) in orders:
     template = io.open(
         "%s/template/keyboard_%s_hand.xml" % (current_dir, adj.name))
     newtext = ""
     for newline in template:
-        newline = newline.replace("$KEY_HEIGHT_INFO", hei.info)
-        newline = newline.replace("$KEY_HEIGHT_VALUE", hei.value)
-        newline = newline.replace("$ORIENTATION_INFO", ori.info)
-        newline = newline.replace("$FOOTER_HEIGHT_DP", ori.value)
+        newline = newline.replace("$KEY_HEIGHT_INFO", kh.info)
+        newline = newline.replace("$KEY_HEIGHT_VALUE", kh.value)
+        newline = newline.replace("$ORIENTATION_INFO", fh.info)
+        newline = newline.replace("$FOOTER_HEIGHT_DP", fh.value)
         newline = newline.replace("$ADJUSTMENT_INFO", adj.info)
         newtext += newline
     template.close()
-    filename = "keyboard_%s_%s_%s.xml" % (adj.id, ori.id, hei.id)
+    filename = "keyboard_%s%s%s.xml" % (adj.id, fh.id, kh.id)
     newxml = io.open(output_dir + filename, "w+")
     newxml.write(newtext)
     newxml.close()

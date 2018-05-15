@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- NOTE:
-    - this file is made automatically by (project-root)/tools/layout.py:
-        adjustment  -> for right hand
-        key height  -> $KEY_HEIGHT_INFO
-        orientation -> $ORIENTATION_INFO
+    - this file is made automatically by (project-root)/tools/keyboard_layout.py:
+        adjustment    -> for right hand
+        key height    -> $KEY_HEIGHT_INFO
+        footer height -> $ORIENTATION_INFO
     - actual keymap is defined in KeymapController.kt
 -->
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"

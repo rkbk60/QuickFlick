@@ -24,6 +24,7 @@
     <string name="preferences_cancel_flick">cancel_flick</string>
     <string name="preferences_cancel_input">cancel_input</string>
     <string name="preferences_keyboard_height">keyboard_height</string>
+    <string name="preferences_keyboard_footer">keyboard_use_footer</string>
     <string name="preferences_theme_indicator">theme_indicator</string>
     <string name="preferences_keys_adjustment">cache_last_adjustment_is_right</string>
 

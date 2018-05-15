@@ -26,41 +26,41 @@ class KeyboardController(private val context: Context) {
     /**
      * Constructs keyboard instance.
      * @param isRight whether or not keyboard layout is for right hand one.
-     * @param isPortrait whether or not device orientation is portrait.
-     * @param heightLevel height level (1 ~ 5). If value is out of this range, it will be 3.
+     * @param useFooter whether or not device orientation is portrait.
+     * @param heightLevel height level (1 ~ 5). If value is out of this range, it will be 2.
      * @return Keyboard instance you wanted
      */
     fun inflateKeyboard(isRight: Boolean    = this.isRight,
-                        isPortrait: Boolean = this.isPortrait,
+                        useFooter: Boolean  = this.isPortrait,
                         heightLevel: Int    = this.heightLevel): Keyboard {
         this.isRight = isRight
-        this.isPortrait = isPortrait
+        this.isPortrait = useFooter
         this.heightLevel = heightLevel
         val intIsRight = if (isRight) 1 else 0
-        val intIsPortrait = if (isPortrait) 1 else 0
+        val intUseFooter = if (useFooter) 1 else 0
         val fixedHeightLevel = if (heightLevel in 1..5) heightLevel else 3
-        val keyboard = Keyboard(context, when(100 * intIsRight + 10 * intIsPortrait + fixedHeightLevel) {
-            115 -> R.xml.keyboard_r_por_5
-            114 -> R.xml.keyboard_r_por_4
-            113 -> R.xml.keyboard_r_por_3
-            112 -> R.xml.keyboard_r_por_2
-            111 -> R.xml.keyboard_r_por_1
-            105 -> R.xml.keyboard_r_lan_5
-            104 -> R.xml.keyboard_r_lan_4
-            103 -> R.xml.keyboard_r_lan_3
-            102 -> R.xml.keyboard_r_lan_2
-            101 -> R.xml.keyboard_r_lan_1
-             15 -> R.xml.keyboard_l_por_5
-             14 -> R.xml.keyboard_l_por_4
-             13 -> R.xml.keyboard_l_por_3
-             12 -> R.xml.keyboard_l_por_2
-             11 -> R.xml.keyboard_l_por_1
-              5 -> R.xml.keyboard_l_lan_5
-              4 -> R.xml.keyboard_l_lan_4
-              3 -> R.xml.keyboard_l_lan_3
-              2 -> R.xml.keyboard_l_lan_2
-              1 -> R.xml.keyboard_l_lan_1
-            else -> R.xml.keyboard_r_por_3 // default
+        val keyboard = Keyboard(context, when(100 * intIsRight + 10 * intUseFooter + fixedHeightLevel) {
+            115 -> R.xml.keyboard_rh5
+            114 -> R.xml.keyboard_rh4
+            113 -> R.xml.keyboard_rh3
+            112 -> R.xml.keyboard_rh2
+            111 -> R.xml.keyboard_rh1
+            105 -> R.xml.keyboard_rl5
+            104 -> R.xml.keyboard_rl4
+            103 -> R.xml.keyboard_rl3
+            102 -> R.xml.keyboard_rl2
+            101 -> R.xml.keyboard_rl1
+             15 -> R.xml.keyboard_lh5
+             14 -> R.xml.keyboard_lh4
+             13 -> R.xml.keyboard_lh3
+             12 -> R.xml.keyboard_lh2
+             11 -> R.xml.keyboard_lh1
+              5 -> R.xml.keyboard_ll5
+              4 -> R.xml.keyboard_ll4
+              3 -> R.xml.keyboard_ll3
+              2 -> R.xml.keyboard_ll2
+              1 -> R.xml.keyboard_ll1
+            else -> R.xml.keyboard_rl2 // default
         })
         this.keyboard = keyboard
         arrowKey = findKey(KeyIndex.INDEX_ARROW)

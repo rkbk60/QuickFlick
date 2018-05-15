@@ -55,9 +55,9 @@ class CustomKeyboardView(context: Context, attrs: AttributeSet) : KeyboardView(c
 
     fun setKeyboardWith(controller:  KeyboardController,
                         isRight:     Boolean,
-                        isPortrait:  Boolean,
+                        useFooter:   Boolean,
                         heightLevel: Int) {
-        keyboard = controller.inflateKeyboard(isRight, isPortrait, heightLevel)
+        keyboard = controller.inflateKeyboard(isRight, useFooter, heightLevel)
         isLayoutForRightHand = isRight
     }
 

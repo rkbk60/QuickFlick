@@ -31,8 +31,9 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private var isRight
         get() = resourceServer.keyboardIsRight.current
         set(value) { resourceServer.keyboardIsRight.current = value }
-    private var isPortrait
-        get()  = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+    private var useFooter
+        get()  = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    && resourceServer.keyboardUseFooter.current
         set(_) = Unit
     private var heightLevel
         get()  = resourceServer.keyboardHeight.current.toInt()
@@ -54,7 +55,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     override fun onCreateInputView(): View {
         keyboardView = layoutInflater.inflate(R.layout.keyboardview, null) as CustomKeyboardView
         return keyboardView.apply {
-            setKeyboardWith(keyboardController, isRight, isPortrait, heightLevel)
+            setKeyboardWith(keyboardController, isRight, useFooter, heightLevel)
             isPreviewEnabled = false
             setOnKeyboardActionListener(this@CustomIME)
             setOnTouchListener Listener@ { _, event ->

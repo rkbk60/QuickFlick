@@ -97,6 +97,7 @@ class ResourceServer(private val context: Context) {
     val canCancelFlick = PreferenceBool(R.string.preferences_cancel_flick, true)
     val canCancelInput = PreferenceBool(R.string.preferences_cancel_input, false)
     val keyboardIsRight = PreferenceBool(R.string.preferences_keys_adjustment, false)
+    val keyboardUseFooter = PreferenceBool(R.string.preferences_keyboard_footer, false)
 
     val keyboardHeight = PreferenceEnum(R.string.preferences_keyboard_height, KeyboardHeight.Lv2, enumValues())
 
