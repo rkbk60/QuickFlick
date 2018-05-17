@@ -25,7 +25,7 @@ release: clean \
 .PHONY: document.py
 document.py:
 	$(PYTHON) $@ $(ARG_RELEASE)
-	cp ./output/document/*.md $(DOCUMENT_CD_TARGET)
+	cp ./output/document/*.html $(DOCUMENT_CD_TARGET)
 	cp ./wiki/*.png $(DOCUMENT_CD_TARGET)
 	cp ./github-markdown-css/github-markdown.css $(DOCUMENT_CD_TARGET)
 

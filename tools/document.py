@@ -27,7 +27,7 @@ re_fixln = (VerEx().
             anything_but(")").
             find(")").
             regex())
-to_fixln = r'[\2](%s\4.md\5\6)' % url
+to_fixln = r'[\2](%s\4.html\5\6)' % url
 
 # img-tag to a-tag
 re_img2a = (VerEx().
@@ -58,9 +58,9 @@ for md in glob.glob('./wiki/*.md'):
         newline = re_img2a.sub(to_img2a, r'%s' % newline)
         newtext += newline
     source.close()
-    basename = os.path.basename(md)
-    newmd = io.open(output_dir + basename, "w+")
-    newmd.write(template.replace("$MARKDOWN", markdown.markdown(newtext)))
-    newmd.close()
+    basename = os.path.splitext(os.path.basename(md))[0] + ".html"
+    html = io.open(output_dir + basename, "w+")
+    html.write(template.replace("$MARKDOWN", markdown.markdown(newtext)))
+    html.close()
     log("generate: ./" + output_dir + basename)
 print()
