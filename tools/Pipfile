@@ -9,8 +9,9 @@ name = "pypi"
 
 [packages]
 cairosvg = "*"
+verbalexpressions = "*"
+markdown = "*"
 
 [requires]
 python_version = "3.6"
-
 # vim: set filetype=toml
