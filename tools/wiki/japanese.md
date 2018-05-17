@@ -15,7 +15,7 @@ I am Japanese, so this page could have accurate information.
 [4. Fnキー](#fn_key)  
 [5. 修飾キー](#mod_key)  
 [6. 設定](#settings)  
-&emsp;[6.1 Horizontal/Vertical Flick Threshold](#setting_threshold)  
+&emsp;[6.1 Horizontal/Vertical Flick Sensitivity](#setting_threshold)  
 &emsp;[6.2 Multi tap settings](#setting_mtc)  
 &emsp;[6.3 Appearance](#setting_appearance)  
 [7. その他](#other)  
@@ -51,7 +51,7 @@ QuickFlickではより少ないタップ数での入力を実現するため、�
 <a id="canceling_with_multi_tap"></a>
 ### 1.3 マルチタップによる入力制御
 マルチタップにより、キー入力を制御することができます。  
-バージョン1.5現在、以下の2機能が利用可能です。
+バージョン2.0現在、以下の2機能が利用可能です。
 - **Flick reseter**: マルチタップをする度、現在のフリック情報をリセットすることができます。
 - **Input canceler**: 2回マルチタップを行うことで、現在実行されようとしているキー入力をキャンセルすることができます。
 
@@ -78,7 +78,7 @@ QuickFlickではより少ないタップ数での入力を実現するため、�
 
 <a id="fn_key"></a>
 ## 4. Fnキー
-バージョン1.5現在、QuickFlickは左右どちらかにF1~F12キー(以降Fnキー)を配置しています。  
+バージョン2.0現在、QuickFlickは左右どちらかにF1~F12キー(以降Fnキー)を配置しています。  
 またこれらのキーで上下どちらかにフリックすることで、Fnキーの左右配置を入れ替えることができます(この切り替えは設定画面からも可能です)。  
 以下にFnキーのキーマップを示します。
 
@@ -98,10 +98,10 @@ QuickFlickはCtrl/Alt/Metaの3種類の修飾キーを実装しています。
 
 <a id="settings"></a>
 ## 6. 設定
-バージョン1.5現在、以下の設定が利用できます。
+バージョン2.0現在、以下の設定が利用できます。
 
 <a id="setting_threshold"></a>
-### 6.1 Horizontal/Vertical flick threshold
+### 6.1 Horizontal/Vertical flick sensitivity
 多段階フリックのフリック感度(閾値)を、thou単位(thou = ミリインチ)で設定できます。
 - **1st threshold**: タップ/フリックの判定に使用される値です。この距離未満のフリックはタップとみなされます。
 - **2nd threshold**: フリックレベルの判定に使用される値です。この値を超える度にフリックレベルが加算され、入力できる文字が変化します。
@@ -119,10 +119,10 @@ QuickFlickはCtrl/Alt/Metaの3種類の修飾キーを実装しています。
 <a id="setting_appearance"></a>
 ### 6.3 Appearance
 キーボードの見た目を変更できます。  
-- **Toggle layout to right**: キーボードのレイアウトを変えます。
 - **Indicator theme**: フリックインジケーターの表示パターンを変更します。
-
-この他、キーの高さと背景色の設定実装を検討しています。
+- **Keyboard Height**: キーボードの高さを5段階の中から選択できます。
+- **Toggle layout to right**: キーボードのレイアウトを変えます。
+- **Use keyboard footer**: 有効にすると端末が横向きの際、フリック入力しやすいように下部にスペースができます。
 
 <a id="other"></a>
 ## 7. その他

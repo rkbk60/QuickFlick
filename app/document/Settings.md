@@ -18,7 +18,7 @@
 1. Home Screen &gt; QuickFlick app icon <strong>(Recommend)</strong>
 2. Home Screen &gt; Settings &gt; Languages &amp; input &gt; Virtual Keyboard &gt; QuickFlick (Android 7)</p>
 <p><a id="1"></a></p>
-<h2>Horizontal/Vertical Flick Threshold</h2>
+<h2>Horizontal/Vertical Flick Sensitivity</h2>
 <p>Set threshold(unit: thou=Milli inch) for use to calculate flick distance level.<br />
 (check: <a href="file:///android-asset/How-to-Input.md#1">Multi phase flick</a>)<br />
 <em> <strong>1st threshold</strong>: For use to judge tap or flick.
@@ -34,16 +34,20 @@ Default values are shown in each settings summary.</p>
 <p><a id="3"></a></p>
 <h2>Appearance</h2>
 <p>You can change keyboard appearance from here.</p>
-<h3>Toggle layout to right</h3>
-<p>If you turn this preference on, keyboard layout changes to input easily for right hand.<br />
-It can also change from keyboard directory.<br />
-(check: <a href="file:///android-asset/Keymap.md#2">Keymap &gt; Adjustment</a>)</p>
 <h3>Indicator theme</h3>
 <ul>
 <li>Base(base on OneDark/OneLight)</li>
 <li>Lime(base on Monokai)</li>
 <li>Morse(base on morse signal, for someone using grayscale)</li>
 </ul>
+<h3>Keyboard Height</h3>
+<p>You can change keyboard height here.</p>
+<h3>Toggle layout to right</h3>
+<p>If you turn this preference on, keyboard layout changes to input easily for right hand.<br />
+It can also change from keyboard directory.<br />
+(check: <a href="file:///android-asset/Keymap.md#2">Keymap &gt; Adjustment</a>)</p>
+<h3>Use keyboard footer</h3>
+<p>If you feel bad to fling lower keys on landscape, then you should turn on to lift keyboard.</p>
 <p><a id="99"></a></p>
 <h2>Note</h2>
 <ul>

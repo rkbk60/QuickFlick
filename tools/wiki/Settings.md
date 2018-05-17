@@ -4,7 +4,7 @@ There are 2 ways to access to Settings View.
 2. Home Screen > Settings > Languages & input > Virtual Keyboard > QuickFlick (Android 7)
 
 <a id="1"></a>
-## Horizontal/Vertical Flick Threshold
+## Horizontal/Vertical Flick Sensitivity
 Set threshold(unit: thou=Milli inch) for use to calculate flick distance level.  
 (check: [Multi phase flick](How-to-Input#1))  
 * **1st threshold**: For use to judge tap or flick.
@@ -25,15 +25,21 @@ If you want to know these functions detail, see [Control with Multi tap](How to 
 ## Appearance
 You can change keyboard appearance from here.
 
+### Indicator theme
+- Base(base on OneDark/OneLight)
+- Lime(base on Monokai)
+- Morse(base on morse signal, for someone using grayscale)
+
+### Keyboard Height
+You can change keyboard height here.
+
 ### Toggle layout to right
 If you turn this preference on, keyboard layout changes to input easily for right hand.  
 It can also change from keyboard directory.  
 (check: [Keymap > Adjustment](Keymap#2))
 
-### Indicator theme
-- Base(base on OneDark/OneLight)
-- Lime(base on Monokai)
-- Morse(base on morse signal, for someone using grayscale)
+### Use keyboard footer
+If you feel bad to fling lower keys on landscape, then you should turn on to lift keyboard.
 
 <a id="99"></a>
 ## Note
