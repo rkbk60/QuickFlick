@@ -2,6 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/app_full_name">
 
+    <Preference
+        android:singleLine="true"
+        android:title="@string/preferences_title_document">
+        <intent android:action="com.rkbk60.quickflick.DocumentActivity"/>
+    </Preference>
     <PreferenceCategory android:title="@string/preferences_category_horizontal">
         <EditTextPreference
             android:defaultValue="@integer/preferences_x1_default"

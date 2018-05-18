@@ -22,6 +22,11 @@ android {
     }
     productFlavors {
     }
+    sourceSets {
+        main {
+            assets.srcDirs = ['document']
+        }
+    }
 }
 
 dependencies {
@@ -45,4 +50,10 @@ dependencies {
 
 repositories {
     mavenCentral()
+}
+
+apply plugin: 'kotlin-android-extensions'
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:+'
 }

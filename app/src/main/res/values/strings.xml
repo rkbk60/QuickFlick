@@ -33,6 +33,7 @@
     <string name="preferences_category_vertical">Vertical flick sensitivity</string>
     <string name="preferences_category_canceler">Multi tap settings</string>
     <string name="preferences_category_appearance">Appearance</string>
+    <string name="preferences_title_document">Check Document</string>
     <string name="preferences_title_threshold_x1">1st horizontal threshold</string>
     <string name="preferences_title_threshold_x2">2nd horizontal threshold</string>
     <string name="preferences_title_threshold_y1">1st horizontal threshold</string>
