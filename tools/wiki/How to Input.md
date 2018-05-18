@@ -11,7 +11,7 @@ You can check flicking state(direction, distance level) in *Flick Indicator* loc
 Indicator shows direction with hue, distance level with transparent of color.  
 
 ### Change flick sensitivity
-You can change flick sensitivity in [Settings > Horizontal/Vertical Flick Threshold](Settings#1).
+You can change flick sensitivity in [Settings > Horizontal/Vertical Flick Sensitivity](Settings#1).
 
 <a id="2"></a>
 ## Canceling with multi tap

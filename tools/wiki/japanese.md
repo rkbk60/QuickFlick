@@ -41,7 +41,7 @@ QuickFlickではより少ないタップ数での入力を実現するため、�
 
 なお、フリック感度は設定によって変えることができます。  
 詳しくはこちらをご確認ください。  
-→ [設定 > Horizontal/Vertical Flick Threshold](#setting_threshold)
+→ [設定 > Horizontal/Vertical Flick Sensitivity](#setting_threshold)
 
 <a id="flick_indicator"></a>
 ### 1.2 フリックインジケーター
@@ -52,6 +52,7 @@ QuickFlickではより少ないタップ数での入力を実現するため、�
 ### 1.3 マルチタップによる入力制御
 マルチタップにより、キー入力を制御することができます。  
 バージョン2.0現在、以下の2機能が利用可能です。
+
 - **Flick reseter**: マルチタップをする度、現在のフリック情報をリセットすることができます。
 - **Input canceler**: 2回マルチタップを行うことで、現在実行されようとしているキー入力をキャンセルすることができます。
 
@@ -69,6 +70,7 @@ QuickFlickではより少ないタップ数での入力を実現するため、�
 ## 3. 方向キー
 `arw mode`をフリックせずに入力すると、方向キーのモードを切り替えることができます。  
 モードは以下の2種類があります。
+
 - **Awr**: 連続入力も可能な方向キーです。この状態ではフリックをするだけで入力が可能です。
 - **Pmv**: PageUp/Down, Home, Endのそれぞれを入力できます。
 
@@ -88,6 +90,7 @@ QuickFlickではより少ないタップ数での入力を実現するため、�
 ## 5. 修飾キー
 QuickFlickはCtrl/Alt/Metaの3種類の修飾キーを実装しています。  
 各修飾キーは3つのモードを持っています。
+
 - **OFF**: キー押下がされていない状態で、小文字で表現されます。
 - **ON**: キーが押下された状態で、大文字で表現されます。  
 非修飾キーを入力するとOFFになります。  
@@ -103,6 +106,7 @@ QuickFlickはCtrl/Alt/Metaの3種類の修飾キーを実装しています。
 <a id="setting_threshold"></a>
 ### 6.1 Horizontal/Vertical flick sensitivity
 多段階フリックのフリック感度(閾値)を、thou単位(thou = ミリインチ)で設定できます。
+
 - **1st threshold**: タップ/フリックの判定に使用される値です。この距離未満のフリックはタップとみなされます。
 - **2nd threshold**: フリックレベルの判定に使用される値です。この値を超える度にフリックレベルが加算され、入力できる文字が変化します。
 
@@ -110,6 +114,7 @@ QuickFlickはCtrl/Alt/Metaの3種類の修飾キーを実装しています。
 ### 6.2 Multi tap settings
 入力中にマルチタップを行った際の挙動を変更できます。
 現在以下の機能を利用することができます。
+
 - **Flick reseter**
 - **Input canceler**
 
@@ -119,6 +124,7 @@ QuickFlickはCtrl/Alt/Metaの3種類の修飾キーを実装しています。
 <a id="setting_appearance"></a>
 ### 6.3 Appearance
 キーボードの見た目を変更できます。  
+
 - **Indicator theme**: フリックインジケーターの表示パターンを変更します。
 - **Keyboard Height**: キーボードの高さを5段階の中から選択できます。
 - **Toggle layout to right**: キーボードのレイアウトを変えます。
