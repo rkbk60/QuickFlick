@@ -1,0 +1,9 @@
+
+output
+tmp
+
+# for pipenv
+Pipfile.lock
+
+# for mypy
+.mypy_cache

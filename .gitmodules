@@ -1,0 +1,9 @@
+[submodule "tools/wiki"]
+	path = tools/wiki
+	url = git://github.com/rkbk60/QuickFlick.wiki.git
+[submodule "app/document/github-markdown-css"]
+	path = app/document/github-markdown-css
+	url = git://github.com/sindresorhus/github-markdown-css.git
+[submodule "tools/github-markdown-css"]
+	path = tools/github-markdown-css
+	url = git://github.com/sindresorhus/github-markdown-css.git

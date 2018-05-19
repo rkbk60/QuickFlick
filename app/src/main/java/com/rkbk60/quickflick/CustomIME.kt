@@ -1,384 +1,274 @@
 package com.rkbk60.quickflick
 
+import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.inputmethodservice.InputMethodService
-import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
-import android.text.InputType
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
+import com.rkbk60.quickflick.domain.*
+import com.rkbk60.quickflick.model.*
 
 /**
  * main input method service
  */
 
 class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
-
     private lateinit var keyboardView: CustomKeyboardView
-    private lateinit var keyboardManager: KeyboardManager
-    private lateinit var keyboard: Keyboard
-    private lateinit var keyList: List<Keyboard.Key>
+    private val keyboardController by lazy { KeyboardController(this) }
 
-    private var onPressCode = 0
-    private var lastActionCode = Integer.MIN_VALUE
+    private val rServer by lazy { ResourceServer(this) }
 
-    private var tapX = 0
-    private var tapY = 0
+    private val keymap = KeymapController()
+    private val modStorage = ModKeyStorage()
+    private lateinit var flickFactory: FlickFactory
+    private lateinit var multiTapManager: MultiTapManager
+    private lateinit var arrowKey: ArrowKey
 
-    private var flick = Flick()
+    // current keyboard information
+    private var isRight
+        get() = rServer.keyboardIsRight.current
+        set(value) { rServer.keyboardIsRight.current = value }
+    private var useFooter
+        get()  = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    && rServer.keyboardUseFooter.current
+        set(_) = Unit
+    private var heightLevel
+        get()  = rServer.keyboardHeight.current.toInt()
+        set(_) = Unit
 
-    private lateinit var keymap: Keymap
-    private lateinit var keymapController: KeymapController
+    // current action information
+    private var tapX = -1
+    private var tapY = -1
+    private var lastAction = MotionEvent.ACTION_UP
+    private var onPressCode = KeyIndex.NOTHING
+    private var flick = Flick.NONE
+    private var canInput = true
 
-    // TODO: move to Keyboard or KeyboardManager
-    private var metaKey
-            = ModKey(KeyEvent.KEYCODE_META_LEFT,  KeyEvent.META_META_ON  or KeyEvent.META_META_LEFT_ON)
-    private var ctrlKey
-            = ModKey(KeyEvent.KEYCODE_CTRL_LEFT,  KeyEvent.META_CTRL_ON  or KeyEvent.META_CTRL_LEFT_ON)
-    private var altKey
-            = ModKey(KeyEvent.KEYCODE_ALT_LEFT,   KeyEvent.META_ALT_ON   or KeyEvent.META_ALT_LEFT_ON)
-    private var shiftKey
-            = ModKey(KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.META_SHIFT_ON or KeyEvent.META_SHIFT_LEFT_ON)
-
-    private val modKeyList = listOf(metaKey, ctrlKey, altKey, shiftKey)
-
-    private var multiTapSetting = MultiTapSetting()
-
-    private val arrowKey = ArrowKey(this)
-
-    private val charConverter = CharConverter()
-
-    private var inputTypeClass = 0
+    private lateinit var indicatorFactory: IndicatorFactory
 
     private lateinit var editorInfo: EditorInfo
 
-
-
+    @SuppressLint("InflateParams")
     override fun onCreateInputView(): View {
         keyboardView = layoutInflater.inflate(R.layout.keyboardview, null) as CustomKeyboardView
-
-        keyboardManager = KeyboardManager(this, keyboardView)
-        keyboard = keyboardManager.keyboard
-
-        keymapController = KeymapController()
-        keymap = keymapController.createInitialKeymap()
-
-        keyboardView.setKeyboard(keyboard, keymap)
-        keyboardView.setOnKeyboardActionListener(this)
-        keyboardView.isPreviewEnabled = false
-
-        keyList = keyboard.keys
-        keyboardView.setOnTouchListener OnTouchListener@ { _, event ->
-            val x = event.x.toInt()
-            val y = event.y.toInt()
-            val actionCode = event.action and MotionEvent.ACTION_MASK
-            lastActionCode = actionCode
-            return@OnTouchListener when (actionCode) {
-                MotionEvent.ACTION_DOWN -> {
-                    onPressCode = SpecialKeyCode.NULL
-                    val key = keyList.find { it.isInside(x, y) } ?: return@OnTouchListener true
-                    if (key.codes[0] in KeyNumbers.LIST_VALID)  {
-                        resetTapState(x, y)
-                        arrowKey.toggleable = true
-                        false
-                    } else {
-                        true
+        return keyboardView.apply {
+            setKeyboardWith(keyboardController, isRight, useFooter, heightLevel)
+            isPreviewEnabled = false
+            setOnCloseListener {
+                arrowKey.stopInput()
+                lastAction = MotionEvent.ACTION_UP
+                tapX = -1
+                tapY = -1
+                onPressCode = KeyIndex.NOTHING
+                canInput = true
+                flick = Flick.NONE
+                indicateFlickState()
+            }
+            setOnKeyboardActionListener(this@CustomIME)
+            setOnTouchListener Listener@ { _, event ->
+                val x = event.x.toInt()
+                val y = event.y.toInt()
+                val action = event.action and MotionEvent.ACTION_MASK
+                lastAction = action
+                when (action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        tapX = x
+                        tapY = y
+                        return@Listener false
                     }
-                }
-                MotionEvent.ACTION_POINTER_DOWN -> {
-                    multiTapSetting.addCount()
-                    when {
-                        multiTapSetting.canCancelInput() -> onPressCode = SpecialKeyCode.NULL
-                        multiTapSetting.canCancelFlick() -> resetTapState(x, y)
-                    }
-                    keyboardView.indicate(flick, onPressCode)
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    if (onPressCode !in KeyNumbers.LIST_VALID) return@OnTouchListener true
-                    if ((onPressCode == KeyNumbers.ARROW) and (flick.direction != Flick.Direction.NONE)) {
-                        arrowKey.toggleable = false
-                        if (arrowKey.isRepeatingMode())
-                            arrowKey.execRepeatingInput(keymap.searchKeycode(onPressCode, flick))
-                    } else {
-                        arrowKey.stopRepeatingInput()
-                    }
-                    if (hasInputLimit()) {
-                        val tmpFlick = Flick()
-                        tmpFlick.update(tapX, tapY, x, y)
-                        val char = keymap.searchKeycode(onPressCode, tmpFlick).toChar()
-                        if (isTappingLimitedKey() and getInputtableChars().any { it == char }) {
-                            flick.sync(tmpFlick)
-                            keyboardView.indicate(flick, onPressCode)
-                        } else if (isTappingLimitedKey() and (onPressCode in KeyNumbers.LIST_FUNCTIONS)) {
-                            when (tmpFlick.direction) {
-                                Flick.Direction.NONE,
-                                Flick.Direction.UP,
-                                Flick.Direction.DOWN -> {
-                                    flick.sync(tmpFlick)
-                                    keyboardView.indicate(flick, onPressCode)
-                                }
-                                else -> Unit
+                    MotionEvent.ACTION_POINTER_DOWN -> {
+                        multiTapManager.addTapCount()
+                        when {
+                            multiTapManager.canCancelInput() -> {
+                                arrowKey.stopInput()
+                                tapX = -1
+                                tapY = -1
+                                canInput = false
+                                onPressCode = KeyIndex.NOTHING
+                                flick = Flick.NONE
+                            }
+                            multiTapManager.canCancelFlick() -> {
+                                arrowKey.stopInput()
+                                tapX = x
+                                tapY = y
+                                flick = Flick.NONE
                             }
                         }
-                    } else {
-                        flick.update(tapX, tapY, x, y)
-                        keyboardView.indicate(flick, onPressCode)
+                        indicateFlickState()
+                        return@Listener true
                     }
-                    true
+                    MotionEvent.ACTION_MOVE -> {
+                        flick = flickFactory.makeWith(tapX, tapY, x, y)
+                        if (onPressCode == KeyIndex.INDEX_ARROW && arrowKey.mode == ArrowKey.Mode.DEFAULT) {
+                            if (flick == Flick.NONE) {
+                                arrowKey.stopInput()
+                            } else {
+                                val key = keymap.getKey(KeyIndex.INDEX_ARROW, flick)
+                                if (key is AsciiKeyInfo.DirectionKey) {
+                                    if (arrowKey.isStandby) {
+                                        arrowKey.changeKeyInfo(key)
+                                    } else {
+                                        arrowKey.startInput(key, modStorage.toSet())
+                                    }
+                                }
+                            }
+
+                        }
+                        indicateFlickState()
+                        return@Listener true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        arrowKey.stopInput()
+                        indicateFlickState()
+                        multiTapManager.resetTapCount()
+                        return@Listener false
+                    }
                 }
-                MotionEvent.ACTION_UP -> {
-                    keyboardView.indicate(Flick(), 0)
-                    multiTapSetting.resetCount()
-                    arrowKey.stopRepeatingInput()
-                    false
-                }
-                else -> true
+                return@Listener true
             }
         }
-
-        return keyboardView
     }
 
-    override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
+    override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
-        editorInfo = info
-        keyboardManager.updateKeyboard()
-        keyList = keyboard.keys
-        Flick.updateDistanceThreshold(keyboardView.context)
-        multiTapSetting.updateSettings(keyboardView.context)
-        modKeyList.forEach { it.turnOff() }
-        inputTypeClass = InputType.TYPE_MASK_CLASS and
-                (currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT)
-        arrowKey.reset()
-        keyboardView.updateTheme()
-        updateAllKeysFace()
+        editorInfo = info ?: EditorInfo()
+        flickFactory = FlickFactory(rServer.thresholdX1.current,
+                                    rServer.thresholdX2.current,
+                                    rServer.thresholdY1.current,
+                                    rServer.thresholdY2.current)
+        multiTapManager = MultiTapManager(rServer.canCancelFlick.current,
+                                          rServer.canCancelInput.current)
+        indicatorFactory = IndicatorFactory(rServer.supplyIndicatorBackground())
+        setInputView(onCreateInputView())
+        indicateFlickState()
+        arrowKey = ArrowKey { order ->
+            val ic = currentInputConnection ?: return@ArrowKey
+            if (order.mainKey is AsciiKeyInfo.DirectionKey) {
+                sendModifiableKeys(ic, order)
+            }
+        }
     }
-
 
     override fun onPress(primaryCode: Int) {
         onPressCode = primaryCode
+        canInput = KeyIndex.isValid(primaryCode)
+        indicateFlickState()
     }
 
-    override fun onRelease(primaryCode: Int) {}
-
-    override fun onKey(primaryCode: Int, keyCodes: IntArray) {
-        sendKeycode(keymap.searchKeycode(onPressCode, flick))
-        updateAllKeysFace()
+    override fun onRelease(primaryCode: Int) {
+        arrowKey.stopInput()
+        tapX = -1
+        tapY = -1
+        onPressCode = KeyIndex.NOTHING
+        canInput = true
+        flick = Flick.NONE
+        indicateFlickState()
     }
 
-    override fun onText(text: CharSequence) {}
+    override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+        if (!canInput) {
+            return
+        }
+        val key = keymap.getKey(onPressCode, flick)
+        if (key is ModKeyInfo) {
+            modStorage.update(key, isSubMod = false)
+            keyboardController.updateModKeyFace(modStorage.toSet())
+            keyboardView.invalidateAllKeys()
+            return
+        }
+        if (key.mods.isNotEmpty()) {
+            key.mods.map { modStorage.update(it, isSubMod = true) }
+        }
+        sendKey(key, modStorage.toSet())
+    }
+
+    private fun sendKey(key: KeyInfo, mods: Set<ModKeyInfo>) {
+        if (key === AsciiKeyInfo.ENTER && mods.isEmpty()) {
+            val editorAction = editorInfo.actionId.and(
+                    EditorInfo.IME_MASK_ACTION or EditorInfo.IME_FLAG_NO_ENTER_ACTION)
+            when (editorAction) {
+                EditorInfo.IME_ACTION_GO,
+                EditorInfo.IME_ACTION_DONE,
+                EditorInfo.IME_ACTION_NEXT,
+                EditorInfo.IME_ACTION_SEARCH,
+                EditorInfo.IME_ACTION_SEND -> {
+                    currentInputConnection?.performEditorAction(editorAction)
+                    return
+                }
+            }
+        }
+
+        if (key is AsciiKeyInfo.DirectionKey) {
+            if (arrowKey.isStandby && lastAction == MotionEvent.ACTION_UP) {
+                arrowKey.stopInput()
+                return
+            }
+        }
+
+        if (key is AsciiKeyInfo && key is AsciiKeyInfo.Modifiable) {
+            val ic = currentInputConnection ?: return
+            sendModifiableKeys(ic, KeyEventOrder(key, mods))
+            modStorage.resetUnlessLock()
+            keyboardController.updateModKeyFace(modStorage.toSet())
+            keyboardView.invalidateAllKeys()
+            return
+        }
+
+        if (key is AsciiKeyInfo.CharKey && key !is AsciiKeyInfo.Modifiable) {
+            super.sendKeyChar(key.char)
+            modStorage.resetUnlessLock()
+            keyboardController.updateModKeyFace(modStorage.toSet())
+            keyboardView.invalidateAllKeys()
+            return
+        }
+
+        if (key === TriggerKeyInfo.ARROWKEY_MODE) {
+            arrowKey.toggleMode()
+            keymap.updateArrowKeymap(arrowKey.mode)
+            keyboardController.updateArrowKeyFace(arrowKey.mode)
+        }
+
+        if (key === TriggerKeyInfo.KEYBOARD_LAYOUT) {
+            isRight = !isRight
+            setInputView(onCreateInputView())
+            return
+        }
+    }
+
+    private fun sendModifiableKeys(ic: InputConnection, order: KeyEventOrder) {
+        val time = System.currentTimeMillis()
+        order.toKeyEventList(time).map { ic.sendKeyEvent(it) }
+    }
+
+    private fun indicateFlickState() {
+        val key = keyboardView.keyboard.keys.first { it.codes[0] == KeyIndex.INDICATOR } ?: return
+        indicatorFactory.also {
+            it.enable = canInput
+            it.isDuringInput = lastAction != MotionEvent.ACTION_UP
+            it.left = key.x
+            it.right = key.x + key.width
+            it.top = key.y
+            it.bottom = key.y + key.height
+            it.direction = flick.direction
+            it.currentDistance = flick.distance
+            it.maxDistance = keymap.getMaxDistance(onPressCode, flick.direction)
+        }
+        keyboardView.apply {
+            indicator = indicatorFactory.makeIndicator()
+            invalidateKey(KeyIndex.INDICATOR)
+        }
+    }
 
     override fun swipeLeft() {}
 
     override fun swipeRight() {}
 
-    override fun swipeDown() {}
-
     override fun swipeUp() {}
 
-    fun sendKeycode(code: Int) {
-        val ic = currentInputConnection ?: return
-        var flagTurnModKeyOff = true
+    override fun swipeDown() {}
 
-        when (code) {
-            SpecialKeyCode.NULL
-            -> flagTurnModKeyOff = false
-
-            SpecialKeyCode.TOGGLE_ARROWKEY_MODES -> {
-                if ((onPressCode != KeyNumbers.ARROW) or !(arrowKey.toggleable)) return
-                arrowKey.toggle()
-                keyboardManager.updateArrowKeyFace(arrowKey.state)
-                keymapController.updateArrowKeymap(arrowKey.state)
-            }
-
-            SpecialKeyCode.TOGGLE_ADJUSTMENT ->
-                keyboardManager.changeKeyAdjustment()
-
-            SpecialKeyCode.TOGGLE_ADJUSTMENT_ALIGN ->
-                keyboardManager.changeKeyAdjustmentAlign()
-
-            SpecialKeyCode.LEFT,
-            SpecialKeyCode.RIGHT,
-            SpecialKeyCode.DOWN,
-            SpecialKeyCode.UP -> {
-                if ((lastActionCode == MotionEvent.ACTION_UP) and (arrowKey.isRepeatingMode())) return
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
-                sendSpecialKeyEvent(ic, code)
-            }
-
-            SpecialKeyCode.BACKSPACE,
-            SpecialKeyCode.DELETE,
-            SpecialKeyCode.TAB,
-            SpecialKeyCode.ESCAPE,
-            SpecialKeyCode.F1,
-            SpecialKeyCode.F2,
-            SpecialKeyCode.F3,
-            SpecialKeyCode.F4,
-            SpecialKeyCode.F5,
-            SpecialKeyCode.F6,
-            SpecialKeyCode.F7,
-            SpecialKeyCode.F8,
-            SpecialKeyCode.F9,
-            SpecialKeyCode.F10,
-            SpecialKeyCode.F11,
-            SpecialKeyCode.F12,
-            SpecialKeyCode.HOME,
-            SpecialKeyCode.END,
-            SpecialKeyCode.PAGE_DOWN,
-            SpecialKeyCode.PAGE_UP -> {
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
-                sendSpecialKeyEvent(ic, code)
-            }
-
-            SpecialKeyCode.ENTER -> {
-                val action = editorInfo.imeOptions.and(
-                        EditorInfo.IME_MASK_ACTION or EditorInfo.IME_FLAG_NO_ENTER_ACTION)
-                when (action) {
-                    EditorInfo.IME_ACTION_GO,
-                    EditorInfo.IME_ACTION_DONE,
-                    EditorInfo.IME_ACTION_NEXT,
-                    EditorInfo.IME_ACTION_SEARCH,
-                    EditorInfo.IME_ACTION_SEND -> ic.performEditorAction(action)
-                    else -> {
-                        modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
-                        sendSpecialKeyEvent(ic, SpecialKeyCode.ENTER)
-                    }
-                }
-            }
-
-            SpecialKeyCode.SHIFT_TAB -> {
-                shiftKey.turnOn()
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
-                sendSpecialKeyEvent(ic, SpecialKeyCode.TAB)
-            }
-
-            SpecialKeyCode.SHIFT_ENTER -> {
-                shiftKey.turnOn()
-                modKeyList.forEach { if (it.isEnabled()) sendModKeyEvent(ic, it, true) }
-                sendSpecialKeyEvent(ic, SpecialKeyCode.ENTER)
-            }
-
-            SpecialKeyCode.META -> {
-                metaKey.toggleOnOff()
-                flagTurnModKeyOff = false
-            }
-
-            SpecialKeyCode.CTRL -> {
-                ctrlKey.toggleOnOff()
-                flagTurnModKeyOff = false
-            }
-
-            SpecialKeyCode.ALT -> {
-                altKey.toggleOnOff()
-                flagTurnModKeyOff = false
-            }
-
-            SpecialKeyCode.META_LOCK -> {
-                metaKey.toggleLock()
-                flagTurnModKeyOff = false
-            }
-
-            SpecialKeyCode.CTRL_LOCK -> {
-                ctrlKey.toggleLock()
-                flagTurnModKeyOff = false
-            }
-
-            SpecialKeyCode.ALT_LOCK -> {
-                altKey.toggleLock()
-                flagTurnModKeyOff = false
-            }
-
-            else -> {
-                val char = code.toChar()
-                if (modKeyList.any { it.isEnabled() }) {
-                    modKeyList.forEach {
-                        if (it.isEnabled()) sendModKeyEvent(ic, it, true)
-                    }
-                    if (char.isUpperCase()) {
-                        shiftKey.turnOn()
-                        sendModKeyEvent(ic, shiftKey, true)
-                        sendCharKeyEvent(ic, char.toLowerCase())
-                        sendModKeyEvent(ic, shiftKey, false)
-                    } else {
-                        sendCharKeyEvent(ic, char)
-                    }
-                } else {
-                    sendKeyChar(char)
-                }
-            }
-        }
-
-        if (flagTurnModKeyOff) modKeyList.forEach {
-            if (it.isEnabled()) sendModKeyEvent(ic, it, false)
-            it.turnOffUnlessLock()
-        }
-    }
-
-    fun updateAllKeysFace() {
-        keyboardManager.apply {
-            updateMetaAltKeyFace(metaKey, altKey)
-            updateCtrlAltKeyFace(ctrlKey, altKey)
-            updateArrowKeyFace(arrowKey.state)
-        }
-        keyboardView.invalidateAllKeys()
-    }
-
-
-
-    private fun hasInputLimit(): Boolean = inputTypeClass > InputType.TYPE_CLASS_TEXT
-
-    private fun getInputtableChars(): List<Char> {
-        if (!hasInputLimit()) return emptyList()
-        val base = "0123456789-"
-        return when (inputTypeClass) {
-            InputType.TYPE_CLASS_NUMBER   -> base
-            InputType.TYPE_CLASS_PHONE    -> "$base*#"
-            InputType.TYPE_CLASS_DATETIME -> "$base/: "
-            else -> ""
-        }.toCharArray().toList()
-    }
-
-    private fun resetTapState(x: Int, y: Int) {
-        tapX = x
-        tapY = y
-        flick.reset()
-        keyboardView.indicate(Flick(), 0)
-        arrowKey.stopRepeatingInput()
-    }
-
-    private fun isTappingLimitedKey(): Boolean =
-            onPressCode in KeyNumbers.LIST_VALID_ON_NUM
-
-    private fun sendModKeyEvent(ic: InputConnection, modKey: ModKey, isDown: Boolean) {
-        sendKeyEvent(ic, modKey.action, isDown, true)
-    }
-
-    private fun sendCharKeyEvent(ic: InputConnection, char: Char) {
-        val keycode = charConverter.convert(char)
-        sendKeyEvent(ic, keycode, true,  true)
-        sendKeyEvent(ic, keycode, false, true)
-    }
-
-    private fun sendSpecialKeyEvent(ic: InputConnection, code: Int) {
-        val trueCode = SpecialKeyCode.convertToKeyEventCode(code)
-        sendKeyEvent(ic, trueCode, true,  true)
-        sendKeyEvent(ic, trueCode, false, true)
-    }
-
-    private fun sendKeyEvent(ic: InputConnection, code: Int, isDown: Boolean, withMeta: Boolean) {
-        val now = System.currentTimeMillis()
-        val action = if (isDown) KeyEvent.ACTION_DOWN else KeyEvent.ACTION_UP
-        val meta = if (withMeta) getMetaState() else 0
-        ic.sendKeyEvent(KeyEvent(now, now, action, code, 0, meta))
-    }
-
-    private fun getMetaState(): Int {
-        var meta = 0
-        modKeyList.forEach { if (it.isEnabled()) meta = meta or it.meta }
-        return meta
-    }
-
+    override fun onText(text: CharSequence?) {}
 }

@@ -3,4 +3,10 @@
     <dimen name="key_height">32dp</dimen>
     <dimen name="inch_unit">1in</dimen>
     <dimen name="dp_unit">1dp</dimen>
+
+    <dimen name="key_height_small">32dp</dimen>
+    <dimen name="key_height_semi_small">36dp</dimen>
+    <dimen name="key_height_medium">40dp</dimen>
+    <dimen name="key_height_semi_large">44dp</dimen>
+    <dimen name="key_height_large">48dp</dimen>
 </resources>

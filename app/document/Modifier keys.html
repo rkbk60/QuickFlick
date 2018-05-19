@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./github-markdown.css" ref="stylesheet" type="text/css">
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            margin: 0 auto;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body class="markdown-body">
+<h1>Modifier keys</h1>
+<p>Now QuickFlick has 3 modifier key(Ctrl/Alt/Meta).<br />
+These keys can use in terminal emulator, code editor, and other apps which have any input field.  </p>
+<p><strong>NOTE:</strong><br />
+This app does <em>NOT</em> provide Cut/Copy/Paste/Redo/Undo functions.</p>
+<h2>Mode</h2>
+<p>Each Modifier keys have 3 modes.</p>
+<ul>
+<li><strong>OFF</strong>: Default. do nothing.</li>
+<li><strong>ON</strong>: press modifier key once when you input char or number.<br />
+(ex. type:<code>&lt;Ctrl:ON&gt;abc</code> --&gt; <code>&lt;C-a&gt;bc</code>)</li>
+<li><strong>LOCK</strong>: keep pressing modifire key.<br />
+(ex. type:<code>&lt;Ctrl:LOCK&gt;abc</code> --&gt; <code>&lt;C-a&gt;&lt;C-b&gt;&lt;C-c&gt;</code>)</li>
+</ul>
+<h2>Control</h2>
+<p>See <a href="file:///android_asset/Keymap.html">Keymap</a>, and you may find that QucikFlick has two way to control modes.</p>
+<ul>
+<li><strong>Ctrl/Alt/Meta</strong>: toggle ON &lt;--> OFF (&lt;-- LOCK)</li>
+<li><strong>Ctrl/Alt/Meta Lock</strong>: toggle OFF &lt;--> LOCK (&lt;-- ON)</li>
+</ul>
+<h2>Check mode</h2>
+<p>If these keys turn ON, key label changes lower to upper. <br />
+(Meta: m--&gt;M, Ctrl: c--&gt;C, Alt: a--&gt;A)  </p>
+<p>If LOCK mode, add <u>underbar</u>.<br />
+(ex. CtrlON: C, CtrlLOCK: <u>C</u>)</p>
+</body>
+</html>

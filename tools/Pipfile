@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+"flake8" = "*"
+"flake8-mypy" = "*"
+
+[packages]
+cairosvg = "*"
+verbalexpressions = "*"
+markdown = "*"
+
+[requires]
+python_version = "3.6"
+# vim: set filetype=toml

@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+//apply plugin: 'de.mannodermaus.android-junit5'
+
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
@@ -8,9 +10,9 @@ android {
         applicationId "com.rkbk60.quickflick"
         minSdkVersion 15
         targetSdkVersion 26
-        versionName '1.5'
+        versionName '2.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 7
+        versionCode 8
     }
     buildTypes {
         release {
@@ -19,6 +21,11 @@ android {
         }
     }
     productFlavors {
+    }
+    sourceSets {
+        main {
+            assets.srcDirs = ['document']
+        }
     }
 }
 
@@ -31,6 +38,22 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
+
+dependencies {
+    // android-junit5
+//    testImplementation junit5.unitTests()
+//    testCompileOnly junit5.unitTestsRuntime()
+
+    // Kluent
+    testImplementation "org.amshove.kluent:kluent-android:$kluentVersion"
+}
+
 repositories {
     mavenCentral()
+}
+
+apply plugin: 'kotlin-android-extensions'
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:+'
 }
