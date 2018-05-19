@@ -1,5 +1,6 @@
 ## Access to Settings
 There are 2 ways to access to Settings View.
+
 1. Home Screen > QuickFlick app icon **(Recommend)**
 2. Home Screen > Settings > Languages & input > Virtual Keyboard > QuickFlick (Android 7)
 
@@ -7,6 +8,7 @@ There are 2 ways to access to Settings View.
 ## Horizontal/Vertical Flick Sensitivity
 Set threshold(unit: thou=Milli inch) for use to calculate flick distance level.  
 (check: [Multi phase flick](How-to-Input#1))  
+
 * **1st threshold**: For use to judge tap or flick.
 * **2nd threshold**: For use to detect level when flick distance is longer than 1st threshold.
 
@@ -16,6 +18,7 @@ Default values are shown in each settings summary.
 <a id="2"></a>
 ## Multi tap settings
 Switch on-off of these input control functions.
+
 * **Reset Flick**
 * **Input Cancel**
 
@@ -40,7 +43,3 @@ It can also change from keyboard directory.
 
 ### Use keyboard footer
 If you feel bad to fling lower keys on landscape, then you should turn on to lift keyboard.
-
-<a id="99"></a>
-## Note
-* You can't change key adjustment from here. Check [Keymap > Adjustment](Keymap#2).

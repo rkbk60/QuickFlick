@@ -34,10 +34,8 @@ class DocumentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_document)
 
         webView = findViewById<WebView>(R.id.document_view)?.apply {
-            settings.let {
-                it.allowFileAccess = true
-                it.setSupportZoom(true)
-            }
+            setTitle("QuickFlick Document")
+            settings.builtInZoomControls = true
             webViewClient = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 webClientForLollipop
             } else {

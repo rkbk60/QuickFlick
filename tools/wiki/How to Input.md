@@ -1,5 +1,5 @@
 You can input with tap or flick.  
-If you want to check keymap, see [Here](keymap).
+If you want to check keymap, see [Here](Keymap).
 
 <a id="1"></a>
 ## Multi phase flick
@@ -17,6 +17,7 @@ You can change flick sensitivity in [Settings > Horizontal/Vertical Flick Sensit
 ## Canceling with multi tap
 You can control input with multi tap.  
 QuickFlick has now two functions to control input.
+
 * **Flick reseter**: Reset flicking state with multi tap.
 * **Input canceler**: Cancel input with twice tap.
 

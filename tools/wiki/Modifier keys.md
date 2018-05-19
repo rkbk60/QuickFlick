@@ -15,6 +15,7 @@ Each Modifier keys have 3 modes.
 
 ## Control
 See [Keymap](Keymap), and you may find that QucikFlick has two way to control modes.
+
 * **Ctrl/Alt/Meta**: toggle ON <--\> OFF (<-- LOCK)
 * **Ctrl/Alt/Meta Lock**: toggle OFF <--\> LOCK (<-- ON)
 

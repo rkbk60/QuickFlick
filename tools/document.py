@@ -55,12 +55,12 @@ re_img2a = (VerEx().
             find("<img").
             anything().
             find(' src="').
-            anything_but('"').
-            find('"').
+            anything().
+            find('.png"').
             anything().
             find("/>").
             regex())
-to_img2a = r'[[View image]](%s\4)' % url
+to_img2a = r'[[View image]](%s\4.html?is_image=1)' % url
 
 # fix minus to space in html hyperlink
 re_minus2space = (VerEx().
@@ -71,6 +71,12 @@ re_minus2space = (VerEx().
                   find('.html').
                   regex())
 
+# regex to find title
+re_title = (VerEx().
+            find("# ").
+            anything().
+            regex())
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 output_dir = "output/document/"
 if not os.path.exists(output_dir):
@@ -80,24 +86,27 @@ os.chdir(current_dir)
 
 template = io.open("./template/document.html").read()
 
+# generate document html
 for md in glob.glob('./wiki/*.md'):
-    source = io.open(md, encoding='utf-8')
+    source_all = io.open(md, encoding='utf-8').read()
+    source = source_all.splitlines()
     basename = os.path.splitext(os.path.basename(md))[0]
+    if re_title.match(source_all) is None:
+        source = ["# " + basename] + source
     newtext = ""
     for newline in source:
         newline = re_fix_innerlink.sub(to_fix_innerlink % basename, newline)
         newline = re_disable_link.sub(to_disable_link, newline)
         newline = re_fix_linkpath.sub(to_fix_linkpath, newline)
         newline = re_img2a.sub(to_img2a, newline)
-        newtext += newline
-    source.close()
+        newtext += "\n" + newline
     html = io.open(output_dir + basename + ".html", "w+", encoding='utf-8')
     context = markdown.markdown(newtext)
     newcontext = u""
     for newline in context.split("<"):
         if newline:
             newline = "<" + newline
-        newline = newline.replace(" Wiki", " Document")
+        newline = newline.replace("Wiki", "Document")
         targets = re_minus2space.findall(newline)
         if targets:
             for target in targets:
@@ -107,6 +116,15 @@ for md in glob.glob('./wiki/*.md'):
         newcontext += newline
     result = template.replace("$MARKDOWN", newcontext)
     html.write(result)
+    html.close()
+    log("generate: ./" + output_dir + basename + ".html")
+
+# generate image html
+template = io.open("./template/document_image.html").read()
+for png in glob.glob('./wiki/*.png'):
+    basename = os.path.splitext(os.path.basename(png))[0]
+    html = io.open(output_dir + basename + ".html", "w+", encoding='utf-8')
+    html.write(template.replace("$IMAGE", '<img src="./%s.png" />' % basename))
     html.close()
     log("generate: ./" + output_dir + basename + ".html")
 print()
