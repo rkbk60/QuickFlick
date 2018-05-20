@@ -202,7 +202,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         }
 
         if (key is AsciiKeyInfo.DirectionKey) {
-            if (arrowKey.isStandby && lastAction == MotionEvent.ACTION_UP) {
+            if (arrowKey.isStandby || lastAction == MotionEvent.ACTION_UP) {
                 arrowKey.stopInput()
                 return
             }
