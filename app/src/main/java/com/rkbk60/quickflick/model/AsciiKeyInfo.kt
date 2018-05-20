@@ -109,7 +109,7 @@ sealed class AsciiKeyInfo : KeyInfo() {
 
     object LARGE_C : CharKey(), Modifiable {
         override val char = 'C'
-        override val code = KeyEvent.KEYCODE_D
+        override val code = KeyEvent.KEYCODE_C
         override val mods = listOf(ModKeyInfo.SHIFT)
     }
 
