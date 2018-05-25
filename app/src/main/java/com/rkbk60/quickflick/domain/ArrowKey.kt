@@ -23,7 +23,7 @@ class ArrowKey(private val sendKey: (KeyEventOrder) -> Unit) {
     /**
      * Repeating input runner.
      */
-    private val runner = RepeatingInputRunner(sendKey)
+    private val runner = RepeatingInputRunner(true, sendKey)
 
     /**
      * Flag to show whether task is readied to run.

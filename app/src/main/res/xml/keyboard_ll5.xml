@@ -59,8 +59,7 @@
             android:keyIcon="@drawable/keyicon_3"/>
         <Key
             android:codes="13"
-            android:keyIcon="@drawable/keyicon_delete"
-            android:isRepeatable="true"/>
+            android:keyIcon="@drawable/keyicon_delete"/>
         <Key android:codes="14"
             android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f4_6"
@@ -82,8 +81,7 @@
             android:keyIcon="@drawable/keyicon_6"/>
         <Key
             android:codes="20"
-            android:keyIcon="@drawable/keyicon_backspace"
-            android:isRepeatable="true"/>
+            android:keyIcon="@drawable/keyicon_backspace"/>
         <Key android:codes="21"
             android:keyWidth="15%p"
             android:keyIcon="@drawable/keyicon_f7_9"

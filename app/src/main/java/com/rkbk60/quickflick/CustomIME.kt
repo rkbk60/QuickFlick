@@ -27,6 +27,13 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
     private lateinit var multiTapManager: MultiTapManager
     private lateinit var arrowKey: ArrowKey
 
+    // repeating input helper for backspace/delete
+    private var doRepeatingDelete = false
+    private val deleteInputRunner = RepeatingInputRunner(inputAtCalling = false) { keyEventOrder ->
+        sendModifiableKeys(currentInputConnection ?: return@RepeatingInputRunner, keyEventOrder)
+        doRepeatingDelete = true
+    }
+
     // current keyboard information
     private var isRight
         get() = rServer.keyboardIsRight.current
@@ -59,6 +66,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
             isPreviewEnabled = false
             setOnCloseListener {
                 arrowKey.stopInput()
+                deleteInputRunner.stopInput()
                 lastAction = MotionEvent.ACTION_UP
                 tapX = -1
                 tapY = -1
@@ -77,6 +85,17 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     MotionEvent.ACTION_DOWN -> {
                         tapX = x
                         tapY = y
+                        keyboard.keys.find {
+                            it.isInside(x, y) && KeyIndex.isValid(it.codes[0])
+                        }?.also {
+                            val key = keymap.getKey(it.codes[0], Flick.NONE)
+                            when (key) {
+                                AsciiKeyInfo.FORWARD_DEL,
+                                AsciiKeyInfo.BACK_DEL -> {
+                                    deleteInputRunner.startInput(key, modStorage.toSet())
+                                }
+                            }
+                        }
                         return@Listener false
                     }
                     MotionEvent.ACTION_POINTER_DOWN -> {
@@ -122,6 +141,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
                     }
                     MotionEvent.ACTION_UP -> {
                         arrowKey.stopInput()
+                        deleteInputRunner.stopInput()
                         indicateFlickState()
                         multiTapManager.resetTapCount()
                         return@Listener false
@@ -204,6 +224,14 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         if (key is AsciiKeyInfo.DirectionKey) {
             if (arrowKey.isStandby || lastAction == MotionEvent.ACTION_UP) {
                 arrowKey.stopInput()
+                return
+            }
+        }
+
+        if (key === AsciiKeyInfo.FORWARD_DEL || key === AsciiKeyInfo.BACK_DEL) {
+            if (doRepeatingDelete && lastAction == MotionEvent.ACTION_UP) {
+                doRepeatingDelete = false
+                deleteInputRunner.stopInput()
                 return
             }
         }

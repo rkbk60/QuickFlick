@@ -63,7 +63,6 @@
         <Key
             android:codes="13"
             android:keyIcon="@drawable/keyicon_delete"
-            android:isRepeatable="true"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>
@@ -86,7 +85,6 @@
         <Key
             android:codes="20"
             android:keyIcon="@drawable/keyicon_backspace"
-            android:isRepeatable="true"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>

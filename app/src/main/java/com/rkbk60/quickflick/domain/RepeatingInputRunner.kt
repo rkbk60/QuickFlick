@@ -6,7 +6,8 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 
-class RepeatingInputRunner(private val action: (KeyEventOrder) -> Unit) {
+class RepeatingInputRunner(val inputAtCalling: Boolean,
+                           private val action: (KeyEventOrder) -> Unit) {
     private var order = KeyEventOrder()
     private var job = Job()
 
@@ -27,7 +28,9 @@ class RepeatingInputRunner(private val action: (KeyEventOrder) -> Unit) {
         if (isStandby || key === KeyInfo.NULL) return
         isStandby = true
         order.changeKeys(key, mods)
-        action(order)
+        if (inputAtCalling) {
+            action(order)
+        }
         order.changeModKeys(mods.filter { it.lockable }.toSet())
         job = launch {
             delay(DELAY_TIME)
