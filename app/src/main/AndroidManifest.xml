@@ -36,8 +36,7 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat">
             <intent-filter>
-                <action android:name="com.rkbk60.quickflick.DocumentActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
     </application>

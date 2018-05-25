@@ -33,15 +33,24 @@ class DocumentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_document)
 
+        val (title, file, zoomable) = when (intent.dataString) {
+            baseContext.getString(R.string.intent_wiki) ->
+                Triple("QuickFlick Document", "Home.html", true)
+            baseContext.getString(R.string.intent_license) ->
+                Triple("License", "license.html", false)
+            else ->
+                Triple("Error", "404", false)
+        }
+
         webView = findViewById<WebView>(R.id.document_view)?.apply {
-            setTitle("QuickFlick Document")
-            settings.builtInZoomControls = true
+            setTitle(title)
+            settings.builtInZoomControls = zoomable
             webViewClient = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 webClientForLollipop
             } else {
                 webClientForKitkat
             }
-            loadUrl("file:///android_asset/Home.html")
+            loadUrl("file:///android_asset/$file")
         }
     }
 

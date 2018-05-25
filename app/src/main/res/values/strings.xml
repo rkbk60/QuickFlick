@@ -34,7 +34,9 @@
     <string name="preferences_category_vertical">Vertical flick sensitivity</string>
     <string name="preferences_category_canceler">Multi tap settings</string>
     <string name="preferences_category_appearance">Appearance</string>
-    <string name="preferences_title_document">Check Document</string>
+    <string name="preferences_category_others">others</string>>
+    <string name="preferences_title_wiki">Offline help</string>
+    <string name="preferences_title_license">License</string>
     <string name="preferences_title_threshold_x1">1st horizontal threshold</string>
     <string name="preferences_title_threshold_x2">2nd horizontal threshold</string>
     <string name="preferences_title_threshold_y1">1st horizontal threshold</string>
@@ -50,5 +52,9 @@
     <string name="preferences_summary_cancel_input">Cancel input with twice tap</string>
     <string name="preferences_summary_keys_adjustment">It can also change from keyboard.</string>
     <string name="preferences_summary_keyboard_footer">Lift keyboard when device is landscape</string>
+
+    <!-- Intent data -->
+    <string name="intent_wiki">intent_wiki</string>
+    <string name="intent_license">intent_license</string>
 
 </resources>
