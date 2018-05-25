@@ -11,6 +11,8 @@ import android.widget.Toast
  * Settings
  */
 
+private typealias HeightPrefEnum = ResourceServerBase.PreferenceEnum<ResourceServer.KeyboardHeight>
+
 class SettingsActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +39,8 @@ class SettingsActivity: AppCompatActivity() {
                 updateThresholdSummary(it)
             }
             updateThemeSummary()
-            updateKeyboardHeightSummary()
+            updateKeyboardHeightSummary(rServer.keyboardHeightPortrait)
+            updateKeyboardHeightSummary(rServer.keyboardHeightLandscape)
         }
 
         override fun onPause() {
@@ -64,8 +67,11 @@ class SettingsActivity: AppCompatActivity() {
                         validateThreshold(thresholdY2)
                         updateThresholdSummary(thresholdY2)
                     }
-                    keyboardHeight.key -> {
-                        updateKeyboardHeightSummary()
+                    keyboardHeightPortrait.key -> {
+                        updateKeyboardHeightSummary(keyboardHeightPortrait)
+                    }
+                    keyboardHeightLandscape.key -> {
+                        updateKeyboardHeightSummary(keyboardHeightLandscape)
                     }
                     indicatorTheme.key -> {
                         updateThemeSummary()
@@ -95,8 +101,8 @@ class SettingsActivity: AppCompatActivity() {
                     "${target.current} thou (Default:${target.default})"
         }
 
-        private fun updateKeyboardHeightSummary() {
-            val current = rServer.keyboardHeight.current
+        private fun updateKeyboardHeightSummary(target: HeightPrefEnum = rServer.keyboardHeightPortrait) {
+            val current = target.current
             val subContent = when (current) {
                 ResourceServer.KeyboardHeight.Lv1 -> "smallest"
                 ResourceServer.KeyboardHeight.Lv2 -> "small"
@@ -104,7 +110,7 @@ class SettingsActivity: AppCompatActivity() {
                 ResourceServer.KeyboardHeight.Lv4 -> "large"
                 ResourceServer.KeyboardHeight.Lv5 -> "largest"
             }
-            findPreference(rServer.keyboardHeight.key).summary =
+            findPreference(target.key).summary =
                     "Level ${current.toInt()} ($subContent)"
         }
 

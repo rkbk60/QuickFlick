@@ -39,8 +39,7 @@ class CustomIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
         get() = rServer.keyboardIsRight.current
         set(value) { rServer.keyboardIsRight.current = value }
     private var useFooter
-        get()  = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-                    && rServer.keyboardUseFooter.current
+        get()  = !rServer.isPortrait && rServer.keyboardUseFooter.current
         set(_) = Unit
     private var heightLevel
         get()  = rServer.keyboardHeight.current.toInt()

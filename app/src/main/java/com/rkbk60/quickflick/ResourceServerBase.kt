@@ -14,6 +14,7 @@ import android.widget.Toast
  * @param context context
  */
 abstract class ResourceServerBase(protected val context: Context) {
+    protected val resources = context.resources ?: null
     private val preference = PreferenceManager.getDefaultSharedPreferences(context)
     private val editor = preference.edit()
 

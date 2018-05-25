@@ -1,6 +1,7 @@
 package com.rkbk60.quickflick
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.support.annotation.*
@@ -17,7 +18,14 @@ class ResourceServer(context: Context) : ResourceServerBase(context) {
     val keyboardIsRight = PreferenceBool(R.string.preferences_keys_adjustment, false)
     val keyboardUseFooter = PreferenceBool(R.string.preferences_keyboard_footer, false)
 
-    val keyboardHeight = PreferenceEnum(R.string.preferences_keyboard_height, KeyboardHeight.Lv2, enumValues())
+    val isPortrait = resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT
+
+    val keyboardHeight
+        get() = if (isPortrait) keyboardHeightPortrait else keyboardHeightLandscape
+    val keyboardHeightPortrait = PreferenceEnum(
+            R.string.preferences_keyboard_height, KeyboardHeight.Lv2, enumValues())
+    val keyboardHeightLandscape = PreferenceEnum(
+            R.string.preferences_keyboard_height_landscape, KeyboardHeight.Lv2, enumValues())
     enum class KeyboardHeight : ResourceEnum {
         Lv1, Lv2, Lv3, Lv4, Lv5;
 

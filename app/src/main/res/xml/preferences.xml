@@ -69,6 +69,13 @@
             android:entries="@array/key_height_list"
             android:entryValues="@array/key_height_list">
         </ListPreference>
+        <ListPreference
+            android:defaultValue="@string/keyboard_height_2"
+            android:key="@string/preferences_keyboard_height_landscape"
+            android:title="@string/preferences_title_keys_height_landscape"
+            android:entries="@array/key_height_list"
+            android:entryValues="@array/key_height_list">
+        </ListPreference>
         <SwitchPreference
             android:defaultValue="true"
             android:key="@string/preferences_keys_adjustment"
