@@ -2,6 +2,7 @@
 package com.rkbk60.quickflick.unittest
 
 import com.rkbk60.quickflick.domain.ArrowKey
+import com.rkbk60.quickflick.domain.RepeatingInputRunner
 import com.rkbk60.quickflick.model.AsciiKeyInfo
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeIn
@@ -11,6 +12,7 @@ import org.junit.Test
 private typealias AL = AsciiKeyInfo.LEFT
 private typealias AR = AsciiKeyInfo.RIGHT
 
+// This test is also one for RepeatingInputRunner because ArrowKey is wrapper of that.
 class ArrowKeyTest {
     @Test fun `test on nothing`() {
         counterObject {
@@ -39,6 +41,23 @@ class ArrowKeyTest {
             Thread.sleep(time)
             stopInput()
         } shouldBeIn (104 - 3)..(104 + 3)
+    }
+
+    @Test fun `test on change direction during input`() {
+        val (time, shouldBe) = getCountTestParams(second = 3)
+        var counter1 = 0
+        var counter2 = 0
+        ArrowKey {
+            order -> if (order.mainKey === AL) counter1++ else counter2++
+        }.runSafely {
+            startInput(AL, setOf())
+            Thread.sleep(time)
+            changeKeyInfo(AR)
+            Thread.sleep(time)
+            stopInput()
+        }
+        counter1 shouldBeIn testRangeOf(shouldBe, margin = 4)
+        counter2 shouldBeIn testRangeOf(shouldBe, margin = 8)
     }
 
     @Test fun `test on PageMove mode`() {
@@ -82,5 +101,25 @@ class ArrowKeyTest {
             a.stopInput()
         }
         return c
+    }
+
+    private fun testRangeOf(shouldBe: Int, margin: Int = 0): IntRange {
+        return (shouldBe - margin)..(shouldBe + margin)
+    }
+
+    private fun getCountTestParams(second: Int): Pair<Long, Int> {
+        val ms = second * 1000
+        return ms.toLong() to
+                2 + (ms - RepeatingInputRunner.DELAY_TIME) / RepeatingInputRunner.REPEATING_TIME
+    }
+
+    private fun <T> ArrowKey.runSafely(run: ArrowKey.() -> T): T? {
+        return try {
+            this.run(run)
+        } catch (e: Exception) {
+            throw e
+        } finally {
+            stopInput()
+        }
     }
 }

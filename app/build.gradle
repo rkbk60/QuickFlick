@@ -40,6 +40,10 @@ dependencies {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+}
+
+dependencies {
     // android-junit5
 //    testImplementation junit5.unitTests()
 //    testCompileOnly junit5.unitTestsRuntime()
@@ -56,4 +60,10 @@ apply plugin: 'kotlin-android-extensions'
 
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:+'
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

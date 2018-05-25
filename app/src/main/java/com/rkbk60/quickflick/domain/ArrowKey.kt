@@ -15,59 +15,22 @@ class ArrowKey(private val sendKey: (KeyEventOrder) -> Unit) {
     enum class Mode { DEFAULT, PAGE_MOVE }
 
     /**
-     * TimerTask for repeating input.
-     * @param sendKey action to send KeyEvent
-     */
-    private inner class ArrowKeyTimerTask(
-            private val sendKey: (KeyEventOrder) -> Unit): TimerTask() {
-        /**
-         * Flag to show whether task is isStandby.
-         */
-        var running = false
-            private set
-
-        /**
-         * Runs repeating key input.
-         */
-        override fun run() {
-            running = true
-            sendKey(this@ArrowKey.order)
-        }
-    }
-
-    /**
      * Current arrow key mode.
      */
     var mode = Mode.DEFAULT
         private set
 
     /**
-     * Timer object to repeating input.
+     * Repeating input runner.
      */
-    private var timer = Timer()
-
-    /**
-     * Custom TimerTask object to repeating input.
-     */
-    private var task = ArrowKeyTimerTask(sendKey)
-
-    /**
-     * Interval time on repeating input.
-     */
-    private val repeatTime = 50L
-
-    /**
-     * Delay time from first input to next input.
-     */
-    private val delayTime = 500L
+    private val runner = RepeatingInputRunner(sendKey)
 
     /**
      * Flag to show whether task is readied to run.
      */
     var isStandby = false
+        get() = runner.isStandby
         private set
-
-    private val order = KeyEventOrder()
 
     /**
      * Toggles [mode].
@@ -97,14 +60,10 @@ class ArrowKey(private val sendKey: (KeyEventOrder) -> Unit) {
      * @param mods list of current enabled modifier keys
      */
     fun startInput(key: AsciiKeyInfo.DirectionKey, mods: Set<ModKeyInfo>) {
-        if (isStandby || task.running || mode == Mode.PAGE_MOVE) {
+        if (runner.isStandby || mode == Mode.PAGE_MOVE) {
             return
         }
-        isStandby = true
-        order.changeKeys(key, mods)
-        sendKey(order)
-        order.changeModKeys(mods.filter{ it.lockable }.toSet())
-        timer.scheduleAtFixedRate(task, delayTime, repeatTime)
+        runner.startInput(key, mods)
     }
 
     /**
@@ -113,7 +72,7 @@ class ArrowKey(private val sendKey: (KeyEventOrder) -> Unit) {
      * @param key direction AsciiKeyInfo
      */
     fun changeKeyInfo(key: AsciiKeyInfo.DirectionKey) {
-        if (task.running) order.changeMainKey(key)
+        runner.changeKeyInfo(key)
     }
 
     /**
@@ -121,12 +80,7 @@ class ArrowKey(private val sendKey: (KeyEventOrder) -> Unit) {
      * This method also can call when not run repeating input, but this will do nothing.
      */
     fun stopInput() {
-        try {
-            timer.cancel()
-        } catch (_: java.lang.Exception) {}
-        timer = Timer()
-        task = ArrowKeyTimerTask(sendKey)
-        isStandby = false
+        runner.stopInput()
     }
 
     @Suppress("ProtectedInFinal", "unused")
