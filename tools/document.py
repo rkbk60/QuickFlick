@@ -1,5 +1,6 @@
 
 from verbalexpressions import VerEx
+import git
 import glob
 import io
 import json
@@ -83,6 +84,13 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 os.chdir(current_dir)
+
+# clone wiki
+if glob.glob("./wiki/*.md"):
+    git.Repo(current_dir + "/wiki").git.pull()
+else:
+    git.Repo.clone_from("git@github.com:rkbk60/QuickFlick.wiki.git",
+                        current_dir + "/wiki")
 
 template = io.open("./template/document.html").read()
 

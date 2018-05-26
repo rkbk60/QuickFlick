@@ -1,6 +1,7 @@
 
 output
 tmp
+wiki
 
 # for pipenv
 Pipfile.lock
