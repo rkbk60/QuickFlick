@@ -12,7 +12,7 @@ android {
         targetSdkVersion 26
         versionName '2.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 10
+        versionCode 11
     }
     buildTypes {
         release {
