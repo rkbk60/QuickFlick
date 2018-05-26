@@ -6,6 +6,7 @@ import io
 import json
 import markdown
 import os
+import subprocess
 import sys
 
 
@@ -86,11 +87,21 @@ if not os.path.exists(output_dir):
 os.chdir(current_dir)
 
 # clone wiki
+can_use_git = subprocess.run([
+    "ping github.com -c 1 > /dev/null 2>&1"
+], shell=True).returncode == 0
 if glob.glob("./wiki/*.md"):
-    git.Repo(current_dir + "/wiki").git.pull()
+    if can_use_git:
+        log("Pull wiki repository.")
+        git.Repo(current_dir + "/wiki").git.pull()
 else:
-    git.Repo.clone_from("git@github.com:rkbk60/QuickFlick.wiki.git",
-                        current_dir + "/wiki")
+    if can_use_git:
+        log("Clone wiki repository.")
+        git.Repo.clone_from("git@github.com:rkbk60/QuickFlick.wiki.git",
+                            current_dir + "/wiki")
+    else:
+        log("cannot clone wiki repository.")
+        sys.exit(1)
 
 # generate document html
 template = io.open("./template/document.html").read()
