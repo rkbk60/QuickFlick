@@ -17,17 +17,22 @@ debug: clean
 	-$(PYTHON) keyboard_layout.py $(ARG_DEBUG)
 	-$(PYTHON) keyicon.py $(ARG_DEBUG)
 	-$(PYTHON) document.py $(ARG_DEBUG)
+	-$(PYTHON) document_image.py $(ARG_DEBUG)
 
 .PHONY: release
 release: clean \
- document.py indicator_morse.py keyboard_layout.py keyicon.py
+ document.py document_image.py indicator_morse.py keyboard_layout.py keyicon.py
 
 .PHONY: document.py
 document.py:
 	$(PYTHON) $@ $(ARG_RELEASE)
 	cp ./output/document/*.html $(DOCUMENT_CD_TARGET)
-	cp ./wiki/*.png $(DOCUMENT_CD_TARGET)
 	cp ./github-markdown-css/github-markdown.css $(DOCUMENT_CD_TARGET)
+
+.PHONY: document_image.py
+document_image.py:
+	$(PYTHON) $@ $(ARG_RELEASE)
+	cp ./output/document_image/* $(DOCUMENT_CD_TARGET)
 
 .PHONY: indicator_morse.py
 indicator_morse.py:

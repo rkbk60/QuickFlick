@@ -92,9 +92,8 @@ else:
     git.Repo.clone_from("git@github.com:rkbk60/QuickFlick.wiki.git",
                         current_dir + "/wiki")
 
-template = io.open("./template/document.html").read()
-
 # generate document html
+template = io.open("./template/document.html").read()
 for md in glob.glob('./wiki/*.md'):
     source_all = io.open(md, encoding='utf-8').read()
     source = source_all.splitlines()
@@ -124,15 +123,6 @@ for md in glob.glob('./wiki/*.md'):
         newcontext += newline
     result = template.replace("$MARKDOWN", newcontext)
     html.write(result)
-    html.close()
-    log("generate: ./" + output_dir + basename + ".html")
-
-# generate image html
-template = io.open("./template/document_image.html").read()
-for png in glob.glob('./wiki/*.png'):
-    basename = os.path.splitext(os.path.basename(png))[0]
-    html = io.open(output_dir + basename + ".html", "w+", encoding='utf-8')
-    html.write(template.replace("$IMAGE", '<img src="./%s.png" />' % basename))
     html.close()
     log("generate: ./" + output_dir + basename + ".html")
 print()
